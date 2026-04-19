@@ -6,781 +6,994 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --brand-blue-1: #2ABDFD;
-      --brand-pink: #fd38ae;
-      --brand-blue-2: #000fff;
-      --brand-black: #000000;
-      --space-xs: 0.5rem;
-      --space-s: 0.75rem;
-      --space-m: 1.25rem;
-      --space-l: 2rem;
-      --space-xl: 3rem;
+      /* Палитра: нейтральная база + сине-голубой акцент */
+      --bg-app:        #F4F7FB;
+      --bg-surface:    #FFFFFF;
+      --bg-muted:      #EEF3F9;
+      --bg-sidebar:    #FFFFFF;
+      --border-soft:   #E2E8F0;
+      --border-strong: #CBD5E1;
+
+      --text-strong:   #0B1220;
+      --text-primary:  #0F172A;
+      --text-secondary:#475569;
+      --text-muted:    #64748B;
+
+      /* Бренд: сине-голубая палитра */
+      --brand-50:  #ECF5FF;
+      --brand-100: #D6EAFF;
+      --brand-200: #AFD4FF;
+      --brand-300: #7BB8FF;
+      --brand-400: #4A98FF;
+      --brand-500: #1F76F2;
+      --brand-600: #1560D4;
+      --brand-700: #0E4AA8;
+      --brand-800: #0B3A82;
+      --brand-900: #0A2E66;
+
+      --cyan-400:  #22D3EE;
+      --cyan-500:  #06B6D4;
+      --cyan-600:  #0891B2;
+
+      /* Семантика */
+      --success-50: #ECFDF5;
+      --success-500:#10B981;
+      --success-700:#047857;
+      --warning-50: #FFFBEB;
+      --warning-500:#F59E0B;
+      --warning-700:#B45309;
+      --danger-50:  #FEF2F2;
+      --danger-500: #EF4444;
+      --danger-700: #B91C1C;
+
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+      --shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04);
+      --shadow-brand: 0 12px 28px rgba(31, 118, 242, 0.28);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
+
+    html, body { background: var(--bg-app); }
 
     body {
       margin: 0;
-      font-family: "Open Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.7;
-      background-color: #050510;
-      color: #f9fafb;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      color: var(--text-primary);
       min-height: 100vh;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     .heading-font {
-      font-family: "Georgia", "Times New Roman", serif;
-      letter-spacing: -0.03em;
-    }
-
-    .elevated {
-      box-shadow:
-        0 24px 60px rgba(0, 0, 0, 0.55),
-        0 0 0 1px rgba(255, 255, 255, 0.03);
-    }
-
-    .chip {
-      border-radius: 9999px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 0.25rem 0.75rem;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
+      font-family: "Manrope", "Inter", system-ui, sans-serif;
+      letter-spacing: -0.02em;
+      color: var(--text-strong);
     }
 
     .shell-bg {
       background:
-        radial-gradient(circle at 0% 0%, rgba(42, 189, 253, 0.35), transparent 55%),
-        radial-gradient(circle at 100% 0%, rgba(253, 56, 174, 0.25), transparent 55%),
-        radial-gradient(circle at 0% 100%, rgba(0, 15, 255, 0.3), transparent 55%),
-        radial-gradient(circle at 100% 100%, rgba(42, 189, 253, 0.25), transparent 60%),
-        #050510;
-      position: relative;
-      isolation: isolate;
+        radial-gradient(900px 500px at -10% -20%, rgba(31,118,242,0.10), transparent 60%),
+        radial-gradient(800px 500px at 110% -10%, rgba(6,182,212,0.10), transparent 60%),
+        var(--bg-app);
       min-height: 100vh;
+      position: relative;
     }
 
-    .noise-layer::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      opacity: 0.14;
-      pointer-events: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.36'/%3E%3C/svg%3E");
-      mix-blend-mode: soft-light;
-      z-index: -1;
-    }
+    /* Скроллбар */
+    *::-webkit-scrollbar { width: 10px; height: 10px; }
+    *::-webkit-scrollbar-track { background: transparent; }
+    *::-webkit-scrollbar-thumb { background: #D6DEE8; border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+    *::-webkit-scrollbar-thumb:hover { background: #B6C2D2; background-clip: padding-box; border: 2px solid transparent; }
 
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 0.75rem 1rem;
-      border-radius: 12px;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
-      border: 1px solid transparent;
-      margin-bottom: 0.25rem;
-    }
-
-    .nav-item:hover {
-      background: rgba(15, 23, 42, 0.8);
-      transform: translateY(-1px);
-      border-color: rgba(148, 163, 184, 0.5);
-    }
-
-    .nav-item.nav-item-active {
-      background: linear-gradient(135deg, var(--brand-blue-1), var(--brand-pink));
-      color: #0b1020;
-      box-shadow: 0 12px 32px rgba(42, 189, 253, 0.4);
-    }
-
-    .btn-primary, .btn-ghost {
-      border-radius: 9999px;
-      padding: 0.6rem 1.4rem;
-      font-size: 0.9rem;
-      font-weight: 600;
+    /* Чип */
+    .chip {
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      border: none;
+      border-radius: 9999px;
+      border: 1px solid var(--border-soft);
+      padding: 0.3rem 0.75rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: var(--bg-muted);
+      color: var(--text-secondary);
+    }
+    .chip-brand {
+      background: var(--brand-50);
+      color: var(--brand-700);
+      border-color: var(--brand-100);
+    }
+
+    /* Навигация */
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--text-secondary);
       cursor: pointer;
-      transition: all 160ms cubic-bezier(0.16, 1, 0.3, 1);
+      transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+      border: 1px solid transparent;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+    .nav-item:hover {
+      background: var(--brand-50);
+      color: var(--brand-700);
+    }
+    .nav-item.nav-item-active {
+      background: var(--brand-500);
+      color: #FFFFFF;
+      box-shadow: var(--shadow-brand);
+    }
+    .nav-item.nav-item-active .nav-icon { color: #FFFFFF; }
+    .nav-icon {
+      width: 20px; height: 20px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--brand-600);
+    }
+
+    /* Кнопки */
+    .btn-primary, .btn-ghost, .btn-secondary {
+      border-radius: 10px;
+      padding: 0.55rem 1rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: transform 140ms ease, box-shadow 160ms ease, background 160ms ease, border-color 160ms ease, color 160ms ease;
+      white-space: nowrap;
+      line-height: 1.2;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--brand-blue-1), var(--brand-blue-2));
-      color: #0b1020;
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
+      background: var(--brand-500);
+      color: #FFFFFF;
+      box-shadow: var(--shadow-brand);
     }
-
     .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.85);
+      background: var(--brand-600);
+      transform: translateY(-1px);
+      box-shadow: 0 18px 36px rgba(31, 118, 242, 0.32);
+    }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-secondary {
+      background: var(--brand-50);
+      color: var(--brand-700);
+      border-color: var(--brand-100);
+    }
+    .btn-secondary:hover {
+      background: var(--brand-100);
+      border-color: var(--brand-200);
     }
 
     .btn-ghost {
-      background: rgba(15, 23, 42, 0.7);
-      color: #f9fafb;
-      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border-soft);
     }
-
     .btn-ghost:hover {
-      background: rgba(15, 23, 42, 0.95);
-      border-color: rgba(42, 189, 253, 0.6);
-      transform: translateY(-1px);
+      background: var(--bg-muted);
+      border-color: var(--border-strong);
+      color: var(--brand-700);
     }
 
+    /* Карточки */
     .card {
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.3);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-soft);
       border-radius: 16px;
-      padding: 1.5rem;
-      backdrop-filter: blur(12px);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-md);
+    }
+    @media (min-width: 640px) {
+      .card { padding: 1.5rem; }
+    }
+    .card-flat {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-soft);
+      border-radius: 14px;
+      padding: 1.1rem;
     }
 
-    .view {
-      display: none;
-      animation: fadeIn 300ms ease-out;
-    }
-
-    .view-active {
-      display: block;
-    }
-
+    /* SPA */
+    .view { display: none; animation: fadeIn 280ms ease-out; }
+    .view-active { display: block; }
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
+    /* Бейджи */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .priority-high   { background: var(--danger-50);  color: var(--danger-700);  border-color: #FECACA; }
+    .priority-medium { background: var(--warning-50); color: var(--warning-700); border-color: #FDE68A; }
+    .priority-low    { background: var(--success-50); color: var(--success-700); border-color: #A7F3D0; }
+    .badge-info      { background: var(--brand-50);   color: var(--brand-700);   border-color: var(--brand-100); }
+    .badge-neutral   { background: var(--bg-muted);   color: var(--text-secondary); border-color: var(--border-soft); }
+
+    /* Карточка задачи */
+    .task-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      margin-bottom: 0.75rem;
+      transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+      cursor: grab;
+    }
+    .task-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--brand-200);
+    }
+
+    /* Прогресс */
+    .progress {
+      width: 100%; height: 8px;
+      background: var(--bg-muted);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+    .progress > span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--brand-500), var(--cyan-500));
+      border-radius: 9999px;
+    }
+    .progress.success > span { background: linear-gradient(90deg, #10B981, #34D399); }
+
+    /* Привычки */
+    .habit-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 0.4rem;
+    }
+    .habit-day {
+      aspect-ratio: 1 / 1;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; font-weight: 600;
+      border: 1px solid var(--border-soft);
+      color: var(--text-muted);
+      background: var(--bg-surface);
+    }
+    .habit-completed {
+      background: var(--brand-500);
+      border-color: var(--brand-500);
+      color: #FFFFFF;
+    }
+    .habit-missed {
+      background: var(--bg-muted);
+      color: var(--text-muted);
+    }
+
+    /* Чекбоксы */
+    input[type="checkbox"] {
+      appearance: none;
+      width: 18px; height: 18px;
+      border-radius: 5px;
+      border: 1.5px solid var(--border-strong);
+      background: var(--bg-surface);
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background 120ms ease, border-color 120ms ease;
+      flex-shrink: 0;
+    }
+    input[type="checkbox"]:hover { border-color: var(--brand-400); }
+    input[type="checkbox"]:checked {
+      background: var(--brand-500);
+      border-color: var(--brand-500);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Cpath d='M6.173 11.354 3.4 8.58l1.06-1.06 1.713 1.713 4.367-4.367 1.06 1.06z'/%3E%3C/svg%3E");
+      background-size: 14px;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    input[type="text"], input[type="email"], input[type="search"] {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-soft);
+      color: var(--text-primary);
+    }
+    input[type="text"]:focus, input[type="email"]:focus, input[type="search"]:focus {
+      border-color: var(--brand-400);
+      box-shadow: 0 0 0 3px rgba(31,118,242,0.15);
+      outline: none;
+    }
+
+    /* Иконка-кнопка */
+    .icon-btn {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-soft);
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
+      position: relative;
+    }
+    .icon-btn:hover { background: var(--brand-50); color: var(--brand-700); border-color: var(--brand-100); }
+
+    /* Аватар */
+    .avatar {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--brand-500), var(--cyan-500));
+      color: #FFFFFF;
+      font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: var(--shadow-brand);
+    }
+
+    .logo-mark {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--brand-500), var(--cyan-500));
+      color: #FFFFFF;
+      font-weight: 800;
+      display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: var(--shadow-brand);
+      letter-spacing: -0.02em;
+    }
+
+    /* Календарь */
+    .cal-day {
+      min-height: 88px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-soft);
+      border-radius: 10px;
+      padding: 0.55rem;
+      display: flex; flex-direction: column; gap: 0.35rem;
+      transition: border-color 140ms ease, background 140ms ease;
+    }
+    .cal-day:hover { border-color: var(--brand-300); background: var(--brand-50); }
+    .cal-day.is-today {
+      background: var(--brand-500);
+      border-color: var(--brand-500);
+      color: #FFFFFF;
+    }
+    .cal-day.is-today .cal-num { color: #FFFFFF; }
+    .cal-num { font-weight: 700; color: var(--text-primary); }
+
+    /* Bottom nav */
     .bottom-nav {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(5, 5, 16, 0.95);
-      backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(148, 163, 184, 0.3);
-      padding: 0.75rem 0;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(255,255,255,0.94);
+      backdrop-filter: blur(14px);
+      border-top: 1px solid var(--border-soft);
+      padding: 0.5rem 0;
       z-index: 100;
       display: none;
     }
+    .bottom-nav .nav-item {
+      width: auto;
+      flex-direction: column;
+      gap: 0.15rem;
+      padding: 0.4rem 0.5rem;
+      font-size: 0.72rem;
+    }
+    .bottom-nav .nav-item.nav-item-active {
+      background: transparent;
+      color: var(--brand-600);
+      box-shadow: none;
+    }
+    .bottom-nav .nav-item.nav-item-active .nav-icon { color: var(--brand-600); }
 
-    @media (max-width: 1024px) {
+    @media (max-width: 1023.98px) {
       .bottom-nav { display: block; }
       .desktop-sidebar { display: none !important; }
+      main { padding-bottom: 88px !important; }
     }
 
-    .status-badge {
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.7rem;
-      font-weight: 600;
-    }
-
-    .priority-high { background: rgba(253, 56, 174, 0.2); color: var(--brand-pink); border: 1px solid rgba(253, 56, 174, 0.5); }
-    .priority-medium { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.5); }
-    .priority-low { background: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.5); }
-
-    .task-card {
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.3);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      cursor: grab;
-      transition: all 200ms ease;
-    }
-
-    .task-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    }
-
-    .habit-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-      gap: 0.5rem;
-    }
-
-    .habit-day {
-      aspect-ratio: 1;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-
-    .habit-completed { background: linear-gradient(135deg, var(--brand-blue-1), var(--brand-pink)); color: white; }
-    .habit-missed { background: rgba(148, 163, 184, 0.3); color: #64748b; }
+    /* SVG иконки */
+    .icon { width: 18px; height: 18px; stroke-width: 2; }
+    .nav-icon .icon { width: 20px; height: 20px; }
   </style>
 </head>
-<body class="shell-bg noise-layer">
+<body class="shell-bg">
   <div class="flex min-h-screen">
-    
+
     <!-- Desktop Sidebar -->
-    <aside class="desktop-sidebar w-72 border-r border-slate-900/50 p-6 flex flex-col h-screen sticky top-0 bg-slate-950/30 backdrop-blur-md">
-      <div class="mb-8">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--brand-blue-1)] via-[var(--brand-pink)] to-[var(--brand-blue-2)] flex items-center justify-center text-lg font-bold text-slate-900 shadow-2xl">
-            PL
-          </div>
+    <aside class="desktop-sidebar w-72 border-r border-[color:var(--border-soft)] p-5 flex flex-col h-screen sticky top-0 bg-[color:var(--bg-sidebar)]">
+      <div class="mb-6">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="logo-mark">PL</div>
           <div>
-            <h1 class="heading-font text-2xl font-bold text-white">PLANEL</h1>
-            <p class="text-xs uppercase tracking-widest text-slate-400">Planning. Focus. Rhythm.</p>
+            <h1 class="heading-font text-xl font-extrabold">PLANEL</h1>
+            <p class="text-[11px] uppercase tracking-[0.16em] text-[color:var(--text-muted)] font-semibold">Planning · Focus · Rhythm</p>
           </div>
-        </div>
-        
-        <div class="chip bg-gradient-to-r from-slate-800 to-slate-900 border-slate-700 text-slate-200 mb-8">
-          👑 Владелец · Валентина
         </div>
 
-        <nav class="space-y-2">
+        <div class="chip chip-brand mb-6">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z"/></svg>
+          Владелец · Валентина
+        </div>
+
+        <nav class="space-y-1">
           <button class="nav-item nav-item-active" data-view="dashboard">
-            <span class="text-xl">🏠</span>
+            <span class="nav-icon">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>
+            </span>
             <span>Дашборд</span>
           </button>
           <button class="nav-item" data-view="tasks">
-            <span class="text-xl">🚀</span>
+            <span class="nav-icon">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 9h8M8 13h6M8 17h4"/></svg>
+            </span>
             <span>Задачи и доски</span>
           </button>
           <button class="nav-item" data-view="calendar">
-            <span class="text-xl">📅</span>
+            <span class="nav-icon">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
+            </span>
             <span>Планер</span>
           </button>
           <button class="nav-item" data-view="projects">
-            <span class="text-xl">🎯</span>
+            <span class="nav-icon">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>
+            </span>
             <span>Цели и проекты</span>
           </button>
           <button class="nav-item" data-view="habits">
-            <span class="text-xl">🔥</span>
+            <span class="nav-icon">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11z"/></svg>
+            </span>
             <span>Привычки</span>
           </button>
           <button class="nav-item" data-view="analytics">
-            <span class="text-xl">📊</span>
+            <span class="nav-icon">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg>
+            </span>
             <span>Аналитика</span>
           </button>
           <button class="nav-item" data-view="settings">
-            <span class="text-xl">⚙️</span>
+            <span class="nav-icon">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+            </span>
             <span>Настройки</span>
           </button>
         </nav>
       </div>
 
-      <div class="mt-auto text-xs text-slate-400 space-y-3">
-        <div class="flex items-center justify-between">
-          <span>Тема</span>
-          <button class="btn-ghost text-xs px-3 py-1.5">🌙 Темная</button>
-        </div>
-        <div class="flex items-center justify-between">
-          <span>Telegram</span>
+      <div class="mt-auto text-xs">
+        <div class="flex items-center justify-between px-2">
+          <span class="text-[color:var(--text-secondary)]">Telegram</span>
           <label class="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" class="w-4 h-4 rounded bg-slate-800 border-slate-700 text-[var(--brand-blue-1)]" checked>
-            <span>Включено</span>
+            <input type="checkbox" checked>
+            <span class="text-[color:var(--text-primary)]">Включено</span>
           </label>
         </div>
       </div>
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 flex flex-col overflow-hidden">
+    <main class="flex-1 flex flex-col min-w-0">
       <!-- Header -->
-      <header class="border-b border-slate-900/50 px-8 py-4 bg-slate-950/30 backdrop-blur-md sticky top-0 z-20">
-        <div class="max-w-6xl mx-auto flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <h2 class="heading-font text-2xl font-bold text-white">Добро пожаловать!</h2>
-            <div class="relative">
-              <input type="search" placeholder="🔍 Поиск по задачам, проектам..." 
-                     class="w-80 pl-10 pr-4 py-2 rounded-2xl bg-slate-900/80 border border-slate-700/50 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue-1)]">
+      <header class="border-b border-[color:var(--border-soft)] px-4 sm:px-6 lg:px-10 py-3 sm:py-4 bg-white/95 backdrop-blur-md sticky top-0 z-20">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
+          <div class="flex items-center gap-4 min-w-0 flex-1">
+            <h2 class="heading-font text-base sm:text-xl font-extrabold leading-tight whitespace-nowrap">Добро пожаловать!</h2>
+            <div class="relative hidden md:max-lg:block xl:block flex-1 max-w-sm">
+              <svg class="icon absolute left-3 top-1/2 -translate-y-1/2 text-[color:var(--text-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              <input type="search" placeholder="Поиск по задачам, проектам…"
+                     class="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm">
             </div>
           </div>
-          <div class="flex items-center gap-3">
-            <button class="relative p-2 rounded-2xl bg-slate-900/50 border border-slate-700/50 hover:bg-slate-800/50">
-              🔔
-              <span class="absolute -top-1 -right-1 w-5 h-5 bg-[var(--brand-pink)] text-xs font-bold text-white rounded-full flex items-center justify-center">3</span>
+          <div class="flex items-center gap-2 sm:gap-2.5 flex-shrink-0">
+            <button class="icon-btn" aria-label="Уведомления">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9z"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+              <span class="absolute -top-1 -right-1 bg-[color:var(--danger-500)] text-[10px] font-bold text-white rounded-full flex items-center justify-center" style="width:18px;height:18px;">3</span>
             </button>
-            <button class="btn-primary text-sm">
-              + Новая задача
+            <button class="btn-primary" aria-label="Новая задача">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+              <span class="hidden sm:inline">Новая задача</span>
             </button>
-            <div class="w-10 h-10 bg-gradient-to-r from-[var(--brand-blue-1)] to-[var(--brand-pink)] rounded-2xl flex items-center justify-center font-bold text-slate-900">
-              ВВ
-            </div>
+            <div class="avatar hidden sm:inline-flex">ВВ</div>
           </div>
         </div>
       </header>
 
       <!-- Content Area -->
-      <div class="flex-1 overflow-y-auto p-8 max-w-7xl mx-auto">
-        
-        <!-- 🏠 Дашборд -->
-        <section id="dashboard" class="view view-active space-y-8">
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Сегодняшние задачи -->
-            <div class="card elevated lg:col-span-2">
-              <div class="flex items-center justify-between mb-6">
+      <div class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
+        <div class="max-w-7xl mx-auto">
+
+          <!-- 🏠 Дашборд -->
+          <section id="dashboard" class="view view-active space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <!-- Сегодняшние задачи -->
+              <div class="card lg:col-span-2">
+                <div class="flex items-start justify-between mb-5 gap-3">
+                  <div>
+                    <h3 class="heading-font text-lg font-extrabold mb-0.5">Задачи на сегодня</h3>
+                    <p class="text-sm text-[color:var(--text-secondary)]">Критические задачи с ближайшими дедлайнами</p>
+                  </div>
+                  <button class="btn-primary text-xs">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                    Добавить
+                  </button>
+                </div>
+
                 <div>
-                  <h3 class="heading-font text-xl font-bold text-white mb-1">Задачи на сегодня</h3>
-                  <p class="text-slate-400">Критические задачи с ближайшими дедлайнами</p>
-                </div>
-                <button class="btn-primary text-sm">+ Добавить</button>
-              </div>
-              
-              <div class="space-y-3">
-                <div class="task-card">
-                  <div class="flex items-start justify-between mb-2">
-                    <div class="flex items-start gap-3 flex-1">
-                      <input type="checkbox" class="mt-1 w-5 h-5 rounded-lg bg-slate-900 border-slate-700 text-[var(--brand-blue-1)] focus:ring-[var(--brand-blue-1)]">
-                      <div class="flex-1 min-w-0">
-                        <h4 class="font-semibold text-white text-lg mb-1">Финализировать дизайн MVP PLANEL</h4>
-                        <p class="text-slate-400 text-sm mb-2">Обновить дашборд, задачи, календарь согласно спецификации</p>
-                        <div class="flex items-center gap-2 text-xs text-slate-400">
-                          <span>📋 PLANEL MVP</span>
-                          <span>👤 Валентина</span>
-                          <span>📅 15 марта</span>
-                        </div>
-                      </div>
-                    </div>
-                    <span class="priority-high status-badge ml-3 whitespace-nowrap">Высокий</span>
-                  </div>
-                </div>
-
-                <div class="task-card">
-                  <div class="flex items-start justify-between mb-2">
-                    <div class="flex items-start gap-3 flex-1">
-                      <input type="checkbox" class="mt-1 w-5 h-5 rounded-lg bg-slate-900 border-slate-700 text-[var(--brand-blue-1)] focus:ring-[var(--brand-blue-1)]">
-                      <div class="flex-1 min-w-0">
-                        <h4 class="font-semibold text-white text-lg mb-1">Настроить Telegram уведомления</h4>
-                        <p class="text-slate-400 text-sm mb-2">Дедлайны, комментарии, назначение задач</p>
-                        <div class="flex items-center gap-2 text-xs text-slate-400">
-                          <span>📱 Интеграции</span>
-                          <span>👤 Сотрудник #1</span>
-                          <span>📅 18 марта</span>
-                        </div>
-                      </div>
-                    </div>
-                    <span class="priority-medium status-badge ml-3 whitespace-nowrap">Средний</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Помодоро + Привычки -->
-            <div class="space-y-6">
-              <!-- Помодоро -->
-              <div class="card elevated">
-                <h3 class="heading-font text-lg font-bold text-white mb-4">Помодоро</h3>
-                <div class="text-center">
-                  <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-[var(--brand-blue-1)] to-[var(--brand-pink)] flex items-center justify-center text-2xl font-bold text-slate-900 shadow-2xl">
-                    25:00
-                  </div>
-                  <div class="space-x-2">
-                    <button class="btn-primary px-6 py-2 text-sm" id="pomodoroStart">▶ Старт</button>
-                    <button class="btn-ghost px-6 py-2 text-sm" id="pomodoroStop">⏹ Стоп</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Быстрые привычки -->
-              <div class="card elevated">
-                <h3 class="heading-font text-lg font-bold text-white mb-4">Привычки · Сегодня</h3>
-                <div class="space-y-2">
-                  <div class="flex items-center justify-between text-sm">
-                    <span>Утренний обзор</span>
-                    <input type="checkbox" class="w-5 h-5 rounded bg-slate-900 border-slate-700 text-[var(--brand-blue-1)]" checked>
-                  </div>
-                  <div class="flex items-center justify-between text-sm">
-                    <span>Дневной фокус</span>
-                    <input type="checkbox" class="w-5 h-5 rounded bg-slate-900 border-slate-700 text-[var(--brand-blue-1)]">
-                  </div>
-                  <div class="flex items-center justify-between text-sm">
-                    <span>Вечерний ретроспектив</span>
-                    <input type="checkbox" class="w-5 h-5 rounded bg-slate-900 border-slate-700 text-[var(--brand-blue-1)]">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- 🚀 Задачи и доски -->
-        <section id="tasks" class="view space-y-8 hidden">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h2 class="heading-font text-2xl font-bold text-white mb-1">Задачи и доски</h2>
-              <p class="text-slate-400">Управляйте задачами в любом формате</p>
-            </div>
-            <div class="flex gap-2">
-              <button class="btn-primary px-6 py-2 text-sm">Список</button>
-              <button class="btn-ghost px-6 py-2 text-sm">Доска</button>
-              <button class="btn-ghost px-6 py-2 text-sm">Матрица</button>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="card elevated">
-              <h3 class="heading-font text-xl font-bold text-white mb-6">Kanban доска</h3>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <h4 class="font-semibold text-slate-200 mb-4 flex items-center gap-2">
-                    🟦 Сделать (8)
-                  </h4>
                   <div class="task-card">
-                    <h5 class="font-semibold text-white mb-1">Интеграция Google Calendar</h5>
-                    <p class="text-slate-400 text-sm mb-2">Двусторонняя синхронизация</p>
-                    <div class="flex items-center justify-between text-xs text-slate-400">
-                      <span>📅 20 марта</span>
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="flex items-start gap-3 flex-1 min-w-0">
+                        <input type="checkbox" class="mt-1">
+                        <div class="flex-1 min-w-0">
+                          <h4 class="font-semibold text-[color:var(--text-strong)] mb-1">Финализировать дизайн MVP PLANEL</h4>
+                          <p class="text-sm text-[color:var(--text-secondary)] mb-2">Обновить дашборд, задачи, календарь согласно спецификации</p>
+                          <div class="flex flex-wrap items-center gap-2 text-xs text-[color:var(--text-muted)]">
+                            <span>📋 PLANEL MVP</span>
+                            <span>👤 Валентина</span>
+                            <span>📅 15 марта</span>
+                          </div>
+                        </div>
+                      </div>
+                      <span class="priority-high status-badge">Высокий</span>
+                    </div>
+                  </div>
+
+                  <div class="task-card">
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="flex items-start gap-3 flex-1 min-w-0">
+                        <input type="checkbox" class="mt-1">
+                        <div class="flex-1 min-w-0">
+                          <h4 class="font-semibold text-[color:var(--text-strong)] mb-1">Настроить Telegram уведомления</h4>
+                          <p class="text-sm text-[color:var(--text-secondary)] mb-2">Дедлайны, комментарии, назначение задач</p>
+                          <div class="flex flex-wrap items-center gap-2 text-xs text-[color:var(--text-muted)]">
+                            <span>📱 Интеграции</span>
+                            <span>👤 Сотрудник #1</span>
+                            <span>📅 18 марта</span>
+                          </div>
+                        </div>
+                      </div>
                       <span class="priority-medium status-badge">Средний</span>
                     </div>
                   </div>
                 </div>
-                <div>
-                  <h4 class="font-semibold text-slate-200 mb-4 flex items-center gap-2">
-                    🟨 В процессе (5)
-                  </h4>
-                  <div class="task-card">
-                    <h5 class="font-semibold text-white mb-1">Аналитика и отчеты</h5>
-                    <p class="text-slate-400 text-sm mb-2">Графики, экспорт PDF/Excel</p>
+              </div>
+
+              <!-- Помодоро + Привычки -->
+              <div class="space-y-6">
+                <div class="card">
+                  <h3 class="heading-font text-base font-extrabold mb-4">Помодоро</h3>
+                  <div class="text-center">
+                    <div class="w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center text-white font-bold text-xl"
+                         style="background: linear-gradient(135deg, var(--brand-500), var(--cyan-500)); box-shadow: var(--shadow-brand);">
+                      25:00
+                    </div>
+                    <div class="flex items-center justify-center gap-2">
+                      <button class="btn-primary text-xs" id="pomodoroStart">▶ Старт</button>
+                      <button class="btn-ghost text-xs" id="pomodoroStop">⏹ Стоп</button>
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <h4 class="font-semibold text-slate-200 mb-4 flex items-center gap-2">
-                    ✅ Выполнено (12)
-                  </h4>
-                </div>
-              </div>
-            </div>
 
-            <div class="card elevated">
-              <h3 class="heading-font text-xl font-bold text-white mb-6">Фильтры и поиск</h3>
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-sm text-slate-400 mb-2">Проекты</label>
-                  <div class="flex flex-wrap gap-2">
-                    <button class="status-badge bg-slate-900/50 border-slate-700/50 hover:bg-slate-800/50 px-3 py-1 text-xs">PLANEL MVP</button>
-                    <button class="status-badge bg-slate-900/50 border-slate-700/50 hover:bg-slate-800/50 px-3 py-1 text-xs">Интеграции</button>
-                  </div>
-                </div>
-                <div>
-                  <label class="block text-sm text-slate-400 mb-2">Приоритет</label>
-                  <div class="flex gap-2">
-                    <span class="priority-high status-badge px-3 py-1 text-xs">Высокий</span>
-                    <span class="priority-medium status-badge px-3 py-1 text-xs">Средний</span>
-                    <span class="priority-low status-badge px-3 py-1 text-xs">Низкий</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- 📅 Планер -->
-        <section id="calendar" class="view space-y-8 hidden">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h2 class="heading-font text-2xl font-bold text-white mb-1">Планер</h2>
-              <p class="text-slate-400">Ваш календарь задач и событий</p>
-            </div>
-            <div class="flex gap-2">
-              <button class="btn-primary px-6 py-2 text-sm">Месяц</button>
-              <button class="btn-ghost px-6 py-2 text-sm">Неделя</button>
-              <button class="btn-ghost px-6 py-2 text-sm">День</button>
-            </div>
-          </div>
-
-          <div class="card elevated p-8">
-            <div class="grid grid-cols-7 gap-4 text-center text-sm">
-              <div class="font-semibold text-slate-300 py-2">Пн</div>
-              <div class="font-semibold text-slate-300 py-2">Вт</div>
-              <div class="font-semibold text-slate-300 py-2">Ср</div>
-              <div class="font-semibold text-slate-300 py-2">Чт</div>
-              <div class="font-semibold text-slate-300 py-2">Пт</div>
-              <div class="font-semibold text-slate-300 py-2">Сб</div>
-              <div class="font-semibold text-slate-300 py-2">Вс</div>
-              
-              <!-- Март 2026 -->
-              <div class="h-24 border-2 border-dashed border-slate-800/50 rounded-lg flex flex-col items-center justify-center p-2 hover:border-[var(--brand-blue-1)] transition-colors">
-                <div class="text-lg font-bold text-slate-400 mb-1">10</div>
-                <div class="w-full h-2 bg-slate-900 rounded-full mt-1">
-                  <div class="h-full w-3/4 bg-[var(--brand-blue-1)] rounded-full"></div>
-                </div>
-                <span class="text-xs text-slate-500 mt-1">3 задачи</span>
-              </div>
-              <div class="h-24 bg-gradient-to-br from-[var(--brand-blue-1)]/10 to-[var(--brand-pink)]/10 border-2 border-[var(--brand-blue-1)]/30 rounded-lg flex flex-col items-center justify-center p-2">
-                <div class="text-lg font-bold text-white mb-1">14</div>
-                <span class="text-xs bg-[var(--brand-blue-1)] text-slate-900 px-2 py-1 rounded-full font-semibold">Сегодня</span>
-              </div>
-              <!-- ... больше дней ... -->
-            </div>
-          </div>
-        </section>
-
-        <!-- 🎯 Цели и проекты -->
-        <section id="projects" class="view space-y-8 hidden">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h2 class="heading-font text-2xl font-bold text-white mb-1">Цели и проекты</h2>
-              <p class="text-slate-400">Стратегическое планирование</p>
-            </div>
-            <button class="btn-primary px-8 py-3 text-sm font-semibold">+ Новый проект</button>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="card elevated hover:scale-[1.02] transition-transform group">
-              <div class="h-40 rounded-t-2xl bg-gradient-to-br from-[var(--brand-blue-1)]/20 to-[var(--brand-pink)]/20 border-b border-[var(--brand-blue-1)]/30 group-hover:from-[var(--brand-blue-1)]/30"></div>
-              <div class="p-6">
-                <h3 class="heading-font text-xl font-bold text-white mb-2">PLANEL MVP</h3>
-                <div class="w-full bg-slate-900 rounded-full h-2 mb-4">
-                  <div class="bg-gradient-to-r from-[var(--brand-blue-1)] to-[var(--brand-pink)] h-2 rounded-full w-75%"></div>
-                </div>
-                <div class="text-sm text-slate-400 mb-3">27/40 задач • 68% готово</div>
-                <div class="flex items-center gap-2 text-xs text-slate-500">
-                  <span>📅 Дедлайн: 31 марта</span>
-                  <span class="priority-high status-badge px-2 py-1">Активный</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="card elevated hover:scale-[1.02] transition-transform">
-              <div class="h-40 rounded-t-2xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border-b border-emerald-500/30"></div>
-              <div class="p-6">
-                <h3 class="heading-font text-xl font-bold text-white mb-2">Личный рост 2026</h3>
-                <div class="w-full bg-slate-900 rounded-full h-2 mb-4">
-                  <div class="bg-emerald-500 h-2 rounded-full w-45%"></div>
-                </div>
-                <div class="text-sm text-slate-400 mb-3">12/30 задач • 40% готово</div>
-              </div>
-            </div>
-
-            <div class="card elevated hover:scale-[1.02] transition-transform">
-              <div class="h-40 rounded-t-2xl bg-gradient-to-br from-slate-600/30 to-slate-700/30 border-b border-slate-600/50"></div>
-              <div class="p-6">
-                <h3 class="heading-font text-xl font-bold text-white mb-2">Brain Dump</h3>
-                <p class="text-slate-400 mb-4">Соберите идеи и превратите их в задачи</p>
-                <div class="text-sm text-slate-500">23 идеи • 8 задач создано</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- 🔥 Привычки -->
-        <section id="habits" class="view space-y-8 hidden">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h2 class="heading-font text-2xl font-bold text-white mb-1">Трекер привычек</h2>
-              <p class="text-slate-400">Отслеживайте серии и прогресс</p>
-            </div>
-            <button class="btn-primary px-8 py-3 text-sm">+ Новая привычка</button>
-          </div>
-
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div class="card elevated">
-              <h3 class="heading-font text-xl font-bold text-white mb-6">Журнал за неделю</h3>
-              <div class="space-y-4">
-                <div>
-                  <div class="flex items-center justify-between mb-3">
-                    <h4 class="font-semibold text-slate-200">Утренний ритуал</h4>
-                    <span class="text-sm font-bold text-emerald-400">✅ 7 дней</span>
-                  </div>
-                  <div class="habit-grid">
-                    <div class="habit-day habit-completed">Пн</div>
-                    <div class="habit-day habit-completed">Вт</div>
-                    <div class="habit-day habit-completed">Ср</div>
-                    <div class="habit-day habit-completed">Чт</div>
-                    <div class="habit-day habit-completed">Пт</div>
-                    <div class="habit-day habit-completed">Сб</div>
-                    <div class="habit-day habit-completed">Вс</div>
-                  </div>
-                </div>
-                <div>
-                  <div class="flex items-center justify-between mb-3">
-                    <h4 class="font-semibold text-slate-200">Фокус без отвлечений</h4>
-                    <span class="text-sm font-bold text-amber-400">⚠️ 3 дня</span>
-                  </div>
-                  <div class="habit-grid">
-                    <div class="habit-day habit-completed">Пн</div>
-                    <div class="habit-day habit-completed">Вт</div>
-                    <div class="habit-day habit-missed">Ср</div>
-                    <div class="habit-day habit-completed">Чт</div>
-                    <div class="habit-day habit-missed">Пт</div>
-                    <div class="habit-day habit-missed">Сб</div>
-                    <div class="habit-day habit-missed">Вс</div>
+                <div class="card">
+                  <h3 class="heading-font text-base font-extrabold mb-4">Привычки · Сегодня</h3>
+                  <div class="space-y-1">
+                    <label class="flex items-center justify-between p-2.5 rounded-lg hover:bg-[color:var(--brand-50)] cursor-pointer transition-colors">
+                      <span class="text-sm font-medium">Утренний обзор</span>
+                      <input type="checkbox" checked>
+                    </label>
+                    <label class="flex items-center justify-between p-2.5 rounded-lg hover:bg-[color:var(--brand-50)] cursor-pointer transition-colors">
+                      <span class="text-sm font-medium">Дневной фокус</span>
+                      <input type="checkbox">
+                    </label>
+                    <label class="flex items-center justify-between p-2.5 rounded-lg hover:bg-[color:var(--brand-50)] cursor-pointer transition-colors">
+                      <span class="text-sm font-medium">Вечерний ретроспектив</span>
+                      <input type="checkbox">
+                    </label>
                   </div>
                 </div>
               </div>
             </div>
+          </section>
 
-            <div class="card elevated p-8">
-              <h3 class="heading-font text-xl font-bold text-white mb-6">Статистика</h3>
-              <div class="space-y-4 text-center">
-                <div class="text-3xl font-bold text-[var(--brand-blue-1)]">78%</div>
-                <p class="text-slate-400">Стабильность за 30 дней</p>
-                <div class="w-24 h-24 mx-auto bg-gradient-to-br from-[var(--brand-blue-1)]/20 to-[var(--brand-pink)]/20 rounded-full border-4 border-[var(--brand-blue-1)]/30 flex items-center justify-center">
-                  <div class="w-16 h-16 bg-gradient-to-br from-[var(--brand-blue-1)] to-[var(--brand-pink)] rounded-full flex items-center justify-center text-white font-bold">78%</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- 📊 Аналитика -->
-        <section id="analytics" class="view space-y-8 hidden">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h2 class="heading-font text-2xl font-bold text-white mb-1">Аналитика</h2>
-              <p class="text-slate-400">Данные о производительности</p>
-            </div>
-            <button class="btn-primary px-8 py-3 text-sm">📊 Экспорт PDF</button>
-          </div>
-
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div class="card elevated p-8">
-              <h3 class="heading-font text-xl font-bold text-white mb-6">Эффективность недели</h3>
-              <div class="space-y-4">
-                <div class="flex items-center justify-between text-2xl font-bold">
-                  <span class="text-emerald-400">27</span>
-                  <span class="text-slate-400 text-lg font-normal">/ 35 задач</span>
-                </div>
-                <div class="w-full bg-slate-900 rounded-full h-3">
-                  <div class="bg-gradient-to-r from-emerald-500 to-emerald-400 h-3 rounded-full w-77%"></div>
-                </div>
-                <div class="grid grid-cols-3 gap-4 text-center">
-                  <div>
-                    <div class="text-lg font-bold text-[var(--brand-blue-1)]">14ч 32м</div>
-                    <div class="text-xs text-slate-400">Фокус времени</div>
-                  </div>
-                  <div>
-                    <div class="text-lg font-bold text-amber-400">4</div>
-                    <div class="text-xs text-slate-400">Просрочено</div>
-                  </div>
-                  <div>
-                    <div class="text-lg font-bold text-emerald-400">+12%</div>
-                    <div class="text-xs text-slate-400">К прошлой неделе</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="card elevated p-8">
-              <h3 class="heading-font text-xl font-bold text-white mb-6">Загрузка по проектам</h3>
-              <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                  <span class="text-slate-300">PLANEL MVP</span>
-                  <div class="w-20 bg-slate-900 rounded-full h-2">
-                    <div class="bg-[var(--brand-blue-1)] h-2 rounded-full w-85%"></div>
-                  </div>
-                  <span class="text-sm font-semibold text-[var(--brand-blue-1)]">85%</span>
-                </div>
-                <div class="flex items-center justify-between">
-                  <span class="text-slate-300">Интеграции</span>
-                  <div class="w-20 bg-slate-900 rounded-full h-2">
-                    <div class="bg-emerald-500 h-2 rounded-full w-60%"></div>
-                  </div>
-                  <span class="text-sm font-semibold text-emerald-400">60%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- ⚙️ Настройки -->
-        <section id="settings" class="view space-y-8 hidden">
-          <h2 class="heading-font text-2xl font-bold text-white mb-8">Настройки</h2>
-          
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div class="card elevated space-y-6">
+          <!-- 🚀 Задачи и доски -->
+          <section id="tasks" class="view space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h3 class="heading-font text-xl font-bold text-white mb-4">👤 Профиль</h3>
+                <h2 class="heading-font text-2xl font-extrabold mb-1">Задачи и доски</h2>
+                <p class="text-sm text-[color:var(--text-secondary)]">Управляйте задачами в любом формате</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="btn-primary text-sm">Список</button>
+                <button class="btn-ghost text-sm">Доска</button>
+                <button class="btn-ghost text-sm">Матрица</button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-5">Kanban доска</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <h4 class="font-semibold text-[color:var(--text-strong)] mb-3 flex items-center gap-2">
+                      <span class="w-2 h-2 rounded-full bg-[color:var(--brand-400)]"></span>
+                      Сделать <span class="text-xs font-semibold text-[color:var(--text-muted)]">(8)</span>
+                    </h4>
+                    <div class="task-card">
+                      <h5 class="font-semibold text-[color:var(--text-strong)] mb-1">Интеграция Google Calendar</h5>
+                      <p class="text-sm text-[color:var(--text-secondary)] mb-3">Двусторонняя синхронизация</p>
+                      <div class="flex items-center justify-between text-xs text-[color:var(--text-muted)]">
+                        <span>📅 20 марта</span>
+                        <span class="priority-medium status-badge">Средний</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-[color:var(--text-strong)] mb-3 flex items-center gap-2">
+                      <span class="w-2 h-2 rounded-full bg-[color:var(--warning-500)]"></span>
+                      В процессе <span class="text-xs font-semibold text-[color:var(--text-muted)]">(5)</span>
+                    </h4>
+                    <div class="task-card">
+                      <h5 class="font-semibold text-[color:var(--text-strong)] mb-1">Аналитика и отчеты</h5>
+                      <p class="text-sm text-[color:var(--text-secondary)]">Графики, экспорт PDF/Excel</p>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-[color:var(--text-strong)] mb-3 flex items-center gap-2">
+                      <span class="w-2 h-2 rounded-full bg-[color:var(--success-500)]"></span>
+                      Выполнено <span class="text-xs font-semibold text-[color:var(--text-muted)]">(12)</span>
+                    </h4>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-5">Фильтры и поиск</h3>
                 <div class="space-y-4">
                   <div>
-                    <label class="block text-sm font-semibold text-slate-300 mb-2">Имя</label>
-                    <input type="text" value="Валентина Воронкова" class="w-full p-3 rounded-xl bg-slate-900/70 border border-slate-700/50 focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue-1)] text-white">
+                    <label class="block text-xs font-semibold text-[color:var(--text-secondary)] uppercase tracking-wider mb-2">Проекты</label>
+                    <div class="flex flex-wrap gap-2">
+                      <button class="badge-info status-badge">PLANEL MVP</button>
+                      <button class="badge-neutral status-badge">Интеграции</button>
+                    </div>
                   </div>
                   <div>
-                    <label class="block text-sm font-semibold text-slate-300 mb-2">Email</label>
-                    <input type="email" value="valentina@planel.app" class="w-full p-3 rounded-xl bg-slate-900/70 border border-slate-700/50 focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue-1)] text-white">
-                  </div>
-                  <button class="btn-primary w-full py-3 text-sm font-semibold">Сохранить изменения</button>
-                </div>
-              </div>
-
-              <div>
-                <h3 class="heading-font text-xl font-bold text-white mb-4">🔔 Уведомления</h3>
-                <div class="space-y-3">
-                  <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/50 border border-slate-700/50 cursor-pointer hover:bg-slate-800/50">
-                    <input type="checkbox" class="w-5 h-5 rounded bg-slate-900 border-slate-700 text-[var(--brand-blue-1)]" checked>
-                    <span class="text-sm text-slate-300">Telegram уведомления</span>
-                  </label>
-                  <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/50 border border-slate-700/50 cursor-pointer hover:bg-slate-800/50">
-                    <input type="checkbox" class="w-5 h-5 rounded bg-slate-900 border-slate-700 text-[var(--brand-blue-1)]">
-                    <span class="text-sm text-slate-300">Email уведомления</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <div class="card elevated space-y-6">
-              <div>
-                <h3 class="heading-font text-xl font-bold text-white mb-4">👥 Команда</h3>
-                <div class="space-y-3">
-                  <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/50 border border-slate-700/50">
-                    <div class="w-10 h-10 bg-[var(--brand-pink)] rounded-xl flex items-center justify-center text-white font-semibold">А1</div>
-                    <div class="flex-1 min-w-0">
-                      <p class="font-semibold text-white text-sm">Алексей Иванов</p>
-                      <p class="text-xs text-slate-400">Сотрудник · Доступ к проектам</p>
+                    <label class="block text-xs font-semibold text-[color:var(--text-secondary)] uppercase tracking-wider mb-2">Приоритет</label>
+                    <div class="flex flex-wrap gap-2">
+                      <span class="priority-high status-badge">Высокий</span>
+                      <span class="priority-medium status-badge">Средний</span>
+                      <span class="priority-low status-badge">Низкий</span>
                     </div>
-                    <button class="btn-ghost text-xs px-3 py-1.5">Изменить роль</button>
                   </div>
-                  <button class="btn-primary w-full py-3 text-sm">+ Пригласить сотрудника</button>
-                </div>
-              </div>
-
-              <div>
-                <h3 class="heading-font text-xl font-bold text-white mb-4">🔗 Интеграции</h3>
-                <div class="grid grid-cols-2 gap-3 text-sm">
-                  <button class="p-3 rounded-xl bg-slate-900/50 border-2 border-dashed border-slate-700/50 hover:border-[var(--brand-blue-1)] hover:bg-[var(--brand-blue-1)]/5 transition-all">
-                    Google Calendar
-                  </button>
-                  <button class="p-3 rounded-xl bg-slate-900/50 border-2 border-dashed border-slate-700/50 hover:border-[var(--brand-pink)] hover:bg-[var(--brand-pink)]/5 transition-all">
-                    Slack
-                  </button>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
 
+          <!-- 📅 Планер -->
+          <section id="calendar" class="view space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="heading-font text-2xl font-extrabold mb-1">Планер</h2>
+                <p class="text-sm text-[color:var(--text-secondary)]">Ваш календарь задач и событий</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="btn-primary text-sm">Месяц</button>
+                <button class="btn-ghost text-sm">Неделя</button>
+                <button class="btn-ghost text-sm">День</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="grid grid-cols-7 gap-2 text-center text-xs font-semibold text-[color:var(--text-muted)] uppercase tracking-wider mb-2">
+                <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>
+              </div>
+              <div class="grid grid-cols-7 gap-2">
+                <div class="cal-day">
+                  <span class="cal-num">10</span>
+                  <div class="progress" style="height:6px;"><span style="width:75%"></span></div>
+                  <span class="text-xs text-[color:var(--text-muted)]">3 задачи</span>
+                </div>
+                <div class="cal-day is-today">
+                  <span class="cal-num">14</span>
+                  <span class="text-[11px] font-semibold">Сегодня</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 🎯 Цели и проекты -->
+          <section id="projects" class="view space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="heading-font text-2xl font-extrabold mb-1">Цели и проекты</h2>
+                <p class="text-sm text-[color:var(--text-secondary)]">Стратегическое планирование</p>
+              </div>
+              <button class="btn-primary text-sm">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                Новый проект
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div class="card hover:-translate-y-0.5 transition-transform">
+                <div class="h-28 -mx-6 -mt-6 mb-5 rounded-t-2xl" style="background: linear-gradient(135deg, var(--brand-500), var(--cyan-500));"></div>
+                <h3 class="heading-font text-lg font-extrabold mb-3">PLANEL MVP</h3>
+                <div class="progress mb-3"><span style="width:68%"></span></div>
+                <div class="text-sm text-[color:var(--text-secondary)] mb-3">27/40 задач • 68% готово</div>
+                <div class="flex items-center justify-between text-xs text-[color:var(--text-muted)]">
+                  <span>📅 Дедлайн: 31 марта</span>
+                  <span class="priority-high status-badge">Активный</span>
+                </div>
+              </div>
+
+              <div class="card hover:-translate-y-0.5 transition-transform">
+                <div class="h-28 -mx-6 -mt-6 mb-5 rounded-t-2xl" style="background: linear-gradient(135deg, #10B981, #34D399);"></div>
+                <h3 class="heading-font text-lg font-extrabold mb-3">Личный рост 2026</h3>
+                <div class="progress success mb-3"><span style="width:40%"></span></div>
+                <div class="text-sm text-[color:var(--text-secondary)]">12/30 задач • 40% готово</div>
+              </div>
+
+              <div class="card hover:-translate-y-0.5 transition-transform">
+                <div class="h-28 -mx-6 -mt-6 mb-5 rounded-t-2xl" style="background: linear-gradient(135deg, #94A3B8, #475569);"></div>
+                <h3 class="heading-font text-lg font-extrabold mb-3">Brain Dump</h3>
+                <p class="text-sm text-[color:var(--text-secondary)] mb-3">Соберите идеи и превратите их в задачи</p>
+                <div class="text-xs text-[color:var(--text-muted)]">23 идеи • 8 задач создано</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 🔥 Привычки -->
+          <section id="habits" class="view space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="heading-font text-2xl font-extrabold mb-1">Трекер привычек</h2>
+                <p class="text-sm text-[color:var(--text-secondary)]">Отслеживайте серии и прогресс</p>
+              </div>
+              <button class="btn-primary text-sm">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                Новая привычка
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-5">Журнал за неделю</h3>
+                <div class="space-y-5">
+                  <div>
+                    <div class="flex items-center justify-between mb-3">
+                      <h4 class="font-semibold text-[color:var(--text-strong)]">Утренний ритуал</h4>
+                      <span class="status-badge" style="background:var(--success-50);color:var(--success-700);border-color:#A7F3D0;">✅ 7 дней</span>
+                    </div>
+                    <div class="habit-grid">
+                      <div class="habit-day habit-completed">Пн</div>
+                      <div class="habit-day habit-completed">Вт</div>
+                      <div class="habit-day habit-completed">Ср</div>
+                      <div class="habit-day habit-completed">Чт</div>
+                      <div class="habit-day habit-completed">Пт</div>
+                      <div class="habit-day habit-completed">Сб</div>
+                      <div class="habit-day habit-completed">Вс</div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex items-center justify-between mb-3">
+                      <h4 class="font-semibold text-[color:var(--text-strong)]">Фокус без отвлечений</h4>
+                      <span class="status-badge" style="background:var(--warning-50);color:var(--warning-700);border-color:#FDE68A;">⚠️ 3 дня</span>
+                    </div>
+                    <div class="habit-grid">
+                      <div class="habit-day habit-completed">Пн</div>
+                      <div class="habit-day habit-completed">Вт</div>
+                      <div class="habit-day habit-missed">Ср</div>
+                      <div class="habit-day habit-completed">Чт</div>
+                      <div class="habit-day habit-missed">Пт</div>
+                      <div class="habit-day habit-missed">Сб</div>
+                      <div class="habit-day habit-missed">Вс</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-5">Статистика</h3>
+                <div class="text-center space-y-4">
+                  <div class="heading-font text-3xl font-extrabold text-[color:var(--brand-600)]">78%</div>
+                  <p class="text-sm text-[color:var(--text-secondary)]">Стабильность за 30 дней</p>
+                  <div class="relative w-32 h-32 mx-auto">
+                    <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90">
+                      <circle cx="18" cy="18" r="15.9155" fill="none" stroke="var(--bg-muted)" stroke-width="3.5"/>
+                      <circle cx="18" cy="18" r="15.9155" fill="none" stroke="url(#gradH)" stroke-width="3.5" stroke-dasharray="78 100" stroke-linecap="round"/>
+                      <defs>
+                        <linearGradient id="gradH" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%" stop-color="var(--brand-500)"/>
+                          <stop offset="100%" stop-color="var(--cyan-500)"/>
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                      <span class="heading-font text-xl font-extrabold">78%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 📊 Аналитика -->
+          <section id="analytics" class="view space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="heading-font text-2xl font-extrabold mb-1">Аналитика</h2>
+                <p class="text-sm text-[color:var(--text-secondary)]">Данные о производительности</p>
+              </div>
+              <button class="btn-primary text-sm">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+                Экспорт PDF
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-5">Эффективность недели</h3>
+                <div class="space-y-4">
+                  <div class="flex items-center justify-between text-2xl font-extrabold heading-font">
+                    <span style="color:var(--success-700)">27</span>
+                    <span class="text-[color:var(--text-muted)] text-base font-normal">/ 35 задач</span>
+                  </div>
+                  <div class="progress success" style="height:10px;"><span style="width:77%"></span></div>
+                  <div class="grid grid-cols-3 gap-3 text-center pt-2">
+                    <div>
+                      <div class="heading-font text-base font-extrabold text-[color:var(--brand-600)]">14ч 32м</div>
+                      <div class="text-xs text-[color:var(--text-muted)]">Фокус времени</div>
+                    </div>
+                    <div>
+                      <div class="heading-font text-base font-extrabold" style="color:var(--warning-700)">4</div>
+                      <div class="text-xs text-[color:var(--text-muted)]">Просрочено</div>
+                    </div>
+                    <div>
+                      <div class="heading-font text-base font-extrabold" style="color:var(--success-700)">+12%</div>
+                      <div class="text-xs text-[color:var(--text-muted)]">К прошлой неделе</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-5">Загрузка по проектам</h3>
+                <div class="space-y-4">
+                  <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                      <span class="text-sm font-medium text-[color:var(--text-primary)]">PLANEL MVP</span>
+                      <span class="text-sm font-semibold text-[color:var(--brand-600)]">85%</span>
+                    </div>
+                    <div class="progress"><span style="width:85%"></span></div>
+                  </div>
+                  <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                      <span class="text-sm font-medium text-[color:var(--text-primary)]">Интеграции</span>
+                      <span class="text-sm font-semibold" style="color:var(--success-700)">60%</span>
+                    </div>
+                    <div class="progress success"><span style="width:60%"></span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ⚙️ Настройки -->
+          <section id="settings" class="view space-y-6">
+            <h2 class="heading-font text-2xl font-extrabold">Настройки</h2>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="card space-y-6">
+                <div>
+                  <h3 class="heading-font text-lg font-extrabold mb-4">👤 Профиль</h3>
+                  <div class="space-y-4">
+                    <div>
+                      <label class="block text-xs font-semibold text-[color:var(--text-secondary)] uppercase tracking-wider mb-2">Имя</label>
+                      <input type="text" value="Валентина Воронкова" class="w-full px-3.5 py-2.5 rounded-lg text-sm">
+                    </div>
+                    <div>
+                      <label class="block text-xs font-semibold text-[color:var(--text-secondary)] uppercase tracking-wider mb-2">Email</label>
+                      <input type="email" value="valentina@planel.app" class="w-full px-3.5 py-2.5 rounded-lg text-sm">
+                    </div>
+                    <button class="btn-primary text-sm w-full justify-center">Сохранить изменения</button>
+                  </div>
+                </div>
+
+                <div class="border-t border-[color:var(--border-soft)] pt-6">
+                  <h3 class="heading-font text-lg font-extrabold mb-4">🔔 Уведомления</h3>
+                  <div class="space-y-2">
+                    <label class="flex items-center gap-3 p-3 rounded-lg border border-[color:var(--border-soft)] hover:bg-[color:var(--brand-50)] cursor-pointer transition-colors">
+                      <input type="checkbox" checked>
+                      <span class="text-sm font-medium text-[color:var(--text-primary)]">Telegram уведомления</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 rounded-lg border border-[color:var(--border-soft)] hover:bg-[color:var(--brand-50)] cursor-pointer transition-colors">
+                      <input type="checkbox">
+                      <span class="text-sm font-medium text-[color:var(--text-primary)]">Email уведомления</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card space-y-6">
+                <div>
+                  <h3 class="heading-font text-lg font-extrabold mb-4">👥 Команда</h3>
+                  <div class="space-y-3">
+                    <div class="flex items-center gap-3 p-3 rounded-lg border border-[color:var(--border-soft)]">
+                      <div class="avatar">А1</div>
+                      <div class="flex-1 min-w-0">
+                        <p class="font-semibold text-sm text-[color:var(--text-strong)]">Алексей Иванов</p>
+                        <p class="text-xs text-[color:var(--text-muted)]">Сотрудник · Доступ к проектам</p>
+                      </div>
+                      <button class="btn-ghost text-xs">Изменить роль</button>
+                    </div>
+                    <button class="btn-primary text-sm w-full justify-center">+ Пригласить сотрудника</button>
+                  </div>
+                </div>
+
+                <div class="border-t border-[color:var(--border-soft)] pt-6">
+                  <h3 class="heading-font text-lg font-extrabold mb-4">🔗 Интеграции</h3>
+                  <div class="grid grid-cols-2 gap-3">
+                    <button class="card-flat hover:border-[color:var(--brand-300)] hover:bg-[color:var(--brand-50)] transition-colors text-sm font-semibold text-[color:var(--text-strong)]">
+                      Google Calendar
+                    </button>
+                    <button class="card-flat hover:border-[color:var(--brand-300)] hover:bg-[color:var(--brand-50)] transition-colors text-sm font-semibold text-[color:var(--text-strong)]">
+                      Slack
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
       </div>
     </main>
 
     <!-- Mobile Bottom Nav -->
     <nav class="bottom-nav lg:hidden">
-      <div class="max-w-4xl mx-auto flex justify-around items-center text-sm">
-        <button class="nav-item nav-item-active flex flex-col items-center gap-1 p-2" data-view="dashboard">
-          <span class="text-xl">🏠</span>
+      <div class="max-w-4xl mx-auto flex justify-around items-center">
+        <button class="nav-item nav-item-active" data-view="dashboard">
+          <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg></span>
           <span>Дашборд</span>
         </button>
-        <button class="nav-item flex flex-col items-center gap-1 p-2" data-view="tasks">
-          <span class="text-xl">🚀</span>
+        <button class="nav-item" data-view="tasks">
+          <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 9h8M8 13h6M8 17h4"/></svg></span>
           <span>Задачи</span>
         </button>
-        <button class="nav-item flex flex-col items-center gap-1 p-2" data-view="calendar">
-          <span class="text-xl">📅</span>
+        <button class="nav-item" data-view="calendar">
+          <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
           <span>Планер</span>
         </button>
-        <button class="nav-item flex flex-col items-center gap-1 p-2" data-view="habits">
-          <span class="text-xl">🔥</span>
+        <button class="nav-item" data-view="habits">
+          <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11z"/></svg></span>
           <span>Привычки</span>
         </button>
-        <button class="nav-item flex flex-col items-center gap-1 p-2" data-view="settings">
-          <span class="text-xl">⚙️</span>
+        <button class="nav-item" data-view="settings">
+          <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span>
           <span>Настройки</span>
         </button>
       </div>
@@ -789,68 +1002,65 @@
 
   <script>
     // SPA Navigation
-    const views = document.querySelectorAll('section[id^="dashboard"], section[id^="tasks"], section[id^="calendar"], section[id^="projects"], section[id^="habits"], section[id^="analytics"], section[id^="settings"]');
+    const views = document.querySelectorAll('main section.view');
     const navButtons = document.querySelectorAll('.nav-item[data-view]');
-    
+
     function switchView(viewName) {
       views.forEach(view => {
         view.classList.toggle('view-active', view.id === viewName);
-        view.classList.toggle('hidden', view.id !== viewName);
       });
-      
       navButtons.forEach(btn => {
         btn.classList.toggle('nav-item-active', btn.dataset.view === viewName);
       });
     }
 
     navButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        switchView(button.dataset.view);
-      });
+      button.addEventListener('click', () => switchView(button.dataset.view));
     });
 
     // Помодоро таймер
     let pomodoroTime = 25 * 60;
     let pomodoroInterval = null;
-    const timeDisplay = document.querySelector('#dashboard .text-2xl');
-    
-    if (timeDisplay) {
-      function updateTimerDisplay() {
-        const minutes = Math.floor(pomodoroTime / 60);
-        const seconds = pomodoroTime % 60;
-        timeDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-      }
-      
-      document.getElementById('pomodoroStart').addEventListener('click', () => {
-        if (pomodoroInterval) return;
-        pomodoroInterval = setInterval(() => {
-          pomodoroTime--;
-          updateTimerDisplay();
-          if (pomodoroTime <= 0) {
-            clearInterval(pomodoroInterval);
-            alert('Помодоро завершен! Отличная работа! 🎉');
-            pomodoroTime = 25 * 60;
-            updateTimerDisplay();
-          }
-        }, 1000);
-      });
-      
-      document.getElementById('pomodoroStop').addEventListener('click', () => {
-        clearInterval(pomodoroInterval);
-        pomodoroInterval = null;
-        pomodoroTime = 25 * 60;
-        updateTimerDisplay();
-      });
+    const timeDisplay = document.querySelector('#dashboard .text-xl.text-white');
+
+    function updateTimerDisplay() {
+      const display = document.querySelector('#dashboard .rounded-full.text-white');
+      if (!display) return;
+      const minutes = Math.floor(pomodoroTime / 60);
+      const seconds = pomodoroTime % 60;
+      display.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
+
+    document.getElementById('pomodoroStart')?.addEventListener('click', () => {
+      if (pomodoroInterval) return;
+      pomodoroInterval = setInterval(() => {
+        pomodoroTime--;
+        updateTimerDisplay();
+        if (pomodoroTime <= 0) {
+          clearInterval(pomodoroInterval);
+          pomodoroInterval = null;
+          alert('Помодоро завершен! Отличная работа! 🎉');
+          pomodoroTime = 25 * 60;
+          updateTimerDisplay();
+        }
+      }, 1000);
+    });
+
+    document.getElementById('pomodoroStop')?.addEventListener('click', () => {
+      clearInterval(pomodoroInterval);
+      pomodoroInterval = null;
+      pomodoroTime = 25 * 60;
+      updateTimerDisplay();
+    });
 
     // Drag & Drop для задач (прототип)
     const taskCards = document.querySelectorAll('.task-card');
     taskCards.forEach(card => {
+      card.setAttribute('draggable', 'true');
       card.addEventListener('dragstart', (e) => {
         e.dataTransfer.setData('text/plain', 'task-card');
         card.classList.add('opacity-50');
       });
-      
       card.addEventListener('dragend', () => {
         card.classList.remove('opacity-50');
       });
@@ -861,16 +1071,13 @@
       checkbox.addEventListener('change', function() {
         const label = this.closest('label') || this.parentElement;
         if (this.checked) {
-          label.style.background = 'linear-gradient(135deg, var(--brand-blue-1), var(--brand-pink))';
-          label.style.color = 'white';
+          label.style.background = 'var(--brand-50)';
         } else {
-          label.style.background = 'rgba(15, 23, 42, 0.9)';
-          label.style.color = '#f9fafb';
+          label.style.background = '';
         }
       });
     });
 
-    // Плавная прокрутка
     document.documentElement.style.scrollBehavior = 'smooth';
   </script>
 </body>
