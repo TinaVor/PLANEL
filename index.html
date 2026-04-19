@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>PLANEL — Tasks, Goals, Habits</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <style>
+    :root {
+      --brand-blue-1: #2ABDFD;
+      --brand-pink: #fd38ae;
+      --brand-blue-2: #000fff;
+      --brand-black: #000000;
+      --space-xs: 0.5rem;
+      --space-s: 0.75rem;
+      --space-m: 1.25rem;
+      --space-l: 2rem;
+      --space-xl: 3rem;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Open Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.7;
+      background-color: #050510;
+      color: #f9fafb;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .heading-font {
+      font-family: "Georgia", "Times New Roman", serif;
+      letter-spacing: -0.03em;
+    }
+
+    .elevated {
+      box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(255, 255, 255, 0.03);
+    }
+
+    .chip {
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 0.25rem 0.75rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .shell-bg {
+      background:
+        radial-gradient(circle at 0% 0%, rgba(42, 189, 253, 0.35), transparent 55%),
+        radial-gradient(circle at 100% 0%, rgba(253, 56, 174, 0.25), transparent 55%),
+        radial-gradient(circle at 0% 100%, rgba(0, 15, 255, 0.3), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(42, 189, 253, 0.25), transparent 60%),
+        #050510;
+      position: relative;
+      isolation: isolate;
+      min-height: 100vh;
+    }
+
+    .noise-layer::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      opacity: 0.14;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.36'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+      z-index: -1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid transparent;
+      margin-bottom: 0.25rem;
+    }
+
+    .nav-item:hover {
+      background: rgba(15, 23, 42, 0.8);
+      transform: translateY(-1px);
+      border-color: rgba(148, 163, 184, 0.5);
+    }
+
+    .nav-item.nav-item-active {
+      background: linear-gradient(135deg, var(--brand-blue-1), var(--brand-pink));
+      color: #0b1020;
+      box-shadow: 0 12px 32px rgba(42, 189, 253, 0.4);
+    }
+
+    .btn-primary, .btn-ghost {
+      border-radius: 9999px;
+      padding: 0.6rem 1.4rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      border: none;
+      cursor: pointer;
+      transition: all 160ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--brand-blue-1), var(--brand-blue-2));
+      color: #0b1020;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.85);
+    }
+
+    .btn-ghost {
+      background: rgba(15, 23, 42, 0.7);
+      color: #f9fafb;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(42, 189, 253, 0.6);
+      transform: translateY(-1px);
+    }
+
+    .card {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      border-radius: 16px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .view {
+      display: none;
+      animation: fadeIn 300ms ease-out;
+    }
+
+    .view-active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(5, 5, 16, 0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(148, 163, 184, 0.3);
+      padding: 0.75rem 0;
+      z-index: 100;
+      display: none;
+    }
+
+    @media (max-width: 1024px) {
+      .bottom-nav { display: block; }
+      .desktop-sidebar { display: none !important; }
+    }
+
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .priority-high { background: rgba(253, 56, 174, 0.2); color: var(--brand-pink); border: 1px solid rgba(253, 56, 174, 0.5); }
+    .priority-medium { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.5); }
+    .priority-low { background: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.5); }
+
+    .task-card {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      cursor: grab;
+      transition: all 200ms ease;
+    }
+
+    .task-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .habit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .habit-day {
+      aspect-ratio: 1;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .habit-completed { background: linear-gradient(135deg, var(--brand-blue-1), var(--brand-pink)); color: white; }
+    .habit-missed { background: rgba(148, 163, 184, 0.3); color: #64748b; }
+  </style>
+</head>
+<body class="shell-bg noise-layer">
+  <div class="flex min-h-screen">
+    
+    <!-- Desktop Sidebar -->
+    <aside class="desktop-sidebar w-72 border-r border-slate-900/50 p-6 flex flex-col h-screen sticky top-0 bg-slate-950/30 backdrop-blur-md">
+      <div class="mb-8">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--brand-blue-1)] via-[var(--brand-pink)] to-[var(--brand-blue-2)] flex items-center justify-center text-lg font-bold text-slate-900 shadow-2xl">
+            PL
+          </div>
+          <div>
+            <h1 class="heading-font text-2xl font-bold text-white">PLANEL</h1>
+            <p class="text-xs uppercase tracking-widest text-slate-400">Planning. Focus. Rhythm.</p>
+          </div>
+        </div>
+        
+        <div class="chip bg-gradient-to-r from-slate-800 to-slate-900 border-slate-700 text-slate-200 mb-8">
+          👑 Владелец · Валентина
+        </div>
+
+        <nav class="space-y-2">
+          <button class="nav-item nav-item-active" data-view="dashboard">
+            <span class="text-xl">🏠</span>
+            <span>Дашборд</span>
+          </button>
+          <button class="nav-item" data-view="tasks">
+            <span class="text-xl">🚀</span>
+            <span>Задачи и доски</span>
+          </button>
+          <button class="nav-item" data-view="calendar">
+            <span class="text-xl">📅</span>
+            <span>Планер</span>
+          </button>
+          <button class="nav-item" data-view="projects">
+            <span class="text-xl">🎯</span>
+            <span>Цели и проекты</span>
+          </button>
+          <button class="nav-item" data-view="habits">
+            <span class="text-xl">🔥</span>
+            <span>Привычки</span>
+          </button>
+          <button class="nav-item" data-view="analytics">
+            <span class="text-xl">📊</span>
+            <span>Аналитика</span>
+          </button>
+          <button class="nav-item" data-view="settings">
+            <span class="text-xl">⚙️</span>
+            <span>Настройки</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="mt-auto text-xs text-slate-400 space-y-3">
+        <div class="flex items-center justify-between">
+          <span>Тема</span>
+          <button class="btn-ghost text-xs px-3 py-1.5">🌙 Темная</button>
+        </div>
+        <div class="flex items-center justify-between">
+          <span>Telegram</span>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" class="w-4 h-4 rounded bg-slate-800 border-slate-700 text-[var(--brand-blue-1)]" checked>
+            <span>Включено</span>
+          </label>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+      <!-- Header -->
+      <header class="border-b border-slate-900/50 px-8 py-4 bg-slate-950/30 backdrop-blur-md sticky top-0 z-20">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <h2 class="heading-font text-2xl font-bold text-white">Добро пожаловать!</h2>
+            <div class="relative">
+              <input type="search" placeholder="🔍 Поиск по задачам, проектам..." 
+                     class="w-80 pl-10 pr-4 py-2 rounded-2xl bg-slate-900/80 border border-slate-700/50 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue-1)]">
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <button class="relative p-2 rounded-2xl bg-slate-900/50 border border-slate-700/50 hover:bg-slate-800/50">
+              🔔
+              <span class="absolute -top-1 -right-1 w-5 h-5 bg-[var(--brand-pink)] text-xs font-bold text-white rounded-full flex items-center justify-center">3</span>
+            </button>
+            <button class="btn-primary text-sm">
+              + Новая задача
+            </button>
+            <div class="w-10 h-10 bg-gradient-to-r from-[var(--brand-blue-1)] to-[var(--brand-pink)] rounded-2xl flex items-center justify-center font-bold text-slate-900">
+              ВВ
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <div class="flex-1 overflow-y-auto p-8 max-w-7xl mx-auto">
+        
+        <!-- 🏠 Дашборд -->
+        <section id="dashboard" class="view view-active space-y-8">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Сегодняшние задачи -->
+            <div class="card elevated lg:col-span-2">
+              <div class="flex items-center justify-between mb-6">
+                <div>
+                  <h3 class="heading-font text-xl font-bold text-white mb-1">Задачи на сегодня</h3>
+                  <p class="text-slate-400">Критические задачи с ближайшими дедлайнами</p>
+                </div>
+                <button class="btn-primary text-sm">+ Добавить</button>
+              </div>
+              
+              <div class="space-y-3">
+                <div class="task-card">
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="flex items-start gap-3 flex-1">
+                      <input type="checkbox" class="mt-1 w-5 h-5 rounded-lg bg-slate-900 border-slate-700 text-[var(--brand-blue-1)] focus:ring-[var(--brand-blue-1)]">
+                      <div class="flex-1 min-w-0">
+                        <h4 class="font-semibold text-white text-lg mb-1">Финализировать дизайн MVP PLANEL</h4>
+                        <p class="text-slate-400 text-sm mb-2">Обновить дашборд, задачи, календарь согласно спецификации</p>
+                        <div class="flex items-center gap-2 text-xs text-slate-400">
+                          <span>📋 PLANEL MVP</span>
+                          <span>👤 Валентина</span>
+                          <span>📅 15 марта</span>
+                        </div>
+                      </div>
+                    </div>
+                    <span class="priority-high status-badge ml-3 whitespace-nowrap">Высокий</span>
+                  </div>
+                </div>
+
+                <div class="task-card">
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="flex items-start gap-3 flex-1">
+                      <input type="checkbox" class="mt-1 w-5 h-5 rounded-lg bg-slate-900 border-slate-700 text-[var(--brand-blue-1)] focus:ring-[var(--brand-blue-1)]">
+                      <div class="flex-1 min-w-0">
+                        <h4 class="font-semibold text-white text-lg mb-1">Настроить Telegram уведомления</h4>
+                        <p class="text-slate-400 text-sm mb-2">Дедлайны, комментарии, назначение задач</p>
+                        <div class="flex items-center gap-2 text-xs text-slate-400">
+                          <span>📱 Интеграции</span>
+                          <span>👤 Сотрудник #1</span>
+                          <span>📅 18 марта</span>
+                        </div>
+                      </div>
+                    </div>
+                    <span class="priority-medium status-badge ml-3 whitespace-nowrap">Средний</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Помодоро + Привычки -->
+            <div class="space-y-6">
+              <!-- Помодоро -->
+              <div class="card elevated">
+                <h3 class="heading-font text-lg font-bold text-white mb-4">Помодоро</h3>
+                <div class="text-center">
+                  <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-[var(--brand-blue-1)] to-[var(--brand-pink)] flex items-center justify-center text-2xl font-bold text-slate-900 shadow-2xl">
+                    25:00
+                  </div>
+                  <div class="space-x-2">
+                    <button class="btn-primary px-6 py-2 text-sm" id="pomodoroStart">▶ Старт</button>
+                    <button class="btn-ghost px-6 py-2 text-sm" id="pomodoroStop">⏹ Стоп</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Быстрые привычки -->
+              <div class="card elevated">
+                <h3 class="heading-font text-lg font-bold text-white mb-4">Привычки · Сегодня</h3>
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between text-sm">
+                    <span>Утренний обзор</span>
+                    <input type="checkbox" class="w-5 h-5 rounded bg-slate-900 border-slate-700 text-[var(--brand-blue-1)]" checked>
+                  </div>
+                  <div class="flex items-center justify-between text-sm">
+                    <span>Дневной фокус</span>
+                    <input type="checkbox" class="w-5 h-5 rounded bg-slate-900 border-slate-700 text-[var(--brand-blue-1)]">
+                  </div>
+                  <div class="flex items-center justify-between text-sm">
+                    <span>Вечерний ретроспектив</span>
+                    <input type="checkbox" class="w-5 h-5 rounded bg-slate-900 border-slate-700 text-[var(--brand-blue-1)]">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 🚀 Задачи и доски -->
+        <section id="tasks" class="view space-y-8 hidden">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="heading-font text-2xl font-bold text-white mb-1">Задачи и доски</h2>
+              <p class="text-slate-400">Управляйте задачами в любом формате</p>
+            </div>
+            <div class="flex gap-2">
+              <button class="btn-primary px-6 py-2 text-sm">Список</button>
+              <button class="btn-ghost px-6 py-2 text-sm">Доска</button>
+              <button class="btn-ghost px-6 py-2 text-sm">Матрица</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="card elevated">
+              <h3 class="heading-font text-xl font-bold text-white mb-6">Kanban доска</h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <h4 class="font-semibold text-slate-200 mb-4 flex items-center gap-2">
+                    🟦 Сделать (8)
+                  </h4>
+                  <div class="task-card">
+                    <h5 class="font-semibold text-white mb-1">Интеграция Google Calendar</h5>
+                    <p class="text-slate-400 text-sm mb-2">Двусторонняя синхронизация</p>
+                    <div class="flex items-center justify-between text-xs text-slate-400">
+                      <span>📅 20 марта</span>
+                      <span class="priority-medium status-badge">Средний</span>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-slate-200 mb-4 flex items-center gap-2">
+                    🟨 В процессе (5)
+                  </h4>
+                  <div class="task-card">
+                    <h5 class="font-semibold text-white mb-1">Аналитика и отчеты</h5>
+                    <p class="text-slate-400 text-sm mb-2">Графики, экспорт PDF/Excel</p>
+                  </div>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-slate-200 mb-4 flex items-center gap-2">
+                    ✅ Выполнено (12)
+                  </h4>
+                </div>
+              </div>
+            </div>
+
+            <div class="card elevated">
+              <h3 class="heading-font text-xl font-bold text-white mb-6">Фильтры и поиск</h3>
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm text-slate-400 mb-2">Проекты</label>
+                  <div class="flex flex-wrap gap-2">
+                    <button class="status-badge bg-slate-900/50 border-slate-700/50 hover:bg-slate-800/50 px-3 py-1 text-xs">PLANEL MVP</button>
+                    <button class="status-badge bg-slate-900/50 border-slate-700/50 hover:bg-slate-800/50 px-3 py-1 text-xs">Интеграции</button>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-sm text-slate-400 mb-2">Приоритет</label>
+                  <div class="flex gap-2">
+                    <span class="priority-high status-badge px-3 py-1 text-xs">Высокий</span>
+                    <span class="priority-medium status-badge px-3 py-1 text-xs">Средний</span>
+                    <span class="priority-low status-badge px-3 py-1 text-xs">Низкий</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 📅 Планер -->
+        <section id="calendar" class="view space-y-8 hidden">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="heading-font text-2xl font-bold text-white mb-1">Планер</h2>
+              <p class="text-slate-400">Ваш календарь задач и событий</p>
+            </div>
+            <div class="flex gap-2">
+              <button class="btn-primary px-6 py-2 text-sm">Месяц</button>
+              <button class="btn-ghost px-6 py-2 text-sm">Неделя</button>
+              <button class="btn-ghost px-6 py-2 text-sm">День</button>
+            </div>
+          </div>
+
+          <div class="card elevated p-8">
+            <div class="grid grid-cols-7 gap-4 text-center text-sm">
+              <div class="font-semibold text-slate-300 py-2">Пн</div>
+              <div class="font-semibold text-slate-300 py-2">Вт</div>
+              <div class="font-semibold text-slate-300 py-2">Ср</div>
+              <div class="font-semibold text-slate-300 py-2">Чт</div>
+              <div class="font-semibold text-slate-300 py-2">Пт</div>
+              <div class="font-semibold text-slate-300 py-2">Сб</div>
+              <div class="font-semibold text-slate-300 py-2">Вс</div>
+              
+              <!-- Март 2026 -->
+              <div class="h-24 border-2 border-dashed border-slate-800/50 rounded-lg flex flex-col items-center justify-center p-2 hover:border-[var(--brand-blue-1)] transition-colors">
+                <div class="text-lg font-bold text-slate-400 mb-1">10</div>
+                <div class="w-full h-2 bg-slate-900 rounded-full mt-1">
+                  <div class="h-full w-3/4 bg-[var(--brand-blue-1)] rounded-full"></div>
+                </div>
+                <span class="text-xs text-slate-500 mt-1">3 задачи</span>
+              </div>
+              <div class="h-24 bg-gradient-to-br from-[var(--brand-blue-1)]/10 to-[var(--brand-pink)]/10 border-2 border-[var(--brand-blue-1)]/30 rounded-lg flex flex-col items-center justify-center p-2">
+                <div class="text-lg font-bold text-white mb-1">14</div>
+                <span class="text-xs bg-[var(--brand-blue-1)] text-slate-900 px-2 py-1 rounded-full font-semibold">Сегодня</span>
+              </div>
+              <!-- ... больше дней ... -->
+            </div>
+          </div>
+        </section>
+
+        <!-- 🎯 Цели и проекты -->
+        <section id="projects" class="view space-y-8 hidden">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="heading-font text-2xl font-bold text-white mb-1">Цели и проекты</h2>
+              <p class="text-slate-400">Стратегическое планирование</p>
+            </div>
+            <button class="btn-primary px-8 py-3 text-sm font-semibold">+ Новый проект</button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="card elevated hover:scale-[1.02] transition-transform group">
+              <div class="h-40 rounded-t-2xl bg-gradient-to-br from-[var(--brand-blue-1)]/20 to-[var(--brand-pink)]/20 border-b border-[var(--brand-blue-1)]/30 group-hover:from-[var(--brand-blue-1)]/30"></div>
+              <div class="p-6">
+                <h3 class="heading-font text-xl font-bold text-white mb-2">PLANEL MVP</h3>
+                <div class="w-full bg-slate-900 rounded-full h-2 mb-4">
+                  <div class="bg-gradient-to-r from-[var(--brand-blue-1)] to-[var(--brand-pink)] h-2 rounded-full w-75%"></div>
+                </div>
+                <div class="text-sm text-slate-400 mb-3">27/40 задач • 68% готово</div>
+                <div class="flex items-center gap-2 text-xs text-slate-500">
+                  <span>📅 Дедлайн: 31 марта</span>
+                  <span class="priority-high status-badge px-2 py-1">Активный</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card elevated hover:scale-[1.02] transition-transform">
+              <div class="h-40 rounded-t-2xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border-b border-emerald-500/30"></div>
+              <div class="p-6">
+                <h3 class="heading-font text-xl font-bold text-white mb-2">Личный рост 2026</h3>
+                <div class="w-full bg-slate-900 rounded-full h-2 mb-4">
+                  <div class="bg-emerald-500 h-2 rounded-full w-45%"></div>
+                </div>
+                <div class="text-sm text-slate-400 mb-3">12/30 задач • 40% готово</div>
+              </div>
+            </div>
+
+            <div class="card elevated hover:scale-[1.02] transition-transform">
+              <div class="h-40 rounded-t-2xl bg-gradient-to-br from-slate-600/30 to-slate-700/30 border-b border-slate-600/50"></div>
+              <div class="p-6">
+                <h3 class="heading-font text-xl font-bold text-white mb-2">Brain Dump</h3>
+                <p class="text-slate-400 mb-4">Соберите идеи и превратите их в задачи</p>
+                <div class="text-sm text-slate-500">23 идеи • 8 задач создано</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 🔥 Привычки -->
+        <section id="habits" class="view space-y-8 hidden">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="heading-font text-2xl font-bold text-white mb-1">Трекер привычек</h2>
+              <p class="text-slate-400">Отслеживайте серии и прогресс</p>
+            </div>
+            <button class="btn-primary px-8 py-3 text-sm">+ Новая привычка</button>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="card elevated">
+              <h3 class="heading-font text-xl font-bold text-white mb-6">Журнал за неделю</h3>
+              <div class="space-y-4">
+                <div>
+                  <div class="flex items-center justify-between mb-3">
+                    <h4 class="font-semibold text-slate-200">Утренний ритуал</h4>
+                    <span class="text-sm font-bold text-emerald-400">✅ 7 дней</span>
+                  </div>
+                  <div class="habit-grid">
+                    <div class="habit-day habit-completed">Пн</div>
+                    <div class="habit-day habit-completed">Вт</div>
+                    <div class="habit-day habit-completed">Ср</div>
+                    <div class="habit-day habit-completed">Чт</div>
+                    <div class="habit-day habit-completed">Пт</div>
+                    <div class="habit-day habit-completed">Сб</div>
+                    <div class="habit-day habit-completed">Вс</div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex items-center justify-between mb-3">
+                    <h4 class="font-semibold text-slate-200">Фокус без отвлечений</h4>
+                    <span class="text-sm font-bold text-amber-400">⚠️ 3 дня</span>
+                  </div>
+                  <div class="habit-grid">
+                    <div class="habit-day habit-completed">Пн</div>
+                    <div class="habit-day habit-completed">Вт</div>
+                    <div class="habit-day habit-missed">Ср</div>
+                    <div class="habit-day habit-completed">Чт</div>
+                    <div class="habit-day habit-missed">Пт</div>
+                    <div class="habit-day habit-missed">Сб</div>
+                    <div class="habit-day habit-missed">Вс</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card elevated p-8">
+              <h3 class="heading-font text-xl font-bold text-white mb-6">Статистика</h3>
+              <div class="space-y-4 text-center">
+                <div class="text-3xl font-bold text-[var(--brand-blue-1)]">78%</div>
+                <p class="text-slate-400">Стабильность за 30 дней</p>
+                <div class="w-24 h-24 mx-auto bg-gradient-to-br from-[var(--brand-blue-1)]/20 to-[var(--brand-pink)]/20 rounded-full border-4 border-[var(--brand-blue-1)]/30 flex items-center justify-center">
+                  <div class="w-16 h-16 bg-gradient-to-br from-[var(--brand-blue-1)] to-[var(--brand-pink)] rounded-full flex items-center justify-center text-white font-bold">78%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 📊 Аналитика -->
+        <section id="analytics" class="view space-y-8 hidden">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="heading-font text-2xl font-bold text-white mb-1">Аналитика</h2>
+              <p class="text-slate-400">Данные о производительности</p>
+            </div>
+            <button class="btn-primary px-8 py-3 text-sm">📊 Экспорт PDF</button>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="card elevated p-8">
+              <h3 class="heading-font text-xl font-bold text-white mb-6">Эффективность недели</h3>
+              <div class="space-y-4">
+                <div class="flex items-center justify-between text-2xl font-bold">
+                  <span class="text-emerald-400">27</span>
+                  <span class="text-slate-400 text-lg font-normal">/ 35 задач</span>
+                </div>
+                <div class="w-full bg-slate-900 rounded-full h-3">
+                  <div class="bg-gradient-to-r from-emerald-500 to-emerald-400 h-3 rounded-full w-77%"></div>
+                </div>
+                <div class="grid grid-cols-3 gap-4 text-center">
+                  <div>
+                    <div class="text-lg font-bold text-[var(--brand-blue-1)]">14ч 32м</div>
+                    <div class="text-xs text-slate-400">Фокус времени</div>
+                  </div>
+                  <div>
+                    <div class="text-lg font-bold text-amber-400">4</div>
+                    <div class="text-xs text-slate-400">Просрочено</div>
+                  </div>
+                  <div>
+                    <div class="text-lg font-bold text-emerald-400">+12%</div>
+                    <div class="text-xs text-slate-400">К прошлой неделе</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card elevated p-8">
+              <h3 class="heading-font text-xl font-bold text-white mb-6">Загрузка по проектам</h3>
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-300">PLANEL MVP</span>
+                  <div class="w-20 bg-slate-900 rounded-full h-2">
+                    <div class="bg-[var(--brand-blue-1)] h-2 rounded-full w-85%"></div>
+                  </div>
+                  <span class="text-sm font-semibold text-[var(--brand-blue-1)]">85%</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-300">Интеграции</span>
+                  <div class="w-20 bg-slate-900 rounded-full h-2">
+                    <div class="bg-emerald-500 h-2 rounded-full w-60%"></div>
+                  </div>
+                  <span class="text-sm font-semibold text-emerald-400">60%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ⚙️ Настройки -->
+        <section id="settings" class="view space-y-8 hidden">
+          <h2 class="heading-font text-2xl font-bold text-white mb-8">Настройки</h2>
+          
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="card elevated space-y-6">
+              <div>
+                <h3 class="heading-font text-xl font-bold text-white mb-4">👤 Профиль</h3>
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">Имя</label>
+                    <input type="text" value="Валентина Воронкова" class="w-full p-3 rounded-xl bg-slate-900/70 border border-slate-700/50 focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue-1)] text-white">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">Email</label>
+                    <input type="email" value="valentina@planel.app" class="w-full p-3 rounded-xl bg-slate-900/70 border border-slate-700/50 focus:outline-none focus:ring-2 focus:ring-[var(--brand-blue-1)] text-white">
+                  </div>
+                  <button class="btn-primary w-full py-3 text-sm font-semibold">Сохранить изменения</button>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="heading-font text-xl font-bold text-white mb-4">🔔 Уведомления</h3>
+                <div class="space-y-3">
+                  <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/50 border border-slate-700/50 cursor-pointer hover:bg-slate-800/50">
+                    <input type="checkbox" class="w-5 h-5 rounded bg-slate-900 border-slate-700 text-[var(--brand-blue-1)]" checked>
+                    <span class="text-sm text-slate-300">Telegram уведомления</span>
+                  </label>
+                  <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/50 border border-slate-700/50 cursor-pointer hover:bg-slate-800/50">
+                    <input type="checkbox" class="w-5 h-5 rounded bg-slate-900 border-slate-700 text-[var(--brand-blue-1)]">
+                    <span class="text-sm text-slate-300">Email уведомления</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="card elevated space-y-6">
+              <div>
+                <h3 class="heading-font text-xl font-bold text-white mb-4">👥 Команда</h3>
+                <div class="space-y-3">
+                  <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/50 border border-slate-700/50">
+                    <div class="w-10 h-10 bg-[var(--brand-pink)] rounded-xl flex items-center justify-center text-white font-semibold">А1</div>
+                    <div class="flex-1 min-w-0">
+                      <p class="font-semibold text-white text-sm">Алексей Иванов</p>
+                      <p class="text-xs text-slate-400">Сотрудник · Доступ к проектам</p>
+                    </div>
+                    <button class="btn-ghost text-xs px-3 py-1.5">Изменить роль</button>
+                  </div>
+                  <button class="btn-primary w-full py-3 text-sm">+ Пригласить сотрудника</button>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="heading-font text-xl font-bold text-white mb-4">🔗 Интеграции</h3>
+                <div class="grid grid-cols-2 gap-3 text-sm">
+                  <button class="p-3 rounded-xl bg-slate-900/50 border-2 border-dashed border-slate-700/50 hover:border-[var(--brand-blue-1)] hover:bg-[var(--brand-blue-1)]/5 transition-all">
+                    Google Calendar
+                  </button>
+                  <button class="p-3 rounded-xl bg-slate-900/50 border-2 border-dashed border-slate-700/50 hover:border-[var(--brand-pink)] hover:bg-[var(--brand-pink)]/5 transition-all">
+                    Slack
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- Mobile Bottom Nav -->
+    <nav class="bottom-nav lg:hidden">
+      <div class="max-w-4xl mx-auto flex justify-around items-center text-sm">
+        <button class="nav-item nav-item-active flex flex-col items-center gap-1 p-2" data-view="dashboard">
+          <span class="text-xl">🏠</span>
+          <span>Дашборд</span>
+        </button>
+        <button class="nav-item flex flex-col items-center gap-1 p-2" data-view="tasks">
+          <span class="text-xl">🚀</span>
+          <span>Задачи</span>
+        </button>
+        <button class="nav-item flex flex-col items-center gap-1 p-2" data-view="calendar">
+          <span class="text-xl">📅</span>
+          <span>Планер</span>
+        </button>
+        <button class="nav-item flex flex-col items-center gap-1 p-2" data-view="habits">
+          <span class="text-xl">🔥</span>
+          <span>Привычки</span>
+        </button>
+        <button class="nav-item flex flex-col items-center gap-1 p-2" data-view="settings">
+          <span class="text-xl">⚙️</span>
+          <span>Настройки</span>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <script>
+    // SPA Navigation
+    const views = document.querySelectorAll('section[id^="dashboard"], section[id^="tasks"], section[id^="calendar"], section[id^="projects"], section[id^="habits"], section[id^="analytics"], section[id^="settings"]');
+    const navButtons = document.querySelectorAll('.nav-item[data-view]');
+    
+    function switchView(viewName) {
+      views.forEach(view => {
+        view.classList.toggle('view-active', view.id === viewName);
+        view.classList.toggle('hidden', view.id !== viewName);
+      });
+      
+      navButtons.forEach(btn => {
+        btn.classList.toggle('nav-item-active', btn.dataset.view === viewName);
+      });
+    }
+
+    navButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        switchView(button.dataset.view);
+      });
+    });
+
+    // Помодоро таймер
+    let pomodoroTime = 25 * 60;
+    let pomodoroInterval = null;
+    const timeDisplay = document.querySelector('#dashboard .text-2xl');
+    
+    if (timeDisplay) {
+      function updateTimerDisplay() {
+        const minutes = Math.floor(pomodoroTime / 60);
+        const seconds = pomodoroTime % 60;
+        timeDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      }
+      
+      document.getElementById('pomodoroStart').addEventListener('click', () => {
+        if (pomodoroInterval) return;
+        pomodoroInterval = setInterval(() => {
+          pomodoroTime--;
+          updateTimerDisplay();
+          if (pomodoroTime <= 0) {
+            clearInterval(pomodoroInterval);
+            alert('Помодоро завершен! Отличная работа! 🎉');
+            pomodoroTime = 25 * 60;
+            updateTimerDisplay();
+          }
+        }, 1000);
+      });
+      
+      document.getElementById('pomodoroStop').addEventListener('click', () => {
+        clearInterval(pomodoroInterval);
+        pomodoroInterval = null;
+        pomodoroTime = 25 * 60;
+        updateTimerDisplay();
+      });
+    }
+
+    // Drag & Drop для задач (прототип)
+    const taskCards = document.querySelectorAll('.task-card');
+    taskCards.forEach(card => {
+      card.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', 'task-card');
+        card.classList.add('opacity-50');
+      });
+      
+      card.addEventListener('dragend', () => {
+        card.classList.remove('opacity-50');
+      });
+    });
+
+    // Интерактивные чекбоксы привычек
+    document.querySelectorAll('section#habits input[type="checkbox"]').forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        const label = this.closest('label') || this.parentElement;
+        if (this.checked) {
+          label.style.background = 'linear-gradient(135deg, var(--brand-blue-1), var(--brand-pink))';
+          label.style.color = 'white';
+        } else {
+          label.style.background = 'rgba(15, 23, 42, 0.9)';
+          label.style.color = '#f9fafb';
+        }
+      });
+    });
+
+    // Плавная прокрутка
+    document.documentElement.style.scrollBehavior = 'smooth';
+  </script>
+</body>
+</html>
