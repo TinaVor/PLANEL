@@ -84,6 +84,21 @@ app.get('/healthz', (req, res) => {
 app.post('/api/auth/login', require('./api/auth/login'));
 app.post('/api/auth/signup', require('./api/auth/signup'));
 app.post('/api/auth/update-email', require('./api/auth/update-email'));
+app.post('/api/auth/update-password', require('./api/auth/update-password'));
+app.post('/api/auth/update-name', require('./api/auth/update-name'));
+app.get('/api/auth/me', require('./api/auth/me'));
+
+app.post('/api/admin/login', require('./api/admin/login'));
+app.get('/api/admin/metrics', require('./api/admin/metrics'));
+app.get('/api/admin/users', require('./api/admin/users'));
+app.post('/api/admin/broadcast', require('./api/admin/broadcast'));
+
+app.get('/api/google/auth', require('./api/google/auth'));
+app.get('/api/google/callback', require('./api/google/callback'));
+app.get('/api/google/status', require('./api/google/status'));
+app.get('/api/google/events', require('./api/google/events'));
+app.post('/api/google/sync-task', require('./api/google/sync-task'));
+app.post('/api/google/disconnect', require('./api/google/disconnect'));
 
 const tasksHandler = require('./api/tasks');
 app.all('/api/tasks', tasksHandler);

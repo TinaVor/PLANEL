@@ -282,6 +282,27 @@
     .pill-filter { padding:0.35rem 0.75rem; border-radius:9999px; font-size:0.8rem; font-weight:600; border:1px solid var(--border-soft); background:var(--bg-surface); color:var(--text-secondary); cursor:pointer; transition:background 140ms ease, color 140ms ease, border-color 140ms ease; }
     .pill-filter:hover { background:var(--brand-50); color:var(--brand-700); border-color:var(--brand-100); }
     .pill-filter.active { background:var(--brand-500); color:#FFF; border-color:var(--brand-500); }
+
+    /* Admin mode — скрываем пользовательские навигации/кнопки */
+    body.admin-mode .desktop-sidebar,
+    body.admin-mode .bottom-nav,
+    body.admin-mode .hidden-for-admin { display:none !important; }
+
+    /* Элементы уведомлений */
+    .notif-item { display:block; padding:0.7rem 1rem; border-bottom:1px solid var(--border-soft); cursor:pointer; transition:background 140ms ease; position:relative; }
+    .notif-item:last-child { border-bottom:none; }
+    .notif-item:hover { background:var(--bg-muted); }
+    .notif-item.unread { background:var(--brand-50); }
+    .notif-item.unread:hover { background:var(--brand-100); }
+    .notif-dot { position:absolute; left:0.35rem; top:1rem; width:6px; height:6px; border-radius:9999px; background:var(--brand-500); }
+    .notif-subject { font-weight:600; color:var(--text-strong); font-size:0.86rem; margin-bottom:0.15rem; }
+    .notif-body    { font-size:0.8rem; color:var(--text-secondary); line-height:1.4; }
+    .notif-time    { font-size:0.68rem; color:var(--text-muted); margin-top:0.3rem; }
+    .notif-empty   { padding:1.5rem 1rem; text-align:center; color:var(--text-muted); font-size:0.84rem; }
+
+    /* Таблица пользователей */
+    #admUsersTable td { padding:0.55rem 0.75rem 0.55rem 0; border-top:1px solid var(--border-soft); font-size:0.82rem; }
+    #admUsersTable tbody tr:first-child td { border-top:none; }
   </style>
 </head>
 <body class="shell-bg">
@@ -390,6 +411,10 @@
             </select>
           </div>
         </div>
+        <label class="flex items-center gap-2 text-sm cursor-pointer hidden" id="taskGoogleWrap">
+          <input type="checkbox" id="taskGoogleSync">
+          <span>Добавить в Google Calendar (требуется дедлайн)</span>
+        </label>
         <p id="taskError" class="text-xs hidden" style="color:var(--danger-700);"></p>
         <div class="flex flex-wrap gap-2 justify-end pt-2">
           <button type="button" class="btn-ghost text-sm" id="taskDeleteBtn" style="display:none;">Удалить</button>
@@ -518,10 +543,6 @@
             <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg></span>
             <span>Аналитика</span>
           </button>
-          <button class="nav-item" data-view="settings">
-            <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span>
-            <span>Настройки</span>
-          </button>
         </nav>
       </div>
     </aside>
@@ -533,11 +554,26 @@
             <h2 class="heading-font text-base sm:text-xl font-extrabold leading-tight whitespace-nowrap" id="headerTitle">Добро пожаловать!</h2>
           </div>
           <div class="flex items-center gap-2 sm:gap-2.5 flex-shrink-0">
-            <button class="btn-primary" id="newTaskBtn" aria-label="Новая задача">
+            <button class="btn-primary hidden-for-admin" id="newTaskBtn" aria-label="Новая задача">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
               <span class="hidden sm:inline">Новая задача</span>
             </button>
-            <div class="avatar hidden sm:inline-flex" id="userAvatar" title="Кликните, чтобы выйти" style="cursor:pointer;">ВВ</div>
+
+            <div class="relative hidden-for-admin" id="notifWrap">
+              <button class="icon-btn" id="notifBtn" aria-label="Уведомления" title="Уведомления">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9z"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+                <span id="notifBadge" class="hidden absolute -top-1 -right-1 bg-[color:var(--danger-500)] text-[10px] font-bold text-white rounded-full flex items-center justify-center" style="width:18px;height:18px;">0</span>
+              </button>
+              <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 max-w-[90vw] bg-white border border-[color:var(--border-soft)] rounded-xl shadow-lg z-[90]" style="box-shadow: var(--shadow-lg);">
+                <div class="flex items-center justify-between px-4 py-3 border-b border-[color:var(--border-soft)]">
+                  <span class="heading-font font-extrabold text-sm">Уведомления</span>
+                  <button class="text-xs text-[color:var(--brand-600)] font-semibold" id="notifMarkAll">Прочитать все</button>
+                </div>
+                <div id="notifList" class="max-h-80 overflow-y-auto"></div>
+              </div>
+            </div>
+
+            <div class="avatar" id="userAvatar" title="Открыть профиль" style="cursor:pointer;">ВВ</div>
           </div>
         </div>
       </header>
@@ -692,7 +728,11 @@
                 <h2 class="heading-font text-2xl font-extrabold mb-1">Планер</h2>
                 <p class="text-sm text-[color:var(--text-secondary)]">Задачи с дедлайнами по дням</p>
               </div>
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
+                <label class="flex items-center gap-2 text-xs cursor-pointer hidden" id="googleCalToggleWrap" title="Показывать события из Google Calendar">
+                  <input type="checkbox" id="googleCalToggle">
+                  <span class="font-semibold text-[color:var(--text-secondary)]">Google-события</span>
+                </label>
                 <button class="btn-ghost text-sm" id="calPrev" aria-label="Предыдущий месяц">‹</button>
                 <span class="heading-font text-base font-extrabold min-w-[140px] text-center" id="calLabel"></span>
                 <button class="btn-ghost text-sm" id="calNext" aria-label="Следующий месяц">›</button>
@@ -840,29 +880,156 @@
             </div>
           </section>
 
-          <!-- Настройки -->
-          <section id="settings" class="view space-y-6">
-            <h2 class="heading-font text-2xl font-extrabold">Настройки</h2>
+          <!-- Профиль -->
+          <section id="profile" class="view space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="heading-font text-2xl font-extrabold mb-1">Профиль</h2>
+                <p class="text-sm text-[color:var(--text-secondary)]">Личные данные и безопасность</p>
+              </div>
+              <button class="btn-ghost text-sm" id="logoutBtn">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+                Выйти из аккаунта
+              </button>
+            </div>
+
+            <div class="card">
+              <div class="flex items-center gap-4 mb-1">
+                <div class="avatar" style="width:56px; height:56px; font-size:1.05rem;" id="profileAvatar">ВВ</div>
+                <div class="min-w-0">
+                  <div class="heading-font text-lg font-extrabold" id="profileHeaderName">—</div>
+                  <div class="text-sm text-[color:var(--text-muted)]" id="profileHeaderEmail">—</div>
+                </div>
+              </div>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div class="card space-y-6">
-                <div>
-                  <h3 class="heading-font text-lg font-extrabold mb-4">👤 Профиль</h3>
-                  <form id="profileForm" class="space-y-4">
-                    <div>
-                      <label class="form-label">Email</label>
-                      <input id="profileEmail" type="email" required autocomplete="email" class="w-full px-3.5 py-2.5 rounded-lg text-sm" placeholder="you@example.com">
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-4">Имя</h3>
+                <form id="nameForm" class="space-y-3">
+                  <div>
+                    <label class="form-label">ФИО</label>
+                    <input id="profileName" type="text" class="form-input" maxlength="200" placeholder="Иванов Иван Иванович">
+                  </div>
+                  <p id="nameMsg" class="text-xs hidden"></p>
+                  <button type="submit" id="nameSave" class="btn-primary text-sm w-full justify-center">Сохранить имя</button>
+                </form>
+              </div>
+
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-4">Email</h3>
+                <form id="profileForm" class="space-y-3">
+                  <div>
+                    <label class="form-label">Новый email</label>
+                    <input id="profileEmail" type="email" required autocomplete="email" class="form-input" placeholder="you@example.com">
+                  </div>
+                  <p id="profileMsg" class="text-xs hidden"></p>
+                  <button type="submit" id="profileSave" class="btn-primary text-sm w-full justify-center">Сохранить email</button>
+                </form>
+              </div>
+
+              <div class="card lg:col-span-2">
+                <h3 class="heading-font text-lg font-extrabold mb-4">Пароль</h3>
+                <form id="passwordForm" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label class="form-label">Новый пароль</label>
+                    <input id="profilePassword" type="password" class="form-input" minlength="8" placeholder="Минимум 8 символов" autocomplete="new-password">
+                  </div>
+                  <div>
+                    <label class="form-label">Повторите пароль</label>
+                    <input id="profilePassword2" type="password" class="form-input" minlength="8" placeholder="Минимум 8 символов" autocomplete="new-password">
+                  </div>
+                  <p id="passwordMsg" class="text-xs hidden sm:col-span-2"></p>
+                  <button type="submit" id="passwordSave" class="btn-primary text-sm sm:col-span-2 justify-center">Сменить пароль</button>
+                </form>
+              </div>
+
+              <div class="card lg:col-span-2">
+                <div class="flex items-start gap-4">
+                  <div class="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style="background:#FFFFFF; border:1px solid var(--border-soft);">
+                    <svg viewBox="0 0 24 24" width="26" height="26"><path fill="#4285F4" d="M20 4h-1V2h-2v2H7V2H5v2H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H4V10h16v10zm0-12H4V6h16v2z"/><text x="12" y="18" text-anchor="middle" font-size="7" font-family="Arial" font-weight="bold" fill="#EA4335">G</text></svg>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h3 class="heading-font text-lg font-extrabold mb-1">Google Calendar</h3>
+                    <p class="text-sm text-[color:var(--text-secondary)] mb-3" id="googleStatusText">Проверка статуса…</p>
+                    <div class="flex flex-wrap gap-2 items-center">
+                      <button class="btn-primary text-sm hidden" id="googleConnectBtn">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
+                        Подключить
+                      </button>
+                      <button class="btn-ghost text-sm hidden" id="googleDisconnectBtn">Отключить</button>
+                      <a class="text-xs text-[color:var(--brand-600)] hidden" id="googleCalendarLink" href="https://calendar.google.com/" target="_blank" rel="noopener">Открыть Google Calendar ↗</a>
                     </div>
-                    <p id="profileMsg" class="text-xs hidden"></p>
-                    <button type="submit" id="profileSave" class="btn-primary text-sm w-full justify-center">Сохранить изменения</button>
-                  </form>
+                    <p id="googleHint" class="text-xs text-[color:var(--text-muted)] mt-3 hidden"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Админ-панель -->
+          <section id="admin" class="view space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="heading-font text-2xl font-extrabold mb-1">Админ-панель</h2>
+                <p class="text-sm text-[color:var(--text-secondary)]">Метрики сервиса и рассылка уведомлений</p>
+              </div>
+              <button class="btn-ghost text-sm" id="adminLogoutBtn">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+                Выйти
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div class="card"><div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">Всего пользователей</div><div class="heading-font text-3xl font-extrabold" id="admMTotalUsers">—</div></div>
+              <div class="card"><div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">Подтвердили email</div><div class="heading-font text-3xl font-extrabold" style="color:var(--success-700);" id="admMConfirmed">—</div></div>
+              <div class="card"><div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">Новых за 7 дней</div><div class="heading-font text-3xl font-extrabold" style="color:var(--brand-600);" id="admMRecent">—</div></div>
+              <div class="card"><div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">Всего задач</div><div class="heading-font text-3xl font-extrabold" id="admMTasks">—</div></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-4">Пользователи</h3>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-sm" id="admUsersTable">
+                    <thead class="text-left text-xs text-[color:var(--text-muted)] uppercase tracking-wider">
+                      <tr><th class="pb-2 pr-3">Email / Имя</th><th class="pb-2 pr-3">Регистрация</th><th class="pb-2">Статус</th></tr>
+                    </thead>
+                    <tbody id="admUsersBody"><tr><td colspan="3" class="py-4 text-[color:var(--text-muted)] text-center">Загрузка…</td></tr></tbody>
+                  </table>
                 </div>
               </div>
 
-              <div class="card space-y-6">
-                <div>
-                  <h3 class="heading-font text-lg font-extrabold mb-4">🚪 Сессия</h3>
-                  <button class="btn-ghost text-sm w-full justify-center" id="logoutBtn">Выйти из аккаунта</button>
-                </div>
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-4">Рассылка уведомлений</h3>
+                <form id="broadcastForm" class="space-y-3">
+                  <div>
+                    <label class="form-label">Получатель</label>
+                    <select id="bcTarget" class="form-select">
+                      <option value="">Все пользователи</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="form-label">Тема <span style="color:var(--danger-500)">*</span></label>
+                    <input id="bcSubject" type="text" class="form-input" required maxlength="200" placeholder="Напр.: Плановые работы">
+                  </div>
+                  <div>
+                    <label class="form-label">Сообщение <span style="color:var(--danger-500)">*</span></label>
+                    <textarea id="bcBody" class="form-textarea" required maxlength="4000" placeholder="Текст уведомления"></textarea>
+                  </div>
+                  <div class="flex items-center gap-4 flex-wrap">
+                    <label class="flex items-center gap-2 text-sm cursor-pointer">
+                      <input type="checkbox" id="bcInapp" checked>
+                      <span>В личный кабинет</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-sm cursor-pointer">
+                      <input type="checkbox" id="bcEmail">
+                      <span>На email</span>
+                    </label>
+                  </div>
+                  <p id="bcMsg" class="text-xs hidden"></p>
+                  <button type="submit" id="bcSubmit" class="btn-primary text-sm w-full justify-center">Отправить</button>
+                </form>
               </div>
             </div>
           </section>
@@ -889,9 +1056,9 @@
           <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11z"/></svg></span>
           <span>Привычки</span>
         </button>
-        <button class="nav-item" data-view="settings">
-          <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span>
-          <span>Настройки</span>
+        <button class="nav-item" data-view="profile">
+          <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+          <span>Профиль</span>
         </button>
       </div>
     </nav>
@@ -1078,6 +1245,8 @@
       tasksView: 'list',
       calendarDate: new Date(),
       calendarSelected: null,
+      googleEvents: [],
+      showGoogleEvents: false,
     };
     function getStatus(task) {
       const meta = Store.taskMeta.for(task.id);
@@ -1128,6 +1297,9 @@
       'User already registered': 'Аккаунт с таким email уже существует',
     }[code] || code || 'Ошибка');
 
+    const ADMIN_TOKEN_KEY = 'planel_admin_token';
+    const ADMIN_USER_KEY  = 'planel_admin_user';
+
     authForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       authErrEl.classList.add('hidden');
@@ -1136,6 +1308,35 @@
       authSubmit.textContent = '...';
       const email = $('#authEmail').value.trim();
       const password = $('#authPassword').value;
+
+      // Админский вход
+      if (authMode === 'login' && email === 'admin@admin') {
+        try {
+          const r = await fetch('/api/admin/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
+          const j = await r.json();
+          if (!r.ok) {
+            authErrEl.textContent = 'Неверный пароль администратора';
+            authErrEl.classList.remove('hidden');
+            return;
+          }
+          localStorage.setItem(ADMIN_TOKEN_KEY, j.access_token);
+          localStorage.setItem(ADMIN_USER_KEY, JSON.stringify(j.user));
+          hideAuth();
+          bootAdmin();
+        } catch {
+          authErrEl.textContent = 'Сетевая ошибка';
+          authErrEl.classList.remove('hidden');
+        } finally {
+          authSubmit.disabled = false;
+          authSubmit.textContent = prev;
+        }
+        return;
+      }
+
       const payload = { email, password };
       if (authMode === 'signup') {
         payload.full_name = $('#authFullName').value.trim();
@@ -1180,6 +1381,13 @@
       setAuthMode('login');
       showAuth();
     }
+    function logoutAdmin() {
+      localStorage.removeItem(ADMIN_TOKEN_KEY);
+      localStorage.removeItem(ADMIN_USER_KEY);
+      document.body.classList.remove('admin-mode');
+      setAuthMode('login');
+      showAuth();
+    }
 
     // ---------- Navigation ----------
     const views = $$('main section.view');
@@ -1187,7 +1395,7 @@
     function switchView(name) {
       views.forEach(v => v.classList.toggle('view-active', v.id === name));
       navButtons.forEach(b => b.classList.toggle('nav-item-active', b.dataset.view === name));
-      const titles = { dashboard:'Добро пожаловать!', tasks:'Задачи и доски', calendar:'Планер', projects:'Цели и проекты', habits:'Привычки', analytics:'Аналитика', settings:'Настройки' };
+      const titles = { dashboard:'Добро пожаловать!', tasks:'Задачи и доски', calendar:'Планер', projects:'Цели и проекты', habits:'Привычки', analytics:'Аналитика', profile:'Профиль', admin:'Админ-панель' };
       $('#headerTitle').textContent = titles[name] || 'PLANEL';
       if (name === 'dashboard') { renderDashboard(); renderTodayHabits(); }
       if (name === 'tasks')     renderTasksView();
@@ -1195,6 +1403,8 @@
       if (name === 'projects')  renderProjects();
       if (name === 'habits')    renderHabits();
       if (name === 'analytics') renderAnalytics();
+      if (name === 'profile')   renderProfile();
+      if (name === 'admin')     renderAdmin();
     }
     navButtons.forEach(b => b.addEventListener('click', () => switchView(b.dataset.view)));
 
@@ -1231,6 +1441,8 @@
         $('#taskProject').value = overrides.project_id || '';
         $('#taskStatus').value = overrides.status || 'todo';
       }
+      $('#taskGoogleSync').checked = false;
+      $('#taskGoogleWrap').classList.toggle('hidden', !googleState.connected);
       openModal('taskModal');
     }
 
@@ -1252,6 +1464,8 @@
       submit.textContent = '…';
       try {
         const done = status === 'done';
+        const pushGoogle = $('#taskGoogleSync').checked && !$('#taskGoogleWrap').classList.contains('hidden');
+        let savedId = id;
         if (id) {
           const r = await api(`/api/tasks/${id}`, { method: 'PUT', body: JSON.stringify({ title, description, priority, due_date, done }) });
           if (r.status === 401) return logout();
@@ -1263,12 +1477,17 @@
           if (r.status === 401) return logout();
           if (!r.ok) throw new Error('create_failed');
           const j = await r.json();
-          const newId = j.task.id;
-          Store.taskMeta.set(newId, { project_id, status });
+          savedId = j.task.id;
+          Store.taskMeta.set(savedId, { project_id, status });
           if (status === 'done') {
-            await api(`/api/tasks/${newId}`, { method: 'PUT', body: JSON.stringify({ done: true }) });
+            await api(`/api/tasks/${savedId}`, { method: 'PUT', body: JSON.stringify({ done: true }) });
           }
           toast('Задача создана', 'success');
+        }
+        if (pushGoogle && due_date && savedId) {
+          await pushTaskToGoogle(savedId);
+        } else if (pushGoogle && !due_date) {
+          toast('Укажите дедлайн, чтобы добавить в Google Calendar', 'warn');
         }
         closeModal('taskModal');
         await loadTasks();
@@ -1662,12 +1881,16 @@
     }
 
     // ---------- Calendar ----------
+    function googleEventsOn(iso) {
+      if (!state.showGoogleEvents) return [];
+      return state.googleEvents.filter(e => (e.start || '').slice(0, 10) === iso);
+    }
+
     function renderCalendar() {
       const date = state.calendarDate;
       $('#calLabel').textContent = `${MONTHS_RU[date.getMonth()]} ${date.getFullYear()}`;
       const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
       const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-      // Monday = 0
       const firstWeekday = (firstDay.getDay() + 6) % 7;
       const daysInMonth = lastDay.getDate();
       const grid = $('#calGrid');
@@ -1677,16 +1900,22 @@
       for (let d = 1; d <= daysInMonth; d++) {
         const iso = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
         const dayTasks = state.tasks.filter(t => t.due_date === iso);
+        const dayGoogle = googleEventsOn(iso);
         const doneCount = dayTasks.filter(t => t.done).length;
         const pct = dayTasks.length ? Math.round((doneCount / dayTasks.length) * 100) : 0;
         const isToday = iso === today;
+        const parts = [];
+        if (dayTasks.length) {
+          parts.push(`<div class="progress" style="height:5px;"><span style="width:${pct}%"></span></div>`);
+          parts.push(`<span class="text-xs ${isToday ? '' : 'text-[color:var(--text-muted)]'}">${dayTasks.length} задач${dayTasks.length === 1 ? 'а' : ''}</span>`);
+        }
+        if (dayGoogle.length) {
+          parts.push(`<span class="text-xs" style="color:${isToday ? 'rgba(255,255,255,0.9)' : 'var(--brand-600)'};">📅 ${dayGoogle.length} Google</span>`);
+        }
         html += `
           <div class="cal-day ${isToday ? 'is-today' : ''}" data-iso="${iso}">
             <span class="cal-num">${d}</span>
-            ${dayTasks.length ? `
-              <div class="progress" style="height:5px;"><span style="width:${pct}%"></span></div>
-              <span class="text-xs ${isToday ? '' : 'text-[color:var(--text-muted)]'}">${dayTasks.length} задач${dayTasks.length === 1 ? 'а' : ''}</span>
-            ` : ''}
+            ${parts.join('')}
           </div>`;
       }
       grid.innerHTML = html;
@@ -1707,11 +1936,27 @@
       card.style.display = '';
       $('#calSelectedTitle').textContent = `Задачи на ${formatDateRu(iso)}`;
       const dayTasks = state.tasks.filter(t => t.due_date === iso);
-      if (!dayTasks.length) {
-        list.innerHTML = `<div class="empty-state"><strong>На этот день задач нет.</strong><br/><button class="btn-ghost text-xs mt-2" id="calAddForDay">+ Создать задачу на ${formatDateRu(iso)}</button></div>`;
+      const dayGoogle = googleEventsOn(iso);
+      const parts = [];
+      if (dayTasks.length) {
+        parts.push(dayTasks.map(t => renderTaskRow(t)).join(''));
+      }
+      if (dayGoogle.length) {
+        parts.push(`<div class="text-xs font-semibold text-[color:var(--text-muted)] uppercase tracking-wider mt-3 mb-2">Google Calendar</div>`);
+        parts.push(dayGoogle.map(ev => {
+          const time = ev.all_day ? 'весь день' : (ev.start ? new Date(ev.start).toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'}) : '');
+          return `<div class="card-flat" style="border-left:3px solid var(--brand-500);">
+            <div class="font-semibold text-[color:var(--text-strong)] text-sm mb-1">${escapeHtml(ev.summary)}</div>
+            <div class="text-xs text-[color:var(--text-muted)]">${time}${ev.html_link ? ` · <a href="${escapeHtml(ev.html_link)}" target="_blank" rel="noopener" class="text-[color:var(--brand-600)]">открыть в Google ↗</a>` : ''}</div>
+            ${ev.description ? `<div class="text-xs text-[color:var(--text-secondary)] mt-1">${escapeHtml(ev.description.slice(0,140))}${ev.description.length>140?'…':''}</div>` : ''}
+          </div>`;
+        }).join(''));
+      }
+      if (!parts.length) {
+        list.innerHTML = `<div class="empty-state"><strong>На этот день ничего нет.</strong><br/><button class="btn-ghost text-xs mt-2" id="calAddForDay">+ Создать задачу на ${formatDateRu(iso)}</button></div>`;
         $('#calAddForDay')?.addEventListener('click', () => openTaskModal(null, { due_date: iso }));
       } else {
-        list.innerHTML = dayTasks.map(t => renderTaskRow(t)).join('');
+        list.innerHTML = parts.join('');
         bindTaskRowEvents(list);
       }
     }
@@ -2026,22 +2271,182 @@
     $('#newProjectBtn').addEventListener('click', () => openProjectModal());
     $('#newHabitBtn').addEventListener('click', () => openHabitModal());
     $('#quickAddHabit').addEventListener('click', () => openHabitModal());
-    $('#userAvatar').addEventListener('click', async () => {
-      const ok = await confirmModal('Выйти из аккаунта?', 'Выйти');
-      if (ok) logout();
-    });
+    $('#userAvatar').addEventListener('click', () => switchView('profile'));
     $('#logoutBtn')?.addEventListener('click', async () => {
       const ok = await confirmModal('Выйти из аккаунта?', 'Выйти');
       if (ok) logout();
     });
+    $('#adminLogoutBtn')?.addEventListener('click', async () => {
+      const ok = await confirmModal('Выйти из админ-панели?', 'Выйти');
+      if (ok) logoutAdmin();
+    });
 
-    // Profile form
+    // ---------- Profile: email / password / name ----------
+    function renderProfile() {
+      const u = JSON.parse(localStorage.getItem(USER_KEY) || 'null');
+      if (!u) return;
+      const name = u.full_name || '';
+      $('#profileHeaderName').textContent = name || u.email.split('@')[0];
+      $('#profileHeaderEmail').textContent = u.email;
+      const initials = (name ? name.split(/\s+/).map(s=>s[0]).slice(0,2).join('') : u.email.slice(0,2)).toUpperCase();
+      document.querySelectorAll('.avatar').forEach(a => a.textContent = initials);
+      $('#profileName').value = name;
+      $('#profileEmail').value = u.email;
+      $('#profilePassword').value = '';
+      $('#profilePassword2').value = '';
+      ['profileMsg','nameMsg','passwordMsg'].forEach(id => $('#'+id).classList.add('hidden'));
+      refreshGoogleStatus();
+    }
+
+    // ---------- Google Calendar ----------
+    const googleState = { configured: false, connected: false, email: null };
+
+    async function refreshGoogleStatus() {
+      try {
+        const r = await api('/api/google/status');
+        if (r.status === 401) return;
+        const j = await r.json();
+        googleState.configured = !!j.configured;
+        googleState.connected  = !!j.connected;
+        googleState.email      = j.email || null;
+      } catch {
+        googleState.configured = false; googleState.connected = false;
+      }
+      renderGoogleUI();
+    }
+
+    function renderGoogleUI() {
+      const statusText = $('#googleStatusText');
+      const connectBtn = $('#googleConnectBtn');
+      const disconnectBtn = $('#googleDisconnectBtn');
+      const link = $('#googleCalendarLink');
+      const hint = $('#googleHint');
+      const togglesWrap = $('#googleCalToggleWrap');
+      const taskGoogleWrap = $('#taskGoogleWrap');
+
+      if (!googleState.configured) {
+        statusText.textContent = 'Интеграция не настроена на сервере.';
+        connectBtn.classList.add('hidden');
+        disconnectBtn.classList.add('hidden');
+        link.classList.add('hidden');
+        hint.textContent = 'Администратору нужно задать GOOGLE_CLIENT_ID и GOOGLE_CLIENT_SECRET в переменных окружения и указать redirect URI: ' + location.origin + '/api/google/callback';
+        hint.classList.remove('hidden');
+        togglesWrap?.classList.add('hidden');
+        taskGoogleWrap?.classList.add('hidden');
+        return;
+      }
+      hint.classList.add('hidden');
+      if (googleState.connected) {
+        statusText.innerHTML = `Подключён: <b>${escapeHtml(googleState.email || '—')}</b>`;
+        connectBtn.classList.add('hidden');
+        disconnectBtn.classList.remove('hidden');
+        link.classList.remove('hidden');
+        togglesWrap?.classList.remove('hidden');
+        taskGoogleWrap?.classList.remove('hidden');
+      } else {
+        statusText.textContent = 'Не подключён. Свяжите аккаунт, чтобы видеть события и отправлять задачи в Google Calendar.';
+        connectBtn.classList.remove('hidden');
+        disconnectBtn.classList.add('hidden');
+        link.classList.add('hidden');
+        togglesWrap?.classList.add('hidden');
+        taskGoogleWrap?.classList.add('hidden');
+      }
+    }
+
+    $('#googleConnectBtn')?.addEventListener('click', async () => {
+      try {
+        const r = await api('/api/google/auth');
+        const j = await r.json();
+        if (!r.ok || !j.url) { toast(j.message || 'Не удалось начать авторизацию', 'error'); return; }
+        const popup = window.open(j.url, 'planel_google', 'width=520,height=640');
+        if (!popup) {
+          // Popup заблокирован — редирект в том же окне
+          window.location.href = j.url;
+          return;
+        }
+        const onMessage = (e) => {
+          if (e.data?.planel_google === 'ok') {
+            toast('Google Calendar подключён', 'success');
+            window.removeEventListener('message', onMessage);
+            refreshGoogleStatus();
+          } else if (e.data?.planel_google === 'err') {
+            toast('Не удалось подключить Google', 'error');
+            window.removeEventListener('message', onMessage);
+          }
+        };
+        window.addEventListener('message', onMessage);
+        // Фолбэк: опрос статуса, если popup закрыт без message
+        const poll = setInterval(async () => {
+          if (popup.closed) {
+            clearInterval(poll);
+            window.removeEventListener('message', onMessage);
+            await refreshGoogleStatus();
+          }
+        }, 1000);
+      } catch {
+        toast('Сетевая ошибка', 'error');
+      }
+    });
+
+    $('#googleDisconnectBtn')?.addEventListener('click', async () => {
+      const ok = await confirmModal('Отключить Google Calendar? PLANEL перестанет видеть события и отправлять задачи.', 'Отключить');
+      if (!ok) return;
+      try {
+        const r = await api('/api/google/disconnect', { method: 'POST', body: '{}' });
+        if (!r.ok) { toast('Не удалось отключить', 'error'); return; }
+        toast('Google Calendar отключён', 'success');
+        state.googleEvents = [];
+        googleState.connected = false;
+        renderGoogleUI();
+        renderCalendar();
+      } catch { toast('Сетевая ошибка', 'error'); }
+    });
+
+    async function loadGoogleEvents() {
+      if (!googleState.connected) { state.googleEvents = []; return; }
+      try {
+        const r = await api('/api/google/events');
+        if (!r.ok) { state.googleEvents = []; return; }
+        const j = await r.json();
+        state.googleEvents = j.events || [];
+      } catch { state.googleEvents = []; }
+    }
+
+    $('#googleCalToggle')?.addEventListener('change', async (e) => {
+      state.showGoogleEvents = e.target.checked;
+      if (state.showGoogleEvents) await loadGoogleEvents();
+      renderCalendar();
+    });
+
+    async function pushTaskToGoogle(taskId) {
+      try {
+        const r = await api('/api/google/sync-task', { method: 'POST', body: JSON.stringify({ task_id: taskId }) });
+        const j = await r.json();
+        if (!r.ok) {
+          toast(j.error === 'no_due_date' ? 'У задачи нет дедлайна — нечего отправить' :
+                j.error === 'not_connected' ? 'Сначала подключите Google Calendar в профиле' :
+                'Ошибка отправки в Google', 'error');
+          return false;
+        }
+        toast('Задача добавлена в Google Calendar', 'success');
+        return true;
+      } catch {
+        toast('Сетевая ошибка Google', 'error');
+        return false;
+      }
+    }
+
+    function showFormMsg(id, text, type) {
+      const el = $('#'+id);
+      el.textContent = text;
+      el.style.color = type === 'error' ? 'var(--danger-700)' : 'var(--success-700)';
+      el.classList.remove('hidden');
+    }
+
     $('#profileForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const msg = $('#profileMsg');
       const btn = $('#profileSave');
       const newEmail = $('#profileEmail').value.trim();
-      msg.classList.add('hidden');
       btn.disabled = true;
       const prev = btn.textContent;
       btn.textContent = 'Сохраняем…';
@@ -2049,22 +2454,254 @@
         const r = await api('/api/auth/update-email', { method: 'POST', body: JSON.stringify({ email: newEmail }) });
         const j = await r.json();
         if (!r.ok) {
-          msg.textContent = j.error === 'email_taken' ? 'Этот email уже занят' : j.error === 'invalid_email' ? 'Некорректный email' : 'Не удалось сохранить';
-          msg.style.color = 'var(--danger-700)';
-          msg.classList.remove('hidden');
+          showFormMsg('profileMsg',
+            j.error === 'email_taken' ? 'Этот email уже занят' :
+            j.error === 'invalid_email' ? 'Некорректный email' : 'Не удалось сохранить', 'error');
           return;
         }
-        localStorage.setItem(USER_KEY, JSON.stringify(j.user));
-        const initials = j.user.email.slice(0, 2).toUpperCase();
-        document.querySelectorAll('.avatar').forEach(a => a.textContent = initials);
-        msg.textContent = 'Email обновлён';
-        msg.style.color = 'var(--success-700)';
-        msg.classList.remove('hidden');
+        const prevUser = JSON.parse(localStorage.getItem(USER_KEY) || '{}');
+        localStorage.setItem(USER_KEY, JSON.stringify({ ...prevUser, ...j.user }));
+        renderProfile();
+        showFormMsg('profileMsg', 'Email обновлён', 'success');
         toast('Email обновлён', 'success');
       } catch {
-        msg.textContent = 'Сетевая ошибка';
-        msg.style.color = 'var(--danger-700)';
-        msg.classList.remove('hidden');
+        showFormMsg('profileMsg', 'Сетевая ошибка', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = prev;
+      }
+    });
+
+    $('#nameForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = $('#nameSave');
+      const name = $('#profileName').value.trim();
+      if (name.length < 2) { showFormMsg('nameMsg', 'Имя минимум 2 символа', 'error'); return; }
+      btn.disabled = true;
+      const prev = btn.textContent;
+      btn.textContent = 'Сохраняем…';
+      try {
+        const r = await api('/api/auth/update-name', { method: 'POST', body: JSON.stringify({ full_name: name }) });
+        const j = await r.json();
+        if (!r.ok) { showFormMsg('nameMsg', j.error === 'invalid_name' ? 'Некорректное имя' : 'Не удалось сохранить', 'error'); return; }
+        const prevUser = JSON.parse(localStorage.getItem(USER_KEY) || '{}');
+        localStorage.setItem(USER_KEY, JSON.stringify({ ...prevUser, ...j.user }));
+        renderProfile();
+        showFormMsg('nameMsg', 'Имя обновлено', 'success');
+        toast('Имя обновлено', 'success');
+      } catch {
+        showFormMsg('nameMsg', 'Сетевая ошибка', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = prev;
+      }
+    });
+
+    $('#passwordForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = $('#passwordSave');
+      const p1 = $('#profilePassword').value;
+      const p2 = $('#profilePassword2').value;
+      if (p1.length < 8) { showFormMsg('passwordMsg', 'Пароль минимум 8 символов', 'error'); return; }
+      if (p1 !== p2) { showFormMsg('passwordMsg', 'Пароли не совпадают', 'error'); return; }
+      btn.disabled = true;
+      const prev = btn.textContent;
+      btn.textContent = 'Меняем…';
+      try {
+        const r = await api('/api/auth/update-password', { method: 'POST', body: JSON.stringify({ password: p1 }) });
+        const j = await r.json();
+        if (!r.ok) { showFormMsg('passwordMsg', j.error === 'weak_password' ? 'Пароль минимум 8 символов' : 'Не удалось сменить', 'error'); return; }
+        $('#profilePassword').value = '';
+        $('#profilePassword2').value = '';
+        showFormMsg('passwordMsg', 'Пароль обновлён', 'success');
+        toast('Пароль обновлён', 'success');
+      } catch {
+        showFormMsg('passwordMsg', 'Сетевая ошибка', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = prev;
+      }
+    });
+
+    // ---------- Notifications (localStorage per-user + broadcast shared) ----------
+    function notifOwnKey() { return 'planel_notifications_' + userId(); }
+    function notifReadKey() { return 'planel_notif_read_' + userId(); }
+    const BROADCAST_KEY = 'planel_broadcasts';
+
+    function readJSON(key, fallback) {
+      try { return JSON.parse(localStorage.getItem(key) || 'null') ?? fallback; } catch { return fallback; }
+    }
+    function writeJSON(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+    function allNotifications() {
+      const own = readJSON(notifOwnKey(), []);
+      const broadcasts = readJSON(BROADCAST_KEY, []).filter(b => !b.target_user_id || b.target_user_id === userId());
+      const read = readJSON(notifReadKey(), {});
+      return [...own, ...broadcasts].map(n => ({ ...n, read: !!read[n.id] }))
+        .sort((a,b) => (b.created_at||'').localeCompare(a.created_at||''));
+    }
+    function unreadCount() { return allNotifications().filter(n => !n.read).length; }
+
+    function addOwnNotification(n) {
+      const list = readJSON(notifOwnKey(), []);
+      list.unshift({ id: uid(), created_at: new Date().toISOString(), ...n });
+      writeJSON(notifOwnKey(), list.slice(0, 100));
+      renderNotifBadge();
+    }
+    function markNotifRead(id) {
+      const read = readJSON(notifReadKey(), {});
+      read[id] = true;
+      writeJSON(notifReadKey(), read);
+      renderNotifBadge();
+      renderNotifDropdown();
+    }
+    function markAllRead() {
+      const read = readJSON(notifReadKey(), {});
+      allNotifications().forEach(n => { read[n.id] = true; });
+      writeJSON(notifReadKey(), read);
+      renderNotifBadge();
+      renderNotifDropdown();
+    }
+
+    function renderNotifBadge() {
+      const badge = $('#notifBadge');
+      if (!badge) return;
+      const n = unreadCount();
+      if (n > 0) { badge.textContent = n > 9 ? '9+' : String(n); badge.classList.remove('hidden'); badge.classList.add('flex'); }
+      else { badge.classList.add('hidden'); badge.classList.remove('flex'); }
+    }
+
+    function formatNotifTime(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      const diff = (Date.now() - d.getTime()) / 60000;
+      if (diff < 1) return 'только что';
+      if (diff < 60) return Math.floor(diff) + ' мин назад';
+      if (diff < 1440) return Math.floor(diff/60) + ' ч назад';
+      return formatDateRu(d.toISOString().slice(0,10));
+    }
+
+    function renderNotifDropdown() {
+      const list = $('#notifList');
+      const items = allNotifications();
+      if (!items.length) {
+        list.innerHTML = `<div class="notif-empty">Пока нет уведомлений</div>`;
+        return;
+      }
+      list.innerHTML = items.slice(0, 30).map(n => `
+        <div class="notif-item ${n.read ? '' : 'unread'}" data-id="${n.id}">
+          ${n.read ? '' : '<span class="notif-dot"></span>'}
+          <div class="notif-subject">${escapeHtml(n.subject || 'Уведомление')}</div>
+          <div class="notif-body">${escapeHtml(n.body || '')}</div>
+          <div class="notif-time">${formatNotifTime(n.created_at)}${n.channels?.email ? ' · также на email' : ''}</div>
+        </div>
+      `).join('');
+      list.querySelectorAll('.notif-item').forEach(el => {
+        el.addEventListener('click', () => markNotifRead(el.dataset.id));
+      });
+    }
+
+    $('#notifBtn')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const dd = $('#notifDropdown');
+      const wasOpen = !dd.classList.contains('hidden');
+      dd.classList.toggle('hidden');
+      if (!wasOpen) renderNotifDropdown();
+    });
+    $('#notifMarkAll')?.addEventListener('click', (e) => { e.stopPropagation(); markAllRead(); });
+    document.addEventListener('click', (e) => {
+      const dd = $('#notifDropdown');
+      if (dd && !dd.classList.contains('hidden') && !dd.contains(e.target) && !$('#notifBtn').contains(e.target)) {
+        dd.classList.add('hidden');
+      }
+    });
+
+    // ---------- Admin panel ----------
+    function adminHeaders() {
+      return { 'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem(ADMIN_TOKEN_KEY) };
+    }
+
+    async function renderAdmin() {
+      await Promise.all([loadAdminMetrics(), loadAdminUsers()]);
+    }
+
+    async function loadAdminMetrics() {
+      try {
+        const r = await fetch('/api/admin/metrics', { headers: adminHeaders() });
+        if (r.status === 401) return logoutAdmin();
+        const j = await r.json();
+        $('#admMTotalUsers').textContent = j.users?.total ?? '—';
+        $('#admMConfirmed').textContent  = j.users?.confirmed ?? '—';
+        $('#admMRecent').textContent     = j.users?.last_7_days ?? '—';
+        $('#admMTasks').textContent      = j.tasks?.total ?? '—';
+      } catch { toast('Ошибка загрузки метрик', 'error'); }
+    }
+
+    async function loadAdminUsers() {
+      try {
+        const r = await fetch('/api/admin/users', { headers: adminHeaders() });
+        if (r.status === 401) return logoutAdmin();
+        const j = await r.json();
+        const tbody = $('#admUsersBody');
+        const target = $('#bcTarget');
+        target.innerHTML = `<option value="">Все пользователи</option>` + (j.users||[]).map(u =>
+          `<option value="${u.id}">${escapeHtml(u.email)}${u.full_name ? ' · '+escapeHtml(u.full_name) : ''}</option>`
+        ).join('');
+        if (!j.users?.length) {
+          tbody.innerHTML = `<tr><td colspan="3" class="py-4 text-[color:var(--text-muted)] text-center">Пока нет пользователей</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = j.users.map(u => `
+          <tr>
+            <td class="pr-3"><div class="font-semibold text-[color:var(--text-strong)]">${escapeHtml(u.email)}</div>${u.full_name ? `<div class="text-xs text-[color:var(--text-muted)]">${escapeHtml(u.full_name)}</div>` : ''}</td>
+            <td class="pr-3 text-[color:var(--text-secondary)]">${u.created_at ? formatDateRu(u.created_at.slice(0,10)) : '—'}</td>
+            <td><span class="status-badge ${u.email_confirmed ? 'priority-low' : 'priority-medium'}">${u.email_confirmed ? 'Подтверждён' : 'Не подтв.'}</span></td>
+          </tr>
+        `).join('');
+      } catch { toast('Ошибка загрузки пользователей', 'error'); }
+    }
+
+    $('#broadcastForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = $('#bcSubmit');
+      const msg = $('#bcMsg');
+      const subject = $('#bcSubject').value.trim();
+      const body = $('#bcBody').value.trim();
+      const inapp = $('#bcInapp').checked;
+      const email = $('#bcEmail').checked;
+      const target_user_id = $('#bcTarget').value || null;
+      msg.classList.add('hidden');
+      if (!subject || !body) { showFormMsg('bcMsg','Заполните тему и сообщение','error'); return; }
+      if (!inapp && !email) { showFormMsg('bcMsg','Выберите минимум один канал','error'); return; }
+      btn.disabled = true;
+      const prev = btn.textContent;
+      btn.textContent = 'Отправляем…';
+      try {
+        const r = await fetch('/api/admin/broadcast', {
+          method: 'POST', headers: adminHeaders(),
+          body: JSON.stringify({ subject, body, inapp, email, target_user_id })
+        });
+        const j = await r.json();
+        if (!r.ok) { showFormMsg('bcMsg', j.error || 'Ошибка', 'error'); return; }
+        // Запись в shared broadcasts, чтобы клиенты увидели в личном кабинете
+        if (inapp) {
+          const bcs = readJSON(BROADCAST_KEY, []);
+          bcs.unshift({
+            id: uid(),
+            subject, body,
+            created_at: new Date().toISOString(),
+            channels: { inapp, email },
+            target_user_id
+          });
+          writeJSON(BROADCAST_KEY, bcs.slice(0, 200));
+        }
+        const recipients = j.delivered?.inapp ?? j.recipients?.length ?? 0;
+        showFormMsg('bcMsg', `Отправлено ${recipients} получател${recipients === 1 ? 'ю' : 'ям'}${email ? ' (включая email)' : ''}`, 'success');
+        toast('Уведомление отправлено', 'success');
+        $('#bcSubject').value = '';
+        $('#bcBody').value = '';
+      } catch {
+        showFormMsg('bcMsg','Сетевая ошибка','error');
       } finally {
         btn.disabled = false;
         btn.textContent = prev;
@@ -2073,20 +2710,47 @@
 
     // ---------- Boot ----------
     async function bootApp() {
+      document.body.classList.remove('admin-mode');
       const u = JSON.parse(localStorage.getItem(USER_KEY) || 'null');
       if (u?.email) {
         const initials = u.email.slice(0, 2).toUpperCase();
         document.querySelectorAll('.avatar').forEach(a => a.textContent = initials);
-        const emailInput = $('#profileEmail');
-        if (emailInput) emailInput.value = u.email;
+        $('#profileEmail').value = u.email;
+        $('#profileName').value = u.full_name || '';
         $('#sidebarUserChip').querySelector('span').textContent = `Владелец · ${u.email.split('@')[0]}`;
       }
+      // Подтягиваем актуальный профиль
+      try {
+        const r = await api('/api/auth/me');
+        if (r.ok) {
+          const j = await r.json();
+          const merged = { ...(u||{}), ...j.user };
+          localStorage.setItem(USER_KEY, JSON.stringify(merged));
+          renderProfile();
+        }
+      } catch {}
       pomodoroDisplay();
       await loadTasks();
       renderTodayHabits();
+      renderNotifBadge();
+      refreshGoogleStatus();
+      // Если пришли обратно из OAuth (?google=connected)
+      const qp = new URLSearchParams(location.search);
+      if (qp.get('google') === 'connected') {
+        toast('Google Calendar подключён', 'success');
+        history.replaceState(null, '', location.pathname + location.hash);
+      }
     }
 
-    if (localStorage.getItem(TOKEN_KEY)) {
+    async function bootAdmin() {
+      document.body.classList.add('admin-mode');
+      switchView('admin');
+    }
+
+    const adminToken = localStorage.getItem(ADMIN_TOKEN_KEY);
+    if (adminToken) {
+      bootAdmin();
+    } else if (localStorage.getItem(TOKEN_KEY)) {
       bootApp();
     } else {
       const params = new URLSearchParams(location.search);
