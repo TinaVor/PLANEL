@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>PLANEL — задачи, цели и привычки в одном месте</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="PLANEL — планировщик для тех, кто строит, а не выгорает. Задачи, цели и привычки в одном месте. От 2 500 ₽ в месяц." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-app:        #F4F7FB;
+      --bg-surface:    #FFFFFF;
+      --bg-muted:      #EEF3F9;
+      --border-soft:   #E2E8F0;
+      --border-strong: #CBD5E1;
+
+      --text-strong:   #0B1220;
+      --text-primary:  #0F172A;
+      --text-secondary:#475569;
+      --text-muted:    #64748B;
+
+      --brand-50:  #ECF5FF;
+      --brand-100: #D6EAFF;
+      --brand-200: #AFD4FF;
+      --brand-300: #7BB8FF;
+      --brand-400: #4A98FF;
+      --brand-500: #1F76F2;
+      --brand-600: #1560D4;
+      --brand-700: #0E4AA8;
+      --brand-800: #0B3A82;
+
+      --cyan-400:  #22D3EE;
+      --cyan-500:  #06B6D4;
+      --cyan-600:  #0891B2;
+
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+      --shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04);
+      --shadow-brand: 0 12px 28px rgba(31, 118, 242, 0.28);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg-app);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    .heading-font {
+      font-family: "Manrope", "Inter", sans-serif;
+      letter-spacing: -0.025em;
+      color: var(--text-strong);
+      line-height: 1.05;
+    }
+
+    .grad-text {
+      background: linear-gradient(135deg, var(--brand-500) 0%, var(--cyan-500) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .shell-bg {
+      background:
+        radial-gradient(900px 500px at 90% -10%, rgba(31,118,242,0.10), transparent 60%),
+        radial-gradient(700px 500px at -10% 30%, rgba(6,182,212,0.10), transparent 60%),
+        var(--bg-app);
+    }
+
+    /* Buttons */
+    .btn-primary, .btn-ghost, .btn-light {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      border-radius: 12px;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.95rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 200ms ease, background 160ms ease, border-color 160ms ease, color 160ms ease;
+      white-space: nowrap;
+      text-decoration: none;
+      line-height: 1.2;
+    }
+    .btn-primary {
+      background: var(--brand-500);
+      color: #FFFFFF;
+      box-shadow: var(--shadow-brand);
+    }
+    .btn-primary:hover {
+      background: var(--brand-600);
+      transform: translateY(-2px);
+      box-shadow: 0 22px 48px rgba(31,118,242,0.34);
+    }
+    .btn-ghost {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border-color: var(--border-soft);
+    }
+    .btn-ghost:hover {
+      background: var(--brand-50);
+      color: var(--brand-700);
+      border-color: var(--brand-100);
+    }
+    .btn-light {
+      background: rgba(255,255,255,0.92);
+      color: var(--brand-700);
+      border-color: var(--brand-100);
+    }
+    .btn-light:hover {
+      background: #FFFFFF;
+      transform: translateY(-2px);
+    }
+
+    .btn-lg {
+      padding: 0.95rem 1.8rem;
+      font-size: 1rem;
+      border-radius: 14px;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-soft);
+      border-radius: 18px;
+      padding: 1.75rem;
+      box-shadow: var(--shadow-md);
+      transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--brand-200);
+    }
+
+    /* Logo / mark */
+    .logo-mark {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--brand-500), var(--cyan-500));
+      color: #FFFFFF;
+      font-weight: 800;
+      display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: var(--shadow-brand);
+      letter-spacing: -0.02em;
+      font-size: 0.9rem;
+    }
+
+    /* Chips */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      border-radius: 9999px;
+      padding: 0.4rem 0.9rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      background: var(--brand-50);
+      color: var(--brand-700);
+      border: 1px solid var(--brand-100);
+    }
+
+    /* Feature icon */
+    .feat-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--brand-50), var(--brand-100));
+      color: var(--brand-600);
+      display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 12px rgba(31,118,242,0.10);
+    }
+
+    /* Animations */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1), transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-in.delay-1 { transition-delay: 100ms; }
+    .fade-in.delay-2 { transition-delay: 200ms; }
+    .fade-in.delay-3 { transition-delay: 300ms; }
+    .fade-in.delay-4 { transition-delay: 400ms; }
+    .fade-in.delay-5 { transition-delay: 500ms; }
+
+    /* Hero mock */
+    .hero-mock {
+      position: relative;
+      border-radius: 22px;
+      background: linear-gradient(135deg, var(--brand-500) 0%, var(--cyan-500) 100%);
+      padding: 28px;
+      box-shadow:
+        0 30px 60px -20px rgba(31,118,242,0.45),
+        0 0 0 1px rgba(255,255,255,0.4) inset;
+      overflow: hidden;
+    }
+    .hero-mock::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(400px 300px at 100% 0%, rgba(255,255,255,0.25), transparent 60%),
+        radial-gradient(400px 300px at 0% 100%, rgba(255,255,255,0.18), transparent 60%);
+      pointer-events: none;
+    }
+    .mock-pane {
+      position: relative;
+      background: rgba(255,255,255,0.95);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 14px 40px rgba(11,18,32,0.18);
+    }
+    .mock-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px;
+      background: var(--bg-muted);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+    }
+    .mock-row .dot {
+      width: 18px; height: 18px;
+      border-radius: 6px;
+      border: 1.5px solid var(--border-strong);
+      flex-shrink: 0;
+    }
+    .mock-row .dot.done {
+      background: var(--brand-500);
+      border-color: var(--brand-500);
+    }
+    .mock-row .pill {
+      margin-left: auto;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      background: var(--brand-100);
+      color: var(--brand-700);
+    }
+    .mock-row .pill.high { background: #FEE2E2; color: #B91C1C; }
+    .mock-row .pill.med  { background: #FEF3C7; color: #92400E; }
+
+    .mock-spark {
+      width: 100%; height: 36px;
+    }
+
+    /* Pricing block */
+    .pricing-card {
+      background: linear-gradient(135deg, var(--brand-600) 0%, var(--brand-500) 50%, var(--cyan-500) 100%);
+      color: #FFFFFF;
+      border-radius: 24px;
+      padding: 3rem 2.5rem;
+      box-shadow: 0 30px 80px -20px rgba(31,118,242,0.5);
+      position: relative;
+      overflow: hidden;
+    }
+    .pricing-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(500px 400px at 100% 0%, rgba(255,255,255,0.15), transparent 60%),
+        radial-gradient(400px 300px at 0% 100%, rgba(255,255,255,0.10), transparent 60%);
+      pointer-events: none;
+    }
+    .pricing-card * { position: relative; }
+
+    .check-row {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      padding: 0.55rem 0;
+      font-size: 0.95rem;
+    }
+    .check-row svg {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      padding: 3px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.2);
+      color: #FFFFFF;
+    }
+
+    /* KAIROS list */
+    .kairos-item {
+      display: flex; align-items: flex-start; gap: 0.7rem;
+      padding: 0.55rem 0.6rem;
+      border-radius: 10px;
+      transition: background 180ms ease, transform 180ms ease;
+    }
+    .kairos-item:hover {
+      background: var(--brand-50);
+      transform: translateX(2px);
+    }
+    .kairos-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--brand-50), var(--brand-100));
+      color: var(--brand-600);
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(31,118,242,0.10);
+    }
+    .kairos-icon svg { width: 16px; height: 16px; stroke-width: 2; }
+
+    /* Mobile menu */
+    .mob-menu {
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 18, 32, 0.96);
+      backdrop-filter: blur(12px);
+      z-index: 200;
+      padding: 6rem 1.5rem 2rem;
+      transform: translateX(100%);
+      transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .mob-menu.open { transform: translateX(0); }
+    .mob-menu a {
+      display: block;
+      padding: 1rem 0;
+      font-family: "Manrope", sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .mob-menu a:hover { color: var(--brand-300); }
+
+    .nav-link {
+      color: var(--text-secondary);
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color 140ms ease;
+    }
+    .nav-link:hover { color: var(--brand-700); }
+
+    /* Scrollbar */
+    *::-webkit-scrollbar { width: 10px; height: 10px; }
+    *::-webkit-scrollbar-track { background: transparent; }
+    *::-webkit-scrollbar-thumb { background: #D6DEE8; border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+    *::-webkit-scrollbar-thumb:hover { background: #B6C2D2; background-clip: padding-box; }
+  </style>
+</head>
+<body class="shell-bg">
+
+  <!-- ================== HEADER ================== -->
+  <header class="sticky top-0 z-50 border-b border-[color:var(--border-soft)] bg-white/80 backdrop-blur-md">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8 py-4 flex items-center justify-between gap-4">
+      <a href="/" class="flex items-center gap-2.5">
+        <div class="logo-mark">PL</div>
+        <span class="heading-font text-xl sm:text-2xl font-extrabold">PLANEL</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-7">
+        <a href="#features" class="nav-link">Возможности</a>
+        <a href="#pricing" class="nav-link">Тариф</a>
+        <a href="#about" class="nav-link">О нас</a>
+      </nav>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <a href="/app" class="hidden sm:inline-flex btn-ghost text-sm" style="padding: 0.55rem 1.1rem;">Войти</a>
+        <a href="/app?mode=signup" class="btn-primary text-sm" style="padding: 0.6rem 1.2rem;">Зарегистрироваться</a>
+        <button id="mobBurger" class="md:hidden p-2 rounded-lg text-[color:var(--text-primary)]" aria-label="Меню">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="mob-menu md:hidden" id="mobMenu">
+    <button id="mobClose" class="absolute top-5 right-5 p-2 text-white" aria-label="Закрыть">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <a href="#features">Возможности</a>
+    <a href="#pricing">Тариф</a>
+    <a href="#about">О нас</a>
+    <a href="/app">Войти</a>
+    <a href="/app?mode=signup">Зарегистрироваться</a>
+  </div>
+
+  <!-- ================== HERO ================== -->
+  <section class="px-5 sm:px-8 pt-16 sm:pt-24 pb-16 sm:pb-24">
+    <div class="max-w-6xl mx-auto grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+      <div class="lg:col-span-7 fade-in">
+        <span class="chip mb-6">
+          <span class="w-1.5 h-1.5 rounded-full bg-[color:var(--brand-500)]"></span>
+          Уже 2 500+ человек планируют в PLANEL
+        </span>
+        <h1 class="heading-font text-[2.4rem] sm:text-[3.4rem] lg:text-[4.2rem] font-extrabold mb-6">
+          Задачи, цели <br class="hidden sm:block" />
+          и привычки — <br class="hidden sm:block" />
+          <span class="grad-text">в одном месте.</span>
+        </h1>
+        <p class="text-lg sm:text-xl text-[color:var(--text-secondary)] max-w-xl mb-9 leading-relaxed">
+          Планируй, отслеживай, достигай. Без хаоса, без выгорания, без десяти приложений.
+        </p>
+        <div class="flex flex-wrap items-center gap-4">
+          <a href="/app?mode=signup" class="btn-primary btn-lg">
+            Начать бесплатно
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+          <div class="text-sm text-[color:var(--text-muted)]">
+            <span class="font-semibold text-[color:var(--text-primary)]">7 дней бесплатно</span>
+            · далее 2 500 ₽/мес
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5 fade-in delay-2">
+        <div class="hero-mock">
+          <div class="mock-pane">
+            <div class="flex items-center justify-between mb-3">
+              <span class="heading-font font-extrabold text-base">Сегодня</span>
+              <span class="text-xs font-semibold text-[color:var(--text-muted)]">3 / 5</span>
+            </div>
+            <div class="mock-row">
+              <span class="dot done"></span>
+              <span style="text-decoration: line-through; opacity: 0.6;">Подвести итоги недели</span>
+              <span class="pill">Готово</span>
+            </div>
+            <div class="mock-row">
+              <span class="dot"></span>
+              <span>Запустить кампанию OZON</span>
+              <span class="pill high">Высокий</span>
+            </div>
+            <div class="mock-row">
+              <span class="dot"></span>
+              <span>Созвон с командой 16:00</span>
+              <span class="pill med">Средний</span>
+            </div>
+            <div class="mt-4 pt-4 border-t border-[color:var(--border-soft)] flex items-center justify-between">
+              <span class="text-xs font-semibold text-[color:var(--text-muted)] uppercase tracking-wider">Серия</span>
+              <div class="flex items-end gap-1 h-7">
+                <span class="w-1.5 rounded-sm bg-[color:var(--brand-200)]" style="height:30%"></span>
+                <span class="w-1.5 rounded-sm bg-[color:var(--brand-300)]" style="height:55%"></span>
+                <span class="w-1.5 rounded-sm bg-[color:var(--brand-400)]" style="height:42%"></span>
+                <span class="w-1.5 rounded-sm bg-[color:var(--brand-500)]" style="height:78%"></span>
+                <span class="w-1.5 rounded-sm bg-[color:var(--brand-500)]" style="height:65%"></span>
+                <span class="w-1.5 rounded-sm bg-[color:var(--brand-600)]" style="height:88%"></span>
+                <span class="w-1.5 rounded-sm bg-[color:var(--brand-600)]" style="height:95%"></span>
+              </div>
+              <span class="heading-font font-extrabold text-base text-[color:var(--brand-600)]">7 дн.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== FEATURES ================== -->
+  <section id="features" class="px-5 sm:px-8 py-20 sm:py-28">
+    <div class="max-w-6xl mx-auto">
+      <div class="max-w-2xl mb-14 fade-in">
+        <span class="chip mb-5">Возможности</span>
+        <h2 class="heading-font text-3xl sm:text-5xl font-extrabold mb-5">
+          Один сервис вместо <br class="hidden sm:block" />
+          <span class="grad-text">десяти приложений.</span>
+        </h2>
+        <p class="text-lg text-[color:var(--text-secondary)]">
+          Задачи, календарь, привычки, цели и аналитика — без переключений между вкладками.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="card fade-in delay-1">
+          <div class="feat-icon mb-5">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 9h8M8 13h6M8 17h4"/></svg>
+          </div>
+          <h3 class="heading-font text-xl font-extrabold mb-2">Задачи и доски</h3>
+          <p class="text-sm text-[color:var(--text-secondary)]">
+            Список, Kanban, матрица Эйзенхауэра. Перетаскивай, фильтруй, делегируй.
+          </p>
+        </div>
+
+        <div class="card fade-in delay-2">
+          <div class="feat-icon mb-5">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>
+          </div>
+          <h3 class="heading-font text-xl font-extrabold mb-2">Цели и проекты</h3>
+          <p class="text-sm text-[color:var(--text-secondary)]">
+            Стратегические инициативы с прогресс-барами. Видишь, куда движешься.
+          </p>
+        </div>
+
+        <div class="card fade-in delay-3">
+          <div class="feat-icon mb-5">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11z"/></svg>
+          </div>
+          <h3 class="heading-font text-xl font-extrabold mb-2">Привычки</h3>
+          <p class="text-sm text-[color:var(--text-secondary)]">
+            Серии, журнал, статистика стабильности. Закрепляй, что важно.
+          </p>
+        </div>
+
+        <div class="card fade-in delay-4">
+          <div class="feat-icon mb-5">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg>
+          </div>
+          <h3 class="heading-font text-xl font-extrabold mb-2">Аналитика</h3>
+          <p class="text-sm text-[color:var(--text-secondary)]">
+            Эффективность, фокус-время, загрузка по проектам. Цифры вместо ощущений.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-5 mt-5">
+        <div class="card fade-in delay-1">
+          <div class="feat-icon mb-5">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
+          </div>
+          <h3 class="heading-font text-xl font-extrabold mb-2">Планер</h3>
+          <p class="text-sm text-[color:var(--text-secondary)]">
+            Календарь с задачами и событиями. День, неделя, месяц — переключайся одним кликом.
+          </p>
+        </div>
+
+        <div class="card fade-in delay-2">
+          <div class="feat-icon mb-5">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9z"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+          </div>
+          <h3 class="heading-font text-xl font-extrabold mb-2">Уведомления</h3>
+          <p class="text-sm text-[color:var(--text-secondary)]">
+            Telegram-бот напомнит про дедлайны, упоминания и просрочки. Без спама.
+          </p>
+        </div>
+
+        <div class="card fade-in delay-3">
+          <div class="feat-icon mb-5">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4M8 14h3M14 14h3M8 18h3"/></svg>
+          </div>
+          <h3 class="heading-font text-xl font-extrabold mb-2">Google Календарь</h3>
+          <p class="text-sm text-[color:var(--text-secondary)]">
+            Синхронизируй задачи с Google Календарём. Двусторонне, без дублей.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== PRICING ================== -->
+  <section id="pricing" class="px-5 sm:px-8 py-20 sm:py-28">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14 fade-in">
+        <span class="chip mb-5">Тариф</span>
+        <h2 class="heading-font text-3xl sm:text-5xl font-extrabold mb-5">Просто и честно.</h2>
+        <p class="text-lg text-[color:var(--text-secondary)] max-w-xl mx-auto">
+          Один тариф. Никаких скрытых платежей и upsell-воронок.
+        </p>
+      </div>
+
+      <div class="pricing-card fade-in delay-1">
+        <div class="grid md:grid-cols-2 gap-10 md:gap-12 items-center">
+          <div>
+            <p class="text-sm uppercase tracking-[0.16em] font-semibold opacity-80 mb-3">PLANEL Pro</p>
+            <div class="flex items-baseline gap-2 mb-3 flex-wrap">
+              <span class="heading-font text-5xl sm:text-6xl font-extrabold" style="color:#FFFFFF;">2 500 ₽</span>
+              <span class="text-lg opacity-80">/ месяц</span>
+            </div>
+            <p class="text-base opacity-90 mb-6">7 дней бесплатно. Отмена в любой момент.</p>
+
+            <a href="/app?mode=signup" class="btn-light btn-lg">
+              Подключить
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </a>
+
+            <a href="tel:+79825554499" class="block mt-5 text-sm opacity-90 hover:opacity-100">
+              Связаться напрямую: <span class="font-semibold">+7 982 555 4499</span>
+            </a>
+          </div>
+
+          <div>
+            <div class="check-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+              Безлимит задач, проектов и привычек
+            </div>
+            <div class="check-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+              Добавляй сотрудников в команду
+            </div>
+            <div class="check-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+              Telegram-уведомления и интеграции
+            </div>
+            <div class="check-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+              Синхронизация с Google Calendar
+            </div>
+            <div class="check-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+              Помодоро, аналитика, фокус-время
+            </div>
+            <div class="check-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+              Командные доски и роли
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== ABOUT / KAIROS ================== -->
+  <section id="about" class="px-5 sm:px-8 py-20 sm:py-28">
+    <div class="max-w-6xl mx-auto grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+      <div class="lg:col-span-5 fade-in">
+        <span class="chip mb-5">О компании</span>
+        <h2 class="heading-font text-3xl sm:text-5xl font-extrabold mb-6">
+          Создано тем, <br />
+          <span class="grad-text">кто в теме.</span>
+        </h2>
+        <p class="text-lg text-[color:var(--text-secondary)] mb-5 leading-relaxed">
+          PLANEL — проект <span class="font-semibold text-[color:var(--text-strong)]">Эла Невталиева</span>, основателя клуба <span class="font-semibold text-[color:var(--text-strong)]">KAIROS</span>.
+        </p>
+        <p class="text-base text-[color:var(--text-secondary)] leading-relaxed mb-8">
+          Мы строим инструмент, которым пользуемся сами — для тех, кто запускает, продаёт, растёт и не хочет тратить вечера на «навести порядок в Notion».
+        </p>
+
+        <a href="https://t.me/CloseNevtalievbot" target="_blank" rel="noopener" class="btn-primary">
+          Узнать про KAIROS
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="lg:col-span-7 card fade-in delay-2" style="padding: 1.5rem;">
+        <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+          <h3 class="heading-font text-lg font-extrabold">Клуб KAIROS</h3>
+          <span class="chip">@CloseNevtalievbot</span>
+        </div>
+        <p class="text-sm text-[color:var(--text-secondary)] mb-4">
+          Закрытое сообщество селлеров и предпринимателей.
+        </p>
+
+        <div class="grid sm:grid-cols-2 gap-x-2 gap-y-1">
+          <div class="kairos-item">
+            <span class="kairos-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m16 10 6-3v10l-6-3z"/></svg>
+            </span>
+            <div class="min-w-0">
+              <p class="font-semibold text-[color:var(--text-strong)] text-sm leading-tight">12 онлайн-эфиров в месяц</p>
+              <p class="text-xs text-[color:var(--text-muted)]">Разборы, тренды, Q&amp;A</p>
+            </div>
+          </div>
+          <div class="kairos-item">
+            <span class="kairos-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l6 3V9l6 3V9l6 3v9z"/><path d="M9 21v-4M15 21v-4"/></svg>
+            </span>
+            <div class="min-w-0">
+              <p class="font-semibold text-[color:var(--text-strong)] text-sm leading-tight">Экскурсии на производства</p>
+              <p class="text-xs text-[color:var(--text-muted)]">Как работают сильные</p>
+            </div>
+          </div>
+          <div class="kairos-item">
+            <span class="kairos-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0 1 14 0"/><circle cx="17" cy="9" r="2.5"/><path d="M22 18a5 5 0 0 0-5-5"/></svg>
+            </span>
+            <div class="min-w-0">
+              <p class="font-semibold text-[color:var(--text-strong)] text-sm leading-tight">Окружение единомышленников</p>
+              <p class="text-xs text-[color:var(--text-muted)]">Те, кто двигается в одном ритме</p>
+            </div>
+          </div>
+          <div class="kairos-item">
+            <span class="kairos-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h10l4 4v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>
+            </span>
+            <div class="min-w-0">
+              <p class="font-semibold text-[color:var(--text-strong)] text-sm leading-tight">Уроки по OZON и WB</p>
+              <p class="text-xs text-[color:var(--text-muted)]">От старта до масштаба</p>
+            </div>
+          </div>
+          <div class="kairos-item">
+            <span class="kairos-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </span>
+            <div class="min-w-0">
+              <p class="font-semibold text-[color:var(--text-strong)] text-sm leading-tight">Эфиры с топ-селлерами</p>
+              <p class="text-xs text-[color:var(--text-muted)]">Те, кто пришёл — рассказывают как</p>
+            </div>
+          </div>
+          <div class="kairos-item">
+            <span class="kairos-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z"/><path d="m9 12 2 2 4-4"/></svg>
+            </span>
+            <div class="min-w-0">
+              <p class="font-semibold text-[color:var(--text-strong)] text-sm leading-tight">Офлайн-встречи в Мск и СПб</p>
+              <p class="text-xs text-[color:var(--text-muted)]">Партнёрские площадки</p>
+            </div>
+          </div>
+          <div class="kairos-item sm:col-span-2" style="background: linear-gradient(135deg, var(--brand-50), rgba(214,234,255,0.4)); border: 1px solid var(--brand-100);">
+            <span class="kairos-icon" style="background: linear-gradient(135deg, var(--brand-500), var(--cyan-500)); color: #fff;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13 17 22l-5-3-5 3 1.5-9"/></svg>
+            </span>
+            <div class="min-w-0 flex-1">
+              <p class="font-semibold text-[color:var(--text-strong)] text-sm leading-tight">Разбор кабинета лично от Эла</p>
+              <p class="text-xs text-[color:var(--text-muted)]">Стоит ~200 000 ₽ — для клуба <span class="font-semibold text-[color:var(--brand-700)]">бесплатно</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== FOOTER ================== -->
+  <footer class="border-t border-[color:var(--border-soft)] bg-white">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8 py-12 grid md:grid-cols-3 gap-10 items-start">
+      <div>
+        <div class="flex items-center gap-2.5 mb-4">
+          <div class="logo-mark">PL</div>
+          <span class="heading-font text-xl font-extrabold">PLANEL</span>
+        </div>
+        <p class="text-sm text-[color:var(--text-muted)] max-w-xs">
+          Планируй, отслеживай, достигай. Без хаоса и выгорания.
+        </p>
+      </div>
+
+      <div>
+        <p class="text-xs uppercase tracking-[0.12em] font-semibold text-[color:var(--text-muted)] mb-3">Контакты</p>
+        <a href="tel:+79825554499" class="block text-base font-semibold text-[color:var(--text-strong)] hover:text-[color:var(--brand-700)]">
+          +7 982 555 4499
+        </a>
+        <a href="mailto:eanevtal@gmail.com" class="block mt-2 text-sm text-[color:var(--text-secondary)] hover:text-[color:var(--brand-700)]">
+          eanevtal@gmail.com
+        </a>
+        <a href="https://t.me/CloseNevtalievbot" target="_blank" rel="noopener" class="block mt-2 text-sm text-[color:var(--text-secondary)] hover:text-[color:var(--brand-700)]">
+          Telegram: @CloseNevtalievbot
+        </a>
+      </div>
+
+      <div>
+        <p class="text-xs uppercase tracking-[0.12em] font-semibold text-[color:var(--text-muted)] mb-3">Документы</p>
+        <a href="/privacy" class="block text-sm text-[color:var(--text-secondary)] hover:text-[color:var(--brand-700)]">Политика конфиденциальности</a>
+        <a href="/terms" class="block mt-2 text-sm text-[color:var(--text-secondary)] hover:text-[color:var(--brand-700)]">Оферта</a>
+      </div>
+    </div>
+
+    <div class="border-t border-[color:var(--border-soft)]">
+      <div class="max-w-6xl mx-auto px-5 sm:px-8 py-5 text-xs text-[color:var(--text-muted)] flex flex-wrap items-center justify-between gap-3">
+        <span>© 2026 PLANEL. Все права защищены.</span>
+        <span>Сделано в команде <span class="text-[color:var(--brand-700)] font-semibold">KAIROS</span></span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Fade-in on scroll
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+    document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
+
+    // Mobile menu
+    const burger = document.getElementById('mobBurger');
+    const menu = document.getElementById('mobMenu');
+    const close = document.getElementById('mobClose');
+    burger?.addEventListener('click', () => {
+      menu.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+    close?.addEventListener('click', () => {
+      menu.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+    menu?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      menu.classList.remove('open');
+      document.body.style.overflow = '';
+    }));
+  </script>
+
+  <!-- 🔧 Заглушка: подключи сюда свой бэкенд /api/* -->
+</body>
+</html>

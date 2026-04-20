@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Политика конфиденциальности — PLANEL</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-app:        #F4F7FB;
+      --bg-surface:    #FFFFFF;
+      --border-soft:   #E2E8F0;
+      --text-strong:   #0B1220;
+      --text-primary:  #0F172A;
+      --text-secondary:#475569;
+      --text-muted:    #64748B;
+      --brand-50:  #ECF5FF;
+      --brand-100: #D6EAFF;
+      --brand-500: #1F76F2;
+      --brand-600: #1560D4;
+      --brand-700: #0E4AA8;
+      --cyan-500:  #06B6D4;
+      --shadow-brand: 0 12px 28px rgba(31, 118, 242, 0.28);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, sans-serif;
+      background: var(--bg-app);
+      color: var(--text-primary);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    .heading-font {
+      font-family: "Manrope", "Inter", sans-serif;
+      letter-spacing: -0.02em;
+      color: var(--text-strong);
+    }
+    .grad-text {
+      background: linear-gradient(135deg, var(--brand-500), var(--cyan-500));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .logo-mark {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--brand-500), var(--cyan-500));
+      color: #FFFFFF;
+      font-weight: 800;
+      display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: var(--shadow-brand);
+      letter-spacing: -0.02em;
+      font-size: 0.9rem;
+    }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.55rem 1.1rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border-soft);
+      transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+      text-decoration: none;
+    }
+    .btn-ghost:hover {
+      background: var(--brand-50);
+      color: var(--brand-700);
+      border-color: var(--brand-100);
+    }
+    article h2 {
+      font-family: "Manrope", sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--text-strong);
+      letter-spacing: -0.01em;
+      margin: 2.2rem 0 0.8rem;
+    }
+    article p, article li {
+      color: var(--text-secondary);
+      font-size: 0.98rem;
+    }
+    article ul {
+      padding-left: 1.2rem;
+      margin: 0.5rem 0 1rem;
+    }
+    article li { margin-bottom: 0.35rem; }
+    article a { color: var(--brand-700); text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header class="sticky top-0 z-50 border-b border-[color:var(--border-soft)] bg-white/85 backdrop-blur-md">
+    <div class="max-w-4xl mx-auto px-5 sm:px-8 py-4 flex items-center justify-between gap-4">
+      <a href="/" class="flex items-center gap-2.5">
+        <div class="logo-mark">PL</div>
+        <span class="heading-font text-xl font-extrabold">PLANEL</span>
+      </a>
+      <a href="/" class="btn-ghost">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        На главную
+      </a>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-5 sm:px-8 py-12 sm:py-20">
+    <p class="text-xs uppercase tracking-[0.16em] font-semibold text-[color:var(--text-muted)] mb-3">Документ</p>
+    <h1 class="heading-font text-3xl sm:text-5xl font-extrabold mb-4">
+      Политика <span class="grad-text">конфиденциальности</span>
+    </h1>
+    <p class="text-sm text-[color:var(--text-muted)] mb-10">Действует с 1 января 2026 года · Версия 1.0</p>
+
+    <article>
+      <p>
+        Настоящая Политика конфиденциальности (далее — «Политика») описывает, как сервис <strong>PLANEL</strong> (далее — «Сервис») собирает, использует, хранит и защищает персональные данные пользователей. Используя Сервис, вы соглашаетесь с условиями этой Политики.
+      </p>
+
+      <h2>1. Какие данные мы собираем</h2>
+      <ul>
+        <li>Email, переданный при регистрации.</li>
+        <li>Пароль (хранится в виде криптографического хэша).</li>
+        <li>Содержимое задач, проектов, привычек и заметок, которые вы создаёте в Сервисе.</li>
+        <li>Технические данные: IP-адрес, тип устройства, версия браузера, временные метки запросов.</li>
+      </ul>
+
+      <h2>2. Цели обработки данных</h2>
+      <ul>
+        <li>Аутентификация и предоставление доступа к Сервису.</li>
+        <li>Хранение и синхронизация ваших задач между устройствами.</li>
+        <li>Отправка уведомлений (Telegram, e-mail) — только если вы их включили.</li>
+        <li>Обеспечение безопасности и предотвращение злоупотреблений.</li>
+      </ul>
+
+      <h2>3. Передача данных третьим лицам</h2>
+      <p>
+        Мы не передаём ваши данные третьим лицам, за исключением:
+      </p>
+      <ul>
+        <li>поставщиков инфраструктуры (хостинг, БД), необходимых для работы Сервиса;</li>
+        <li>случаев, когда передача требуется законодательством РФ.</li>
+      </ul>
+
+      <h2>4. Хранение и защита данных</h2>
+      <p>
+        Данные хранятся на серверах в защищённых дата-центрах. Доступ к данным имеют только уполномоченные сотрудники. Применяется шифрование при передаче (HTTPS/TLS) и при хранении паролей (bcrypt-аналоги).
+      </p>
+
+      <h2>5. Сроки хранения</h2>
+      <p>
+        Данные хранятся всё время, пока активна ваша учётная запись. После удаления аккаунта данные стираются в течение 30 дней, за исключением случаев, когда хранение требуется законодательством.
+      </p>
+
+      <h2>6. Ваши права</h2>
+      <ul>
+        <li>Получить копию своих данных.</li>
+        <li>Изменить или удалить данные в личном кабинете.</li>
+        <li>Отозвать согласие на обработку — путём удаления аккаунта.</li>
+        <li>Обратиться с жалобой в Роскомнадзор.</li>
+      </ul>
+
+      <h2>7. Cookies</h2>
+      <p>
+        Сервис использует только технически необходимые cookies (хранение токена аутентификации, настройки интерфейса). Аналитические и рекламные cookies не используются.
+      </p>
+
+      <h2>8. Изменения Политики</h2>
+      <p>
+        Мы можем обновлять Политику. Актуальная версия всегда доступна по адресу <a href="/privacy">/privacy</a>. Существенные изменения мы анонсируем на e-mail.
+      </p>
+
+      <h2>9. Контакты</h2>
+      <p>
+        По вопросам обработки персональных данных:<br />
+        Телефон: <a href="tel:+79825554499">+7 982 555 4499</a><br />
+        E-mail: <a href="mailto:eanevtal@gmail.com">eanevtal@gmail.com</a><br />
+        Telegram: <a href="https://t.me/CloseNevtalievbot" target="_blank" rel="noopener">@CloseNevtalievbot</a>
+      </p>
+    </article>
+  </main>
+
+  <footer class="border-t border-[color:var(--border-soft)] bg-white">
+    <div class="max-w-4xl mx-auto px-5 sm:px-8 py-6 text-xs text-[color:var(--text-muted)] flex flex-wrap items-center justify-between gap-3">
+      <span>© 2026 PLANEL. Все права защищены.</span>
+      <span>
+        <a href="/privacy" class="hover:text-[color:var(--brand-700)]">Политика</a>
+        <span class="mx-2">·</span>
+        <a href="/terms" class="hover:text-[color:var(--brand-700)]">Оферта</a>
+      </span>
+    </div>
+  </footer>
+</body>
+</html>
