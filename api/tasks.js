@@ -45,11 +45,22 @@ module.exports = async function tasks(req, res) {
       const description = sanitizeStr(req.body?.description, 2000);
       const priority = PRIORITIES.includes(req.body?.priority) ? req.body.priority : 'medium';
       const due_date = req.body?.due_date && /^\d{4}-\d{2}-\d{2}$/.test(req.body.due_date) ? req.body.due_date : null;
+      const now = new Date().toISOString();
 
       const { data, error } = await db.from('tasks').insert({
-        user_id: user.id, title, description, priority, due_date, done: false
+        user_id: user.id,
+        title,
+        description,
+        priority,
+        due_date,
+        done: false,
+        created_at: now,
+        updated_at: now
       }).select('id,title,description,priority,done,due_date,created_at').single();
-      if (error) return res.status(500).json({ error: error.message });
+      if (error) {
+        console.error('[tasks POST] insert error:', error);
+        return res.status(500).json({ error: error.message });
+      }
       return res.status(201).json({ task: data });
     }
 
