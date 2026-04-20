@@ -4,7 +4,7 @@ module.exports = async function googleStatus(req, res) {
   try {
     const user = await authUser(req);
     if (!user) return res.status(401).json({ error: 'unauthorized' });
-    const g = user.user_metadata?.google;
+    const g = await require('./_helpers').loadGoogleTokens(user);
     return res.json({
       configured: configured(),
       connected: !!(g && g.refresh_token),

@@ -94,23 +94,69 @@ async function authUser(req) {
   return data.user;
 }
 
+// Загружает Google-токены пользователя.
+// Сначала пытается из таблицы user_google_tokens (предпочтительно, RLS-защищено),
+// при ошибке/отсутствии падает на user_metadata.google (старый путь).
+async function loadGoogleTokens(user) {
+  const db = supabaseAdmin();
+  try {
+    const { data, error } = await db
+      .from('user_google_tokens')
+      .select('access_token, refresh_token, expires_at, email, connected_at, updated_at')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    if (!error && data) return data;
+  } catch (e) {
+    console.warn('[google] table not available, fallback to user_metadata:', e.message);
+  }
+  return user.user_metadata?.google || null;
+}
+
 async function saveGoogleTokens(userId, userMeta, patch) {
-  const merged = { ...(userMeta?.google || {}), ...patch, updated_at: new Date().toISOString() };
-  const newMeta = { ...(userMeta || {}), google: merged };
-  const { error } = await supabaseAdmin().auth.admin.updateUserById(userId, { user_metadata: newMeta });
-  if (error) throw new Error(error.message);
+  const db = supabaseAdmin();
+  // Загружаем существующее, чтобы patch был инкрементальным
+  let existing = null;
+  try {
+    const { data } = await db.from('user_google_tokens').select('*').eq('user_id', userId).maybeSingle();
+    existing = data;
+  } catch {}
+  const base = existing || (userMeta?.google || {});
+  const merged = { ...base, ...patch, user_id: userId, updated_at: new Date().toISOString() };
+
+  // Пытаемся в таблицу
+  let savedToTable = false;
+  try {
+    const { error } = await db.from('user_google_tokens').upsert(merged, { onConflict: 'user_id' });
+    if (!error) savedToTable = true;
+    else console.warn('[google] table upsert failed:', error.message);
+  } catch (e) {
+    console.warn('[google] table not available:', e.message);
+  }
+
+  // Fallback: пишем в user_metadata
+  if (!savedToTable) {
+    const { user_id, ...metaCopy } = merged;
+    const newMeta = { ...(userMeta || {}), google: metaCopy };
+    const { error } = await db.auth.admin.updateUserById(userId, { user_metadata: newMeta });
+    if (error) throw new Error(error.message);
+  }
   return merged;
 }
 
 async function clearGoogleTokens(userId, userMeta) {
-  const newMeta = { ...(userMeta || {}) };
-  delete newMeta.google;
-  const { error } = await supabaseAdmin().auth.admin.updateUserById(userId, { user_metadata: newMeta });
-  if (error) throw new Error(error.message);
+  const db = supabaseAdmin();
+  // Очищаем оба места
+  try { await db.from('user_google_tokens').delete().eq('user_id', userId); } catch {}
+  if (userMeta?.google) {
+    const newMeta = { ...(userMeta || {}) };
+    delete newMeta.google;
+    const { error } = await db.auth.admin.updateUserById(userId, { user_metadata: newMeta });
+    if (error) throw new Error(error.message);
+  }
 }
 
 async function ensureFreshAccess(user) {
-  const g = user.user_metadata?.google;
+  const g = await loadGoogleTokens(user);
   if (!g?.refresh_token) return null;
   const now = Date.now();
   if (g.access_token && g.expires_at && g.expires_at > now + 60_000) return g;
@@ -135,6 +181,7 @@ module.exports = {
   revokeToken,
   fetchGoogleEmail,
   authUser,
+  loadGoogleTokens,
   saveGoogleTokens,
   clearGoogleTokens,
   ensureFreshAccess,

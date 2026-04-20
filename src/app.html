@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <title>PLANEL — Tasks, Goals, Habits</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#1F76F2" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <link rel="apple-touch-icon" href="/icon.svg" />
   <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -425,6 +429,129 @@
     .habit-month-grid .habit-day.habit-future { opacity:0.4; cursor:not-allowed; }
     .habit-month-grid .habit-day.is-today { box-shadow:0 0 0 2px var(--brand-400); }
 
+    /* Note card */
+    .note-card {
+      background:var(--bg-surface); border:1px solid var(--border-soft);
+      border-radius:12px; padding:0.9rem 1rem; cursor:pointer;
+      transition:border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+      display:flex; flex-direction:column; gap:0.35rem;
+      min-height:140px;
+    }
+    .note-card:hover { border-color:var(--brand-300); box-shadow:var(--shadow-md); transform:translateY(-1px); }
+    .note-card h4 { font-weight:700; font-size:0.95rem; color:var(--text-strong); line-height:1.3; }
+    .note-card .note-preview { font-size:0.82rem; color:var(--text-secondary); line-height:1.5; flex:1; display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; }
+    .note-card .note-meta { display:flex; flex-wrap:wrap; gap:0.3rem; align-items:center; margin-top:auto; font-size:0.7rem; color:var(--text-muted); }
+    .note-tag { background:var(--brand-50); color:var(--brand-700); padding:0.1rem 0.5rem; border-radius:9999px; font-weight:600; font-size:0.68rem; border:1px solid var(--brand-100); }
+
+    /* ============ Dark theme ============ */
+    body.dark-mode {
+      --bg-app:        #0B1220;
+      --bg-surface:    #11192A;
+      --bg-muted:      #182238;
+      --bg-sidebar:    #0F1828;
+      --border-soft:   #243149;
+      --border-strong: #36476A;
+
+      --text-strong:   #F1F5F9;
+      --text-primary:  #E2E8F0;
+      --text-secondary:#94A3B8;
+      --text-muted:    #64748B;
+
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.25);
+      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+    body.dark-mode .shell-bg {
+      background:
+        radial-gradient(900px 500px at -10% -20%, rgba(31,118,242,0.18), transparent 60%),
+        radial-gradient(800px 500px at 110% -10%, rgba(6,182,212,0.16), transparent 60%),
+        var(--bg-app);
+    }
+    body.dark-mode input[type="checkbox"] { background:var(--bg-surface); border-color:var(--border-strong); }
+    body.dark-mode .priority-high   { background:#3B0E13; color:#FCA5A5; border-color:#7F1D1D; }
+    body.dark-mode .priority-medium { background:#3D2B0A; color:#FBBF24; border-color:#92400E; }
+    body.dark-mode .priority-low    { background:#0E2D24; color:#6EE7B7; border-color:#065F46; }
+    body.dark-mode .badge-info      { background:#0C2042; color:#7BB8FF; border-color:#0E4AA8; }
+    body.dark-mode .badge-neutral   { background:#1A2236; color:#94A3B8; border-color:#243149; }
+    body.dark-mode .sphere-health        { background:#3B0E13; color:#FCA5A5; border-color:#7F1D1D; }
+    body.dark-mode .sphere-finance       { background:#0E2D24; color:#6EE7B7; border-color:#065F46; }
+    body.dark-mode .sphere-career        { background:#0C2042; color:#7BB8FF; border-color:#0E4AA8; }
+    body.dark-mode .sphere-relationships { background:#3D0F2B; color:#F0ABFC; border-color:#86198F; }
+    body.dark-mode .sphere-rest          { background:#0A2A30; color:#67E8F9; border-color:#155E75; }
+    body.dark-mode .sphere-growth        { background:#1F1147; color:#C4B5FD; border-color:#5B21B6; }
+    body.dark-mode .sphere-good_deeds    { background:#3D2B0A; color:#FBBF24; border-color:#92400E; }
+
+    /* ============ Search modal ============ */
+    .search-overlay { display:flex; align-items:flex-start; justify-content:center; padding-top:10vh; }
+    .search-card { width:100%; max-width:600px; }
+    .search-input {
+      width:100%; padding:0.85rem 1rem 0.85rem 2.7rem; border-radius:12px;
+      border:1px solid var(--border-soft); background:var(--bg-surface);
+      font-size:1rem; color:var(--text-primary);
+    }
+    .search-results { margin-top:0.7rem; max-height:60vh; overflow-y:auto; }
+    .search-group-head { font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); font-weight:700; padding:0.6rem 0.85rem 0.3rem; }
+    .search-item { display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.85rem; border-radius:8px; cursor:pointer; }
+    .search-item:hover, .search-item.active { background:var(--brand-50); }
+    body.dark-mode .search-item:hover, body.dark-mode .search-item.active { background:var(--bg-muted); }
+    .search-item-title { font-size:0.88rem; color:var(--text-strong); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .search-item-type { font-size:0.7rem; color:var(--text-muted); padding:0.1rem 0.5rem; border-radius:9999px; background:var(--bg-muted); white-space:nowrap; }
+    .kbd { font-family: ui-monospace, Menlo, monospace; font-size:0.72rem; padding:0.1rem 0.4rem; border-radius:5px; background:var(--bg-muted); border:1px solid var(--border-soft); color:var(--text-secondary); }
+
+    /* ============ Subtasks ============ */
+    .subtasks-list { display:flex; flex-direction:column; gap:0.3rem; }
+    .subtask-item { display:flex; align-items:center; gap:0.5rem; padding:0.35rem 0.5rem; border-radius:6px; background:var(--bg-muted); }
+    .subtask-input { flex:1; background:transparent; border:none; outline:none; font-size:0.86rem; color:var(--text-primary); }
+    .subtask-item.is-done .subtask-input { text-decoration:line-through; opacity:0.6; }
+    .subtask-remove { background:transparent; border:none; cursor:pointer; color:var(--text-muted); font-size:1.05rem; line-height:1; padding:0 0.25rem; }
+    .subtask-remove:hover { color:var(--danger-700); }
+    .subtask-progress { display:inline-flex; align-items:center; gap:0.25rem; font-size:0.7rem; color:var(--text-muted); padding:0.1rem 0.4rem; border-radius:9999px; background:var(--bg-muted); }
+
+    /* ============ Swipe (mobile) ============ */
+    .task-card { position:relative; touch-action: pan-y; }
+    .task-card.swiping { transition:none; }
+    .task-card.swipe-restored { transition: transform 200ms ease; }
+    .swipe-action {
+      position:absolute; top:0; bottom:0; width:80px;
+      display:flex; align-items:center; justify-content:center;
+      color:#fff; font-weight:700; font-size:0.85rem; border-radius:12px;
+    }
+    .swipe-action-left  { left:0;  background:var(--success-500); }
+    .swipe-action-right { right:0; background:var(--danger-500); }
+
+    /* ============ Markdown content ============ */
+    .md-preview h1, .md-preview h2, .md-preview h3 { font-weight:700; margin:0.6rem 0 0.3rem; color:var(--text-strong); }
+    .md-preview h1 { font-size:1.2rem; } .md-preview h2 { font-size:1.05rem; } .md-preview h3 { font-size:0.95rem; }
+    .md-preview p { margin:0.4rem 0; }
+    .md-preview ul, .md-preview ol { margin:0.4rem 0 0.4rem 1.2rem; }
+    .md-preview ul { list-style:disc; } .md-preview ol { list-style:decimal; }
+    .md-preview li { margin:0.15rem 0; }
+    .md-preview code { background:var(--bg-muted); padding:0.05rem 0.3rem; border-radius:4px; font-family:ui-monospace, Menlo, monospace; font-size:0.85rem; }
+    .md-preview pre { background:var(--bg-muted); padding:0.6rem 0.8rem; border-radius:8px; overflow-x:auto; }
+    .md-preview pre code { background:transparent; padding:0; }
+    .md-preview blockquote { border-left:3px solid var(--brand-400); padding:0.2rem 0.7rem; color:var(--text-secondary); margin:0.4rem 0; }
+    .md-preview a { color:var(--brand-600); text-decoration:underline; }
+    .md-preview hr { border:none; border-top:1px solid var(--border-soft); margin:0.7rem 0; }
+    .md-preview strong { font-weight:700; color:var(--text-strong); }
+
+    /* ============ Editor split ============ */
+    .editor-split { display:grid; grid-template-columns:1fr; gap:0.5rem; }
+    @media (min-width:780px) { .editor-split.split-on { grid-template-columns:1fr 1fr; } }
+    .editor-toolbar { display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap; font-size:0.78rem; }
+    .editor-toolbar button { background:var(--bg-muted); border:1px solid var(--border-soft); padding:0.2rem 0.5rem; border-radius:6px; cursor:pointer; color:var(--text-secondary); }
+    .editor-toolbar button:hover { background:var(--brand-50); color:var(--brand-700); }
+
+    /* ============ Charts ============ */
+    .chart-svg { width:100%; height:200px; }
+
+    /* ============ Toggle switch ============ */
+    .switch { position:relative; display:inline-block; width:38px; height:22px; }
+    .switch input { opacity:0; width:0; height:0; }
+    .switch .slider { position:absolute; cursor:pointer; inset:0; background:var(--border-strong); border-radius:9999px; transition:background 200ms ease; }
+    .switch .slider::before { content:""; position:absolute; height:18px; width:18px; left:2px; top:2px; background:#fff; border-radius:50%; transition:transform 200ms ease; }
+    .switch input:checked + .slider { background:var(--brand-500); }
+    .switch input:checked + .slider::before { transform:translateX(16px); }
+
     /* Элементы уведомлений */
     .notif-item { display:block; padding:0.7rem 1rem; border-bottom:1px solid var(--border-soft); cursor:pointer; transition:background 140ms ease; position:relative; }
     .notif-item:last-child { border-bottom:none; }
@@ -446,6 +573,31 @@
 
   <!-- Toast host -->
   <div id="toastHost"></div>
+
+  <!-- Install prompt baner -->
+  <div id="installBanner" class="hidden fixed bottom-24 lg:bottom-4 left-1/2 -translate-x-1/2 z-[200]"
+       style="background:var(--brand-700); color:#fff; padding:0.7rem 1rem; border-radius:12px; box-shadow:var(--shadow-lg); display:none; align-items:center; gap:0.6rem;">
+    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m6 9 6 6 6-6"/><path d="M5 21h14"/></svg>
+    <span class="text-sm">Установить PLANEL как приложение?</span>
+    <button class="btn-secondary text-xs" id="installAccept">Да</button>
+    <button class="btn-ghost text-xs" id="installDismiss">Позже</button>
+  </div>
+
+  <!-- Global Search Modal -->
+  <div id="searchModal" class="modal-overlay hidden search-overlay" data-modal>
+    <div class="modal-card search-card">
+      <div class="relative">
+        <svg class="icon absolute left-3 top-1/2 -translate-y-1/2 text-[color:var(--text-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="searchInput" class="search-input" placeholder="Поиск по задачам, заметкам, проектам, целям, привычкам…" autocomplete="off">
+      </div>
+      <div class="flex items-center gap-3 mt-3 text-xs text-[color:var(--text-muted)]">
+        <span><span class="kbd">↑</span> <span class="kbd">↓</span> навигация</span>
+        <span><span class="kbd">⏎</span> открыть</span>
+        <span><span class="kbd">Esc</span> закрыть</span>
+      </div>
+      <div id="searchResults" class="search-results"></div>
+    </div>
+  </div>
 
   <!-- Auth Modal -->
   <div id="authModal" class="fixed inset-0 z-[400] hidden items-center justify-center p-4" style="background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(8px); overflow-y: auto;">
@@ -548,11 +700,30 @@
             </select>
           </div>
         </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="form-label">Сфера жизни</label>
+            <select id="taskSphere" class="form-select">
+              <option value="">Без сферы</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Повтор</label>
+            <select id="taskRecurrence" class="form-select">
+              <option value="">Не повторяется</option>
+              <option value="daily">Ежедневно</option>
+              <option value="weekdays">По будням (Пн-Пт)</option>
+              <option value="weekly">Еженедельно</option>
+              <option value="monthly">Ежемесячно</option>
+            </select>
+          </div>
+        </div>
         <div>
-          <label class="form-label">Сфера жизни</label>
-          <select id="taskSphere" class="form-select">
-            <option value="">Без сферы</option>
-          </select>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="form-label" style="margin:0;">Подзадачи</label>
+            <button type="button" class="text-xs text-[color:var(--brand-600)] font-semibold" id="addSubtaskBtn">+ Добавить</button>
+          </div>
+          <div id="subtasksList" class="subtasks-list"></div>
         </div>
         <label class="flex items-center gap-2 text-sm cursor-pointer hidden" id="taskGoogleWrap">
           <input type="checkbox" id="taskGoogleSync">
@@ -622,17 +793,69 @@
           <label class="form-label">Описание</label>
           <input type="text" id="habitDescription" class="form-input" maxlength="200" placeholder="Коротко, что именно делаете">
         </div>
-        <div>
-          <label class="form-label">Сфера жизни</label>
-          <select id="habitSphere" class="form-select">
-            <option value="">Без сферы</option>
-          </select>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="form-label">Сфера жизни</label>
+            <select id="habitSphere" class="form-select">
+              <option value="">Без сферы</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Цель за период</label>
+            <div class="flex items-center gap-1">
+              <input type="number" id="habitTargetCount" class="form-input" min="1" max="31" placeholder="5" style="max-width:70px;">
+              <select id="habitTargetPeriod" class="form-select">
+                <option value="week">в неделю</option>
+                <option value="month">в месяц</option>
+              </select>
+            </div>
+          </div>
         </div>
         <p id="habitError" class="text-xs hidden" style="color:var(--danger-700);"></p>
         <div class="flex flex-wrap gap-2 justify-end pt-2">
           <button type="button" class="btn-ghost text-sm" id="habitDeleteBtn" style="display:none;">Удалить</button>
           <button type="button" class="btn-ghost text-sm" data-close-modal>Отмена</button>
           <button type="submit" class="btn-primary text-sm" id="habitSubmit">Создать</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Note Modal -->
+  <div id="noteModal" class="modal-overlay hidden" data-modal>
+    <div class="modal-card" style="max-width:640px;">
+      <div class="modal-header">
+        <h3 class="heading-font text-lg font-extrabold" id="noteModalTitle">Новая заметка</h3>
+        <button class="modal-close" data-close-modal aria-label="Закрыть">×</button>
+      </div>
+      <form id="noteForm" class="space-y-3">
+        <input type="hidden" id="noteId">
+        <div>
+          <label class="form-label">Название</label>
+          <input type="text" id="noteTitle" class="form-input" maxlength="200" placeholder="Заголовок заметки">
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="form-label" style="margin:0;">Содержимое <span class="normal-case text-[color:var(--text-muted)] tracking-normal">· поддерживает Markdown</span></label>
+            <label class="flex items-center gap-2 text-xs cursor-pointer">
+              <input type="checkbox" id="noteSplitToggle">
+              <span class="text-[color:var(--text-secondary)]">Превью</span>
+            </label>
+          </div>
+          <div id="noteEditor" class="editor-split">
+            <textarea id="noteContent" class="form-textarea" maxlength="20000" placeholder="**Жирный**, *курсив*, # заголовок, - список, [ссылка](url)" style="min-height:240px;"></textarea>
+            <div id="notePreview" class="md-preview hidden card-flat" style="min-height:240px; overflow-y:auto;"></div>
+          </div>
+        </div>
+        <div>
+          <label class="form-label">Теги <span class="normal-case text-[color:var(--text-muted)] tracking-normal">· через запятую</span></label>
+          <input type="text" id="noteTags" class="form-input" maxlength="200" placeholder="работа, идея, книга">
+        </div>
+        <p id="noteError" class="text-xs hidden" style="color:var(--danger-700);"></p>
+        <div class="flex flex-wrap gap-2 justify-end pt-2">
+          <button type="button" class="btn-ghost text-sm" id="noteDeleteBtn" style="display:none;">Удалить</button>
+          <button type="button" class="btn-ghost text-sm" data-close-modal>Отмена</button>
+          <button type="submit" class="btn-primary text-sm" id="noteSubmit">Сохранить</button>
         </div>
       </form>
     </div>
@@ -668,7 +891,11 @@
         </div>
 
         <nav class="space-y-1">
-          <button class="nav-item nav-item-active" data-view="dashboard">
+          <button class="nav-item nav-item-active" data-view="today">
+            <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+            <span>Сегодня</span>
+          </button>
+          <button class="nav-item" data-view="dashboard">
             <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg></span>
             <span>Дашборд</span>
           </button>
@@ -703,6 +930,14 @@
           <button class="nav-item" data-view="emotions">
             <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11z"/><path d="M9 10h.01M15 10h.01M9 14c1 1 3 1 4 0"/></svg></span>
             <span>Дневник эмоций</span>
+          </button>
+          <button class="nav-item" data-view="notes">
+            <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span>
+            <span>Заметки</span>
+          </button>
+          <button class="nav-item" data-view="trash">
+            <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></span>
+            <span>Корзина</span>
           </button>
         </nav>
       </div>
@@ -747,11 +982,71 @@
       <div class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
         <div class="max-w-7xl mx-auto">
 
+          <!-- Сегодня -->
+          <section id="today" class="view view-active space-y-6">
+            <div>
+              <h2 class="heading-font text-2xl font-extrabold mb-1">Сегодня</h2>
+              <p class="text-sm text-[color:var(--text-secondary)]" id="todayDateLabel">—</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div class="card lg:col-span-2">
+                <div class="flex items-start justify-between mb-5 gap-3">
+                  <div>
+                    <h3 class="heading-font text-lg font-extrabold mb-0.5">Задачи на сегодня</h3>
+                    <p class="text-sm text-[color:var(--text-secondary)]" id="todayTasksSubtitle">Ближайшие задачи и дедлайны</p>
+                  </div>
+                  <button class="btn-primary text-xs hidden-for-viewer" id="todayNewTaskBtn">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                    Добавить
+                  </button>
+                </div>
+                <div class="space-y-2" id="tasksList">
+                  <div class="text-sm text-[color:var(--text-muted)] py-6 text-center">Загрузка…</div>
+                </div>
+              </div>
+
+              <div class="space-y-6">
+                <div class="card">
+                  <div class="flex items-center justify-between mb-4">
+                    <h3 class="heading-font text-base font-extrabold">Привычки · Сегодня</h3>
+                    <button class="btn-ghost text-xs" id="quickAddHabit">+ Добавить</button>
+                  </div>
+                  <div class="space-y-1" id="todayHabits">
+                    <div class="text-xs text-[color:var(--text-muted)] py-4 text-center">Загрузка…</div>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <h3 class="heading-font text-base font-extrabold mb-3">Питание сегодня</h3>
+                  <div class="flex items-baseline gap-2 mb-2">
+                    <span class="heading-font text-2xl font-extrabold" id="todayFoodCal">0</span>
+                    <span class="text-sm text-[color:var(--text-muted)]">/ <span id="todayFoodCalGoal">0</span> ккал</span>
+                  </div>
+                  <div class="progress mb-4"><span id="todayFoodCalBar" style="width:0%"></span></div>
+                  <div class="flex items-baseline gap-2 mb-2">
+                    <span class="heading-font text-2xl font-extrabold" id="todayFoodWater">0</span>
+                    <span class="text-sm text-[color:var(--text-muted)]">/ <span id="todayFoodWaterGoal">0</span> мл воды</span>
+                  </div>
+                  <div class="progress"><span id="todayFoodWaterBar" style="width:0%"></span></div>
+                </div>
+
+                <div class="card" id="todayEmotionsCard">
+                  <div class="flex items-center justify-between mb-1">
+                    <h3 class="heading-font text-base font-extrabold">Эмоции</h3>
+                    <button class="text-xs text-[color:var(--brand-600)] font-semibold" id="todayEmotLink">Открыть →</button>
+                  </div>
+                  <p class="text-xs text-[color:var(--text-muted)]" id="todayEmotStatus">Ещё нет записи</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
           <!-- Дашборд -->
-          <section id="dashboard" class="view view-active space-y-6">
+          <section id="dashboard" class="view space-y-6">
             <div>
               <h2 class="heading-font text-2xl font-extrabold mb-1">Дашборд</h2>
-              <p class="text-sm text-[color:var(--text-secondary)]" id="dashboardHello">Обзор задач, аналитика, помодоро и привычки</p>
+              <p class="text-sm text-[color:var(--text-secondary)]">Аналитика, помодоро и общие метрики</p>
             </div>
 
             <!-- KPI -->
@@ -774,51 +1069,39 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div class="card lg:col-span-2">
-                <div class="flex items-start justify-between mb-5 gap-3">
-                  <div>
-                    <h3 class="heading-font text-lg font-extrabold mb-0.5">Задачи на сегодня</h3>
-                    <p class="text-sm text-[color:var(--text-secondary)]" id="dashboardSubtitle">Ближайшие задачи и дедлайны</p>
-                  </div>
+            <div class="card" style="position:relative;">
+              <div class="flex items-center gap-2 mb-4">
+                <h3 class="heading-font text-lg font-extrabold">Помодоро</h3>
+                <button id="pomodoroHelp" class="help-btn" aria-expanded="false" aria-label="Что такое Помодоро?" title="Что такое Помодоро?">?</button>
+              </div>
+              <div id="pomodoroPopover" class="popover hidden" style="top:60px; left:16px;">
+                <strong>Метод «Помодоро»</strong> — техника тайм-менеджмента.<br/>
+                25 минут фокуса → 5 минут отдыха. После 4 циклов — длинный перерыв 15–30 минут. Помогает удерживать концентрацию и избегать выгорания.
+              </div>
+              <div class="text-center">
+                <div id="pomodoroDisplay" class="w-32 h-32 mx-auto mb-4 rounded-full flex items-center justify-center text-white font-bold text-2xl"
+                     style="background: linear-gradient(135deg, var(--brand-500), var(--cyan-500)); box-shadow: var(--shadow-brand);">
+                  25:00
                 </div>
-                <div class="space-y-2" id="tasksList">
-                  <div class="text-sm text-[color:var(--text-muted)] py-6 text-center">Загрузка…</div>
+                <div class="text-xs text-[color:var(--text-muted)] mb-3" id="pomodoroStatus">Готов к работе</div>
+                <div class="flex items-center justify-center gap-2 flex-wrap">
+                  <button class="btn-primary text-xs" id="pomodoroStart">▶ Старт</button>
+                  <button class="btn-ghost text-xs" id="pomodoroPause">⏸ Пауза</button>
+                  <button class="btn-ghost text-xs" id="pomodoroStop">⏹ Сброс</button>
                 </div>
               </div>
-
-              <div class="space-y-6">
-                <div class="card" style="position:relative;">
-                  <div class="flex items-center gap-2 mb-4">
-                    <h3 class="heading-font text-base font-extrabold">Помодоро</h3>
-                    <button id="pomodoroHelp" class="help-btn" aria-expanded="false" aria-label="Что такое Помодоро?" title="Что такое Помодоро?">?</button>
-                  </div>
-                  <div id="pomodoroPopover" class="popover hidden" style="top:60px; left:16px;">
-                    <strong>Метод «Помодоро»</strong> — техника тайм-менеджмента.<br/>
-                    25 минут фокуса → 5 минут отдыха. После 4 циклов — длинный перерыв 15–30 минут. Помогает удерживать концентрацию и избегать выгорания.
-                  </div>
-                  <div class="text-center">
-                    <div id="pomodoroDisplay" class="w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center text-white font-bold text-xl"
-                         style="background: linear-gradient(135deg, var(--brand-500), var(--cyan-500)); box-shadow: var(--shadow-brand);">
-                      25:00
-                    </div>
-                    <div class="text-xs text-[color:var(--text-muted)] mb-3" id="pomodoroStatus">Готов к работе</div>
-                    <div class="flex items-center justify-center gap-2 flex-wrap">
-                      <button class="btn-primary text-xs" id="pomodoroStart">▶ Старт</button>
-                      <button class="btn-ghost text-xs" id="pomodoroPause">⏸ Пауза</button>
-                      <button class="btn-ghost text-xs" id="pomodoroStop">⏹ Сброс</button>
-                    </div>
-                  </div>
+              <div class="grid grid-cols-3 gap-3 mt-5 pt-4 border-t border-[color:var(--border-soft)] text-center">
+                <div>
+                  <div class="heading-font text-2xl font-extrabold text-[color:var(--brand-600)]" id="pomTodayCount">0</div>
+                  <div class="text-xs text-[color:var(--text-muted)]">Сегодня</div>
                 </div>
-
-                <div class="card">
-                  <div class="flex items-center justify-between mb-4">
-                    <h3 class="heading-font text-base font-extrabold">Привычки · Сегодня</h3>
-                    <button class="btn-ghost text-xs" id="quickAddHabit">+ Добавить</button>
-                  </div>
-                  <div class="space-y-1" id="todayHabits">
-                    <div class="text-xs text-[color:var(--text-muted)] py-4 text-center">Загрузка…</div>
-                  </div>
+                <div>
+                  <div class="heading-font text-2xl font-extrabold" style="color:var(--success-700)" id="pomWeekCount">0</div>
+                  <div class="text-xs text-[color:var(--text-muted)]">За 7 дней</div>
+                </div>
+                <div>
+                  <div class="heading-font text-2xl font-extrabold" id="pomTotalMin">0</div>
+                  <div class="text-xs text-[color:var(--text-muted)]">мин фокуса</div>
                 </div>
               </div>
             </div>
@@ -1117,6 +1400,7 @@
                   <span class="text-sm text-[color:var(--text-muted)]">/ <span id="foodCaloriesGoal">0</span> ккал</span>
                 </div>
                 <div class="progress"><span id="foodCaloriesBar" style="width:0%"></span></div>
+                <div class="text-xs text-[color:var(--text-muted)] mt-2" id="foodMacrosToday">Б 0 · Ж 0 · У 0 г</div>
               </div>
               <div class="card">
                 <div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">Вода сегодня</div>
@@ -1188,10 +1472,21 @@
                 <strong>T</strong>ime-bound · с дедлайном<br/>
                 Пример вместо «Похудеть»: «Скинуть 5 кг к 1 сентября через 3 тренировки в неделю и дефицит 400 ккал».
               </div>
-              <button class="btn-primary text-sm" id="goals100AddBtn">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-                Добавить цель
-              </button>
+              <div class="flex items-center gap-2">
+                <button class="btn-ghost text-sm" id="goals100Export" title="Экспорт CSV">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+                  CSV
+                </button>
+                <label class="btn-ghost text-sm cursor-pointer">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg>
+                  Импорт
+                  <input type="file" id="goals100Import" accept=".csv" style="display:none;">
+                </label>
+                <button class="btn-primary text-sm" id="goals100AddBtn">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                  Добавить цель
+                </button>
+              </div>
             </div>
 
             <div class="card">
@@ -1256,8 +1551,53 @@
             </div>
 
             <div class="card">
+              <h3 class="heading-font text-lg font-extrabold mb-4">Настроение и энергия за 30 дней</h3>
+              <svg id="emotionsChart" viewBox="0 0 600 220" class="chart-svg"></svg>
+              <div class="flex items-center gap-4 mt-2 text-xs text-[color:var(--text-muted)]">
+                <span><span style="display:inline-block;width:10px;height:10px;background:var(--brand-500);border-radius:50%;"></span> настроение</span>
+                <span><span style="display:inline-block;width:10px;height:10px;background:var(--cyan-500);border-radius:50%;"></span> энергия</span>
+                <span class="ml-auto" id="emotCorr">—</span>
+              </div>
+            </div>
+
+            <div class="card">
               <h3 class="heading-font text-lg font-extrabold mb-4">История</h3>
               <div id="emotionsList" class="space-y-3"></div>
+            </div>
+          </section>
+
+          <!-- Заметки -->
+          <section id="notes" class="view space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="heading-font text-2xl font-extrabold mb-1">Заметки</h2>
+                <p class="text-sm text-[color:var(--text-secondary)]">Быстрые заметки, идеи, выписки</p>
+              </div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <div class="relative">
+                  <svg class="icon absolute left-3 top-1/2 -translate-y-1/2 text-[color:var(--text-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                  <input type="search" id="notesSearch" placeholder="Поиск" class="pl-9 pr-3 py-2 rounded-lg text-sm form-input" style="min-width:200px;">
+                </div>
+                <button class="btn-primary text-sm" id="newNoteBtn">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                  Новая заметка
+                </button>
+              </div>
+            </div>
+            <div id="notesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+          </section>
+
+          <!-- Корзина -->
+          <section id="trash" class="view space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="heading-font text-2xl font-extrabold mb-1">Корзина</h2>
+                <p class="text-sm text-[color:var(--text-secondary)]">Удалённые объекты — можно восстановить или удалить навсегда</p>
+              </div>
+              <button class="btn-danger text-sm" id="trashEmptyBtn">Очистить полностью</button>
+            </div>
+            <div class="card">
+              <div id="trashList" class="space-y-2"></div>
             </div>
           </section>
 
@@ -1268,10 +1608,16 @@
                 <h2 class="heading-font text-2xl font-extrabold mb-1">Профиль</h2>
                 <p class="text-sm text-[color:var(--text-secondary)]">Личные данные и безопасность</p>
               </div>
-              <button class="btn-ghost text-sm" id="logoutBtn">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
-                Выйти из аккаунта
-              </button>
+              <div class="flex items-center gap-3 flex-wrap">
+                <label class="flex items-center gap-2 text-sm cursor-pointer">
+                  <span>🌙 Тёмная</span>
+                  <span class="switch"><input type="checkbox" id="darkToggle"><span class="slider"></span></span>
+                </label>
+                <button class="btn-ghost text-sm" id="logoutBtn">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+                  Выйти из аккаунта
+                </button>
+              </div>
             </div>
 
             <div class="card">
@@ -1440,9 +1786,9 @@
 
     <nav class="bottom-nav lg:hidden">
       <div class="max-w-4xl mx-auto flex justify-around items-center">
-        <button class="nav-item nav-item-active" data-view="dashboard">
-          <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg></span>
-          <span>Дашборд</span>
+        <button class="nav-item nav-item-active" data-view="today">
+          <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <span>Сегодня</span>
         </button>
         <button class="nav-item" data-view="tasks">
           <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 9h8M8 13h6M8 17h4"/></svg></span>
@@ -1452,9 +1798,9 @@
           <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
           <span>Планер</span>
         </button>
-        <button class="nav-item" data-view="habits">
-          <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11z"/></svg></span>
-          <span>Привычки</span>
+        <button class="nav-item" data-view="notes">
+          <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span>
+          <span>Заметки</span>
         </button>
         <button class="nav-item" data-view="profile">
           <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
@@ -1669,6 +2015,43 @@
       emotions: {
         list: () => loadBucket('emotions', []),
         save: (arr) => saveBucket('emotions', arr),
+      },
+      notes: {
+        list: () => loadBucket('notes', []),
+        save: (arr) => saveBucket('notes', arr),
+      },
+      trash: {
+        list: () => loadBucket('trash', []),
+        save: (arr) => saveBucket('trash', arr),
+        push: (item) => {
+          const list = loadBucket('trash', []);
+          list.unshift({ ...item, _trashed_at: new Date().toISOString() });
+          saveBucket('trash', list.slice(0, 200));
+        }
+      },
+      pomLog: {
+        list: () => loadBucket('pom_log', []),
+        save: (arr) => saveBucket('pom_log', arr),
+        add: (entry) => {
+          const list = loadBucket('pom_log', []);
+          list.push(entry);
+          saveBucket('pom_log', list.slice(-1000));
+        }
+      },
+      taskExtras: {
+        get: () => loadBucket('task_extras', {}),
+        save: (obj) => saveBucket('task_extras', obj),
+        for: (id) => (loadBucket('task_extras', {})[id] || { subtasks: [], recurrence: null }),
+        set: (id, patch) => {
+          const all = loadBucket('task_extras', {});
+          all[id] = { ...(all[id] || {}), ...patch };
+          saveBucket('task_extras', all);
+        },
+        delete: (id) => {
+          const all = loadBucket('task_extras', {});
+          delete all[id];
+          saveBucket('task_extras', all);
+        }
       }
     };
 
@@ -1687,6 +2070,7 @@
       workspace: null,       // {owner_id, owner_email, owner_name, role}
       workspaces: [],        // остальные workspace'ы пользователя (как member)
       teamMembers: [],       // собственные приглашённые сотрудники
+      notesQuery: '',
     };
     function getStatus(task) {
       const meta = Store.taskMeta.for(task.id);
@@ -1836,13 +2220,14 @@
       views.forEach(v => v.classList.toggle('view-active', v.id === name));
       navButtons.forEach(b => b.classList.toggle('nav-item-active', b.dataset.view === name));
       const titles = {
-        dashboard:'Дашборд', tasks:'Задачи и доски', calendar:'Планер',
+        today:'Сегодня', dashboard:'Дашборд', tasks:'Задачи и доски', calendar:'Планер',
         projects:'Цели и проекты', habits:'Привычки',
         wheel:'Колесо баланса', food:'Дневник питания', goals100:'100 целей на год', emotions:'Дневник эмоций',
-        profile:'Профиль', admin:'Админ-панель'
+        notes:'Заметки', trash:'Корзина', profile:'Профиль', admin:'Админ-панель'
       };
       document.title = (titles[name] || 'PLANEL') + ' · PLANEL';
-      if (name === 'dashboard') { renderDashboard(); renderTodayHabits(); renderAnalytics(); }
+      if (name === 'today')     renderTodayView();
+      if (name === 'dashboard') { renderAnalytics(); renderPomStats(); }
       if (name === 'tasks')     renderTasksView();
       if (name === 'calendar')  renderCalendar();
       if (name === 'projects')  renderProjects();
@@ -1851,6 +2236,8 @@
       if (name === 'food')      renderFoodDiary();
       if (name === 'goals100')  renderGoals100();
       if (name === 'emotions')  renderEmotions();
+      if (name === 'notes')     renderNotes();
+      if (name === 'trash')     renderTrash();
       if (name === 'profile')   renderProfile();
       if (name === 'admin')     renderAdmin();
     }
@@ -1858,6 +2245,8 @@
 
     // ---------- Task modal ----------
     function getSphere(task) { return Store.taskMeta.for(task.id).sphere || null; }
+    function getRecurrence(task) { return Store.taskExtras.for(task.id).recurrence || ''; }
+    function getSubtasks(task) { return Store.taskExtras.for(task.id).subtasks || []; }
 
     function fillSphereSelect(selectEl, selected = '') {
       if (!selectEl) return;
@@ -1886,6 +2275,8 @@
         $('#taskProject').value = getProjectId(t) || '';
         $('#taskStatus').value = getStatus(t);
         fillSphereSelect($('#taskSphere'), getSphere(t) || '');
+        $('#taskRecurrence').value = getRecurrence(t);
+        renderSubtasksField(getSubtasks(t));
       } else {
         $('#taskModalTitle').textContent = 'Новая задача';
         $('#taskSubmit').textContent = 'Создать';
@@ -1898,6 +2289,8 @@
         $('#taskProject').value = overrides.project_id || '';
         $('#taskStatus').value = overrides.status || 'todo';
         fillSphereSelect($('#taskSphere'), overrides.sphere || '');
+        $('#taskRecurrence').value = '';
+        renderSubtasksField([]);
       }
       const gcSync = $('#taskGoogleSync');
       const gcWrap = $('#taskGoogleWrap');
@@ -1916,6 +2309,8 @@
       const project_id = $('#taskProject').value || null;
       const status = $('#taskStatus').value;
       const sphere = $('#taskSphere').value || null;
+      const recurrence = $('#taskRecurrence').value || null;
+      const subtasks = readSubtasks();
       const err = $('#taskError');
       err.classList.add('hidden');
       if (!title) { err.textContent = 'Введите название'; err.classList.remove('hidden'); return; }
@@ -1943,6 +2338,7 @@
           const j = await r.json();
           savedId = j.task.id;
           Store.taskMeta.set(savedId, { project_id, status, sphere });
+          Store.taskExtras.set(savedId, { subtasks, recurrence });
           if (status === 'done') {
             await api(taskUrl(`/api/tasks/${savedId}`), { method: 'PUT', body: JSON.stringify({ done: true }) });
           }
@@ -2054,15 +2450,16 @@
     $('#projectDeleteBtn').addEventListener('click', async () => {
       const id = $('#projectId').value;
       if (!id) return;
-      const ok = await confirmModal('Удалить проект? Задачи останутся, но потеряют связь с этим проектом.');
+      const ok = await confirmModal('Переместить проект в корзину? Задачи останутся, но потеряют связь.');
       if (!ok) return;
+      const target = Store.projects.list().find(p => p.id === id);
+      if (target) trashPush('project', target, target.name);
       const projects = Store.projects.list().filter(p => p.id !== id);
       Store.projects.save(projects);
       const meta = Store.taskMeta.get();
       Object.keys(meta).forEach(k => { if (meta[k].project_id === id) meta[k].project_id = null; });
       Store.taskMeta.save(meta);
       closeModal('projectModal');
-      toast('Проект удалён', 'success');
       renderProjects();
       renderTasksView();
       renderAnalytics();
@@ -2082,6 +2479,8 @@
         $('#habitName').value = h.name;
         $('#habitDescription').value = h.description || '';
         fillSphereSelect($('#habitSphere'), h.sphere || '');
+        $('#habitTargetCount').value = h.target_count || '';
+        $('#habitTargetPeriod').value = h.target_period || 'week';
       } else {
         $('#habitModalTitle').textContent = 'Новая привычка';
         $('#habitSubmit').textContent = 'Создать';
@@ -2090,6 +2489,8 @@
         $('#habitName').value = '';
         $('#habitDescription').value = '';
         fillSphereSelect($('#habitSphere'), '');
+        $('#habitTargetCount').value = '';
+        $('#habitTargetPeriod').value = 'week';
       }
       openModal('habitModal');
     }
@@ -2100,16 +2501,18 @@
       const name = $('#habitName').value.trim();
       const description = $('#habitDescription').value.trim();
       const sphere = $('#habitSphere').value || null;
+      const target_count = Number($('#habitTargetCount').value) || null;
+      const target_period = $('#habitTargetPeriod').value || 'week';
       const err = $('#habitError');
       if (!name) { err.textContent = 'Введите название'; err.classList.remove('hidden'); return; }
       const habits = Store.habits.list();
       if (id) {
         const idx = habits.findIndex(h => h.id === id);
         if (idx < 0) return;
-        habits[idx] = { ...habits[idx], name, description, sphere };
+        habits[idx] = { ...habits[idx], name, description, sphere, target_count, target_period };
         toast('Привычка обновлена', 'success');
       } else {
-        habits.push({ id: uid(), name, description, sphere, created_at: new Date().toISOString() });
+        habits.push({ id: uid(), name, description, sphere, target_count, target_period, created_at: new Date().toISOString() });
         toast('Привычка создана', 'success');
       }
       Store.habits.save(habits);
@@ -2121,12 +2524,13 @@
     $('#habitDeleteBtn').addEventListener('click', async () => {
       const id = $('#habitId').value;
       if (!id) return;
-      const ok = await confirmModal('Удалить привычку и всю её историю?');
+      const ok = await confirmModal('Переместить привычку в корзину? История удаляется.');
       if (!ok) return;
+      const habit = Store.habits.list().find(h => h.id === id);
+      if (habit) trashPush('habit', habit, habit.name);
       Store.habits.save(Store.habits.list().filter(h => h.id !== id));
       Store.habitLogs.deleteHabit(id);
       closeModal('habitModal');
-      toast('Привычка удалена', 'success');
       renderHabits();
       renderTodayHabits();
     });
@@ -2170,6 +2574,7 @@
       renderCalendar();
       renderProjects();
       renderAnalytics();
+      renderTodayView();
     }
 
     async function toggleTaskDone(id, done) {
@@ -2180,8 +2585,29 @@
       if (!r.ok) { toast('Не удалось обновить', 'error'); return; }
       const t = state.tasks.find(x => x.id === id);
       if (t) t.done = done;
-      if (done) Store.taskMeta.set(id, { status: 'done' });
-      else {
+      if (done) {
+        Store.taskMeta.set(id, { status: 'done' });
+        // Если есть рекуррентность — клонируем задачу на следующую дату
+        const extras = Store.taskExtras.for(id);
+        if (extras.recurrence && t) {
+          const nextDate = nextRecurrenceDate(extras.recurrence, t.due_date || todayISO());
+          if (nextDate) {
+            try {
+              const create = await api(taskUrl('/api/tasks'), {
+                method: 'POST',
+                body: JSON.stringify({ title: t.title, description: t.description, priority: t.priority, due_date: nextDate })
+              });
+              if (create.ok) {
+                const j = await create.json();
+                Store.taskExtras.set(j.task.id, { recurrence: extras.recurrence, subtasks: (extras.subtasks || []).map(s => ({ ...s, done: false })) });
+                Store.taskMeta.set(j.task.id, { project_id: getProjectId(t), status: 'todo', sphere: getSphere(t) });
+                toast(`Создан повтор на ${formatDateRu(nextDate)}`, 'success');
+                await loadTasks();
+              }
+            } catch {}
+          }
+        }
+      } else {
         const meta = Store.taskMeta.for(id);
         if (meta.status === 'done') Store.taskMeta.set(id, { status: 'todo' });
       }
@@ -2202,9 +2628,10 @@
     // ---------- Dashboard ----------
     function renderDashboard() {
       const list = $('#tasksList');
+      const subtitle = $('#todayTasksSubtitle');
       if (!state.tasks.length) {
-        list.innerHTML = `<div class="empty-state"><strong>Пока нет задач.</strong><br/>Нажмите «Добавить», чтобы начать.</div>`;
-        $('#dashboardSubtitle').textContent = 'Создайте первую задачу';
+        if (list) list.innerHTML = `<div class="empty-state"><strong>Пока нет задач.</strong><br/>Нажмите «Добавить», чтобы начать.</div>`;
+        if (subtitle) subtitle.textContent = 'Создайте первую задачу';
         return;
       }
       const today = todayISO();
@@ -2218,9 +2645,11 @@
       });
       const top = sorted.slice(0, 6);
       const doneToday = state.tasks.filter(t => t.done).length;
-      $('#dashboardSubtitle').textContent = `${state.tasks.length} всего · ${doneToday} выполнено`;
-      list.innerHTML = top.map(t => renderTaskRow(t, { compact: true, today })).join('');
-      bindTaskRowEvents(list);
+      if (subtitle) subtitle.textContent = `${state.tasks.length} всего · ${doneToday} выполнено`;
+      if (list) {
+        list.innerHTML = top.map(t => renderTaskRow(t, { compact: true, today })).join('');
+        bindTaskRowEvents(list);
+      }
     }
 
     function sphereBadgeHtml(sphereId) {
@@ -2236,6 +2665,11 @@
       const projId = getProjectId(t);
       const project = projId ? Store.projects.list().find(p => p.id === projId) : null;
       const sphereId = getSphere(t);
+      const extras = Store.taskExtras.for(t.id);
+      const subs = extras.subtasks || [];
+      const subDone = subs.filter(s => s.done).length;
+      const subBadge = subs.length ? `<span class="subtask-progress">☑ ${subDone}/${subs.length}</span>` : '';
+      const recBadge = extras.recurrence ? `<span class="status-badge badge-info" title="Повтор">🔁</span>` : '';
       const overdue = t.due_date && !t.done && t.due_date < today;
       const dueLabel = t.due_date ? (overdue ? `<span style="color:var(--danger-700);font-weight:600;">📅 ${formatDateRu(t.due_date)} · просрочено</span>` : `📅 ${formatDateRu(t.due_date)}`) : '';
       return `
@@ -2250,6 +2684,8 @@
                   ${dueLabel ? `<span>${dueLabel}</span>` : ''}
                   ${project ? `<span class="status-badge badge-info">${escapeHtml(project.name)}</span>` : ''}
                   ${sphereBadgeHtml(sphereId)}
+                  ${subBadge}
+                  ${recBadge}
                   <span class="status-badge badge-neutral">${STATUS_LABEL[status]}</span>
                 </div>
               </div>
@@ -2280,7 +2716,59 @@
           openTaskModal(card.dataset.id);
         });
       });
-      root.querySelectorAll('.task-card').forEach(card => bindTaskDrag(card));
+      root.querySelectorAll('.task-card').forEach(card => { bindTaskDrag(card); bindTaskSwipe(card); });
+    }
+
+    // Swipe жесты на тач-устройствах: → выполнить, ← удалить
+    function bindTaskSwipe(card) {
+      let startX = 0, startY = 0, deltaX = 0, swiping = false, locked = null;
+      const onStart = (e) => {
+        const t = e.touches?.[0]; if (!t) return;
+        startX = t.clientX; startY = t.clientY; deltaX = 0; swiping = true; locked = null;
+        card.classList.add('swiping');
+      };
+      const onMove = (e) => {
+        if (!swiping) return;
+        const t = e.touches?.[0]; if (!t) return;
+        const dx = t.clientX - startX;
+        const dy = t.clientY - startY;
+        if (locked === null) {
+          if (Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy) * 1.5) locked = 'h';
+          else if (Math.abs(dy) > 12) locked = 'v';
+        }
+        if (locked !== 'h') return;
+        e.preventDefault();
+        deltaX = Math.max(-160, Math.min(160, dx));
+        card.style.transform = `translateX(${deltaX}px)`;
+      };
+      const onEnd = async () => {
+        if (!swiping) return;
+        swiping = false;
+        card.classList.remove('swiping');
+        card.classList.add('swipe-restored');
+        const id = card.dataset.id;
+        if (deltaX > 90) {
+          card.style.transform = '';
+          const t = state.tasks.find(x => x.id === id);
+          if (t && !t.done) await toggleTaskDone(id, true);
+        } else if (deltaX < -90) {
+          card.style.transform = '';
+          const ok = await confirmModal('Удалить задачу?');
+          if (ok) {
+            await api(taskUrl(`/api/tasks/${id}`), { method: 'DELETE' });
+            Store.taskMeta.delete(id); Store.taskExtras.delete(id);
+            await loadTasks();
+          }
+        } else {
+          card.style.transform = '';
+        }
+        setTimeout(() => card.classList.remove('swipe-restored'), 220);
+        locked = null; deltaX = 0;
+      };
+      card.addEventListener('touchstart', onStart, { passive: true });
+      card.addEventListener('touchmove', onMove,  { passive: false });
+      card.addEventListener('touchend', onEnd);
+      card.addEventListener('touchcancel', onEnd);
     }
 
     function bindTaskDrag(card) {
@@ -2722,6 +3210,9 @@
               <span class="status-badge ${streak >= 3 ? 'priority-low' : (periodDone > 0 ? 'badge-info' : 'badge-neutral')}">${badge}</span>
             </div>
             ${h.description ? `<p class="text-xs text-[color:var(--text-muted)] mb-3">${escapeHtml(h.description)}</p>` : ''}
+            ${(() => { const p = habitProgress(h); if (!p) return ''; const pct = Math.min(100, p.pct);
+              return `<div class="mb-3"><div class="flex items-center justify-between text-xs mb-1"><span class="text-[color:var(--text-muted)]">Цель: ${p.target} ${p.period === 'week' ? 'в неделю' : 'в месяц'}</span><span class="font-semibold ${pct >= 100 ? 'text-[color:var(--success-700)]' : 'text-[color:var(--text-secondary)]'}">${p.done}/${p.target} · ${pct}%</span></div><div class="progress ${pct >= 100 ? 'success' : ''}"><span style="width:${pct}%"></span></div></div>`;
+            })()}
             <div class="${isMonth ? 'habit-month-grid' : 'habit-grid'}">${cellsHtml}</div>
           </div>`;
       }).join('');
@@ -2897,6 +3388,7 @@
           pomodoroTime = 25 * 60;
           pomodoroDisplay();
           pomodoroSetStatus('Готов к работе');
+          logPomodoro(25);
           toast('Помодоро завершён! Время на перерыв 🎉', 'success', 4500);
         }
       }, 1000);
@@ -3508,8 +4000,13 @@
       const todayItems = all.filter(e => (e.datetime || '').slice(0, 10) === today);
       const totalCal = todayItems.reduce((s, e) => s + (e.calories || 0), 0);
       const totalWater = todayItems.reduce((s, e) => s + (e.drinks_ml || 0), 0);
+      const totalP = todayItems.reduce((s, e) => s + (e.protein || 0), 0);
+      const totalF = todayItems.reduce((s, e) => s + (e.fat || 0), 0);
+      const totalC = todayItems.reduce((s, e) => s + (e.carbs || 0), 0);
       $('#foodCaloriesToday').textContent = totalCal;
       $('#foodWaterToday').textContent = totalWater;
+      const macroEl = $('#foodMacrosToday');
+      if (macroEl) macroEl.textContent = `Б ${totalP.toFixed(0)} · Ж ${totalF.toFixed(0)} · У ${totalC.toFixed(0)} г`;
       $('#foodCaloriesBar').style.width = Math.min(100, goals.calories ? Math.round(totalCal / goals.calories * 100) : 0) + '%';
       $('#foodWaterBar').style.width    = Math.min(100, goals.water    ? Math.round(totalWater / goals.water * 100) : 0) + '%';
 
@@ -3538,10 +4035,11 @@
             </tr>`).join('');
         body.querySelectorAll('.food-edit').forEach(b => b.addEventListener('click', () => openFoodModal(b.dataset.id)));
         body.querySelectorAll('.food-delete').forEach(b => b.addEventListener('click', async () => {
-          const ok = await confirmModal('Удалить запись?'); if (!ok) return;
+          const ok = await confirmModal('Переместить запись в корзину?'); if (!ok) return;
+          const item = Store.food.list().find(x => x.id === b.dataset.id);
+          if (item) trashPush('food', item, `${MEAL_LABEL[item.meal_type] || ''}: ${item.food || '—'}`);
           Store.food.save(Store.food.list().filter(x => x.id !== b.dataset.id));
           renderFoodDiary();
-          toast('Запись удалена', 'success');
         }));
       }
 
@@ -3623,6 +4121,20 @@
                   <input type="number" id="fdHunger" class="form-input" min="1" max="10" value="${entry?.hunger ?? ''}" placeholder="5">
                 </div>
               </div>
+              <div class="grid grid-cols-3 gap-3">
+                <div>
+                  <label class="form-label">Белки, г</label>
+                  <input type="number" id="fdProtein" class="form-input" min="0" max="999" step="0.1" value="${entry?.protein ?? ''}" placeholder="20">
+                </div>
+                <div>
+                  <label class="form-label">Жиры, г</label>
+                  <input type="number" id="fdFat" class="form-input" min="0" max="999" step="0.1" value="${entry?.fat ?? ''}" placeholder="15">
+                </div>
+                <div>
+                  <label class="form-label">Углеводы, г</label>
+                  <input type="number" id="fdCarbs" class="form-input" min="0" max="999" step="0.1" value="${entry?.carbs ?? ''}" placeholder="60">
+                </div>
+              </div>
               <div class="flex gap-2 justify-end pt-2">
                 ${entry ? '<button type="button" class="btn-ghost text-sm" id="fdDelete">Удалить</button>' : ''}
                 <button type="button" class="btn-ghost text-sm" data-close-modal>Отмена</button>
@@ -3647,6 +4159,9 @@
           drinks_ml: Number($('#fdDrinksMl').value) || 0,
           calories: Number($('#fdCal').value) || 0,
           hunger: Number($('#fdHunger').value) || null,
+          protein: Number($('#fdProtein').value) || 0,
+          fat:     Number($('#fdFat').value)     || 0,
+          carbs:   Number($('#fdCarbs').value)   || 0,
           created_at: entry?.created_at || new Date().toISOString()
         };
         const list = Store.food.list();
@@ -3661,10 +4176,11 @@
         renderFoodDiary();
       });
       $('#fdDelete')?.addEventListener('click', async () => {
-        const ok = await confirmModal('Удалить запись?'); if (!ok) return;
+        const ok = await confirmModal('Переместить запись в корзину?'); if (!ok) return;
+        const item = Store.food.list().find(x => x.id === entryId);
+        if (item) trashPush('food', item, `${MEAL_LABEL[item.meal_type] || ''}: ${item.food || '—'}`);
         Store.food.save(Store.food.list().filter(x => x.id !== entryId));
         closeModal('foodDynamicModal'); modalEl.remove();
-        toast('Запись удалена', 'success');
         renderFoodDiary();
       });
     }
@@ -3781,15 +4297,22 @@
         renderGoals100();
       });
       $('#glDelete')?.addEventListener('click', async () => {
-        const ok = await confirmModal('Удалить цель?'); if (!ok) return;
+        const ok = await confirmModal('Переместить цель в корзину?'); if (!ok) return;
+        const item = Store.goals100.list().find(x => x.id === goalId);
+        if (item) trashPush('goal', item, item.goal);
         Store.goals100.save(Store.goals100.list().filter(x => x.id !== goalId));
         closeModal('goalsDynamicModal'); $('#goalsDynamicModal').remove();
-        toast('Цель удалена', 'success');
         renderGoals100();
       });
     }
 
     $('#goals100AddBtn')?.addEventListener('click', () => openGoals100Modal());
+    $('#goals100Export')?.addEventListener('click', exportGoalsCSV);
+    $('#goals100Import')?.addEventListener('change', (e) => {
+      const f = e.target.files?.[0];
+      if (f) importGoalsCSV(f).catch(err => toast('Ошибка импорта: ' + err.message, 'error'));
+      e.target.value = '';
+    });
 
     // ---------- Emotions diary ----------
     let selectedMood = null;
@@ -3836,6 +4359,7 @@
     });
 
     function renderEmotions() {
+      renderEmotionsChart();
       const list = Store.emotions.list().slice().sort((a, b) => b.date.localeCompare(a.date));
       const today = todayISO();
       const todayEntry = list.find(e => e.date === today);
@@ -3875,13 +4399,580 @@
       `).join('');
       host.querySelectorAll('.emot-delete').forEach(btn => {
         btn.addEventListener('click', async () => {
-          const ok = await confirmModal('Удалить запись?'); if (!ok) return;
+          const ok = await confirmModal('Переместить запись в корзину?'); if (!ok) return;
+          const item = Store.emotions.list().find(x => x.id === btn.dataset.id);
+          if (item) trashPush('emotion', item, formatDateRu(item.date));
           Store.emotions.save(Store.emotions.list().filter(x => x.id !== btn.dataset.id));
-          toast('Запись удалена', 'success');
           renderEmotions();
         });
       });
     }
+
+    // ---------- Dark theme ----------
+    function applyTheme(theme) {
+      document.body.classList.toggle('dark-mode', theme === 'dark');
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#0B1220' : '#1F76F2');
+      const t = $('#darkToggle'); if (t) t.checked = theme === 'dark';
+    }
+    function getTheme() {
+      try { return localStorage.getItem('planel_theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+      catch { return 'light'; }
+    }
+    function setTheme(t) { try { localStorage.setItem('planel_theme', t); } catch {} applyTheme(t); }
+    applyTheme(getTheme());
+    $('#darkToggle')?.addEventListener('change', (e) => setTheme(e.target.checked ? 'dark' : 'light'));
+
+    // ---------- Markdown (мини-парсер) ----------
+    function renderMarkdown(src) {
+      if (!src) return '';
+      const esc = (s) => escapeHtml(s);
+      let s = esc(src);
+      // code blocks
+      s = s.replace(/```([\s\S]*?)```/g, (_, c) => `<pre><code>${c}</code></pre>`);
+      // inline code
+      s = s.replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`);
+      // headings
+      s = s.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+      s = s.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+      s = s.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+      // hr
+      s = s.replace(/^---+$/gm, '<hr>');
+      // blockquote
+      s = s.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
+      // bold / italic
+      s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      s = s.replace(/(^|[^*])\*([^*]+)\*/g, '$1<em>$2</em>');
+      // links
+      s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+      // unordered lists
+      s = s.replace(/(?:^- (.+)(?:\n|$))+/gm, (m) => {
+        const items = m.trim().split(/\n/).map(l => '<li>' + l.replace(/^- /, '') + '</li>').join('');
+        return '<ul>' + items + '</ul>';
+      });
+      // ordered lists
+      s = s.replace(/(?:^\d+\. (.+)(?:\n|$))+/gm, (m) => {
+        const items = m.trim().split(/\n/).map(l => '<li>' + l.replace(/^\d+\. /, '') + '</li>').join('');
+        return '<ol>' + items + '</ol>';
+      });
+      // paragraphs (двойной перевод строки)
+      s = s.split(/\n{2,}/).map(block => {
+        if (/^<(h[1-3]|ul|ol|pre|blockquote|hr)/.test(block.trim())) return block;
+        return '<p>' + block.replace(/\n/g, '<br>') + '</p>';
+      }).join('\n');
+      return s;
+    }
+
+    // ---------- Trash (soft delete) ----------
+    function trashPush(type, item, label) { Store.trash.push({ type, item, label }); toast('Перемещено в корзину', 'success'); }
+    function renderTrash() {
+      const host = $('#trashList');
+      const list = Store.trash.list();
+      if (!list.length) {
+        host.innerHTML = `<div class="empty-state"><strong>Корзина пуста.</strong></div>`;
+        return;
+      }
+      host.innerHTML = list.map((entry, i) => `
+        <div class="member-row" data-i="${i}">
+          <div class="flex-1 min-w-0">
+            <div class="font-semibold text-[color:var(--text-strong)] text-sm truncate">${escapeHtml(entry.label || '(без названия)')}</div>
+            <div class="text-xs text-[color:var(--text-muted)]">${typeLabel(entry.type)} · ${new Date(entry._trashed_at).toLocaleDateString('ru-RU')}</div>
+          </div>
+          <button class="btn-secondary text-xs" data-action="restore" data-i="${i}">Восстановить</button>
+          <button class="btn-danger text-xs" data-action="purge" data-i="${i}">Удалить</button>
+        </div>
+      `).join('');
+      host.querySelectorAll('[data-action="restore"]').forEach(b => b.addEventListener('click', () => restoreFromTrash(+b.dataset.i)));
+      host.querySelectorAll('[data-action="purge"]').forEach(b => b.addEventListener('click', async () => {
+        const ok = await confirmModal('Удалить навсегда?'); if (!ok) return;
+        const arr = Store.trash.list(); arr.splice(+b.dataset.i, 1); Store.trash.save(arr); renderTrash();
+      }));
+    }
+    function typeLabel(t) {
+      return ({ note:'Заметка', goal:'Цель', project:'Проект', habit:'Привычка', food:'Запись питания', emotion:'Эмоция' })[t] || t;
+    }
+    function restoreFromTrash(idx) {
+      const arr = Store.trash.list();
+      const entry = arr[idx];
+      if (!entry) return;
+      const t = entry.type, item = entry.item;
+      if (t === 'note')    { const l = Store.notes.list(); l.push(item); Store.notes.save(l); }
+      if (t === 'goal')    { const l = Store.goals100.list(); l.push(item); Store.goals100.save(l); }
+      if (t === 'project') { const l = Store.projects.list(); l.push(item); Store.projects.save(l); }
+      if (t === 'habit')   { const l = Store.habits.list(); l.push(item); Store.habits.save(l); }
+      if (t === 'food')    { const l = Store.food.list(); l.push(item); Store.food.save(l); }
+      if (t === 'emotion') { const l = Store.emotions.list(); l.push(item); Store.emotions.save(l); }
+      arr.splice(idx, 1); Store.trash.save(arr);
+      toast('Восстановлено', 'success');
+      renderTrash();
+    }
+    $('#trashEmptyBtn')?.addEventListener('click', async () => {
+      const ok = await confirmModal('Очистить корзину полностью?', 'Очистить');
+      if (!ok) return;
+      Store.trash.save([]); renderTrash(); toast('Корзина очищена', 'success');
+    });
+
+    // ---------- Subtasks (внутри модалки задачи) ----------
+    function readSubtasks() {
+      return $$('#subtasksList .subtask-item').map(el => ({
+        text: el.querySelector('.subtask-input').value.trim(),
+        done: el.classList.contains('is-done')
+      })).filter(s => s.text);
+    }
+    function renderSubtasksField(subtasks = []) {
+      const host = $('#subtasksList');
+      host.innerHTML = subtasks.map(s => subtaskRowHtml(s)).join('');
+      bindSubtaskRow(host);
+    }
+    function subtaskRowHtml(s) {
+      return `<div class="subtask-item ${s.done ? 'is-done' : ''}">
+        <input type="checkbox" class="subtask-check" ${s.done ? 'checked' : ''}>
+        <input type="text" class="subtask-input" maxlength="200" value="${escapeHtml(s.text)}" placeholder="Шаг">
+        <button type="button" class="subtask-remove" title="Удалить">×</button>
+      </div>`;
+    }
+    function bindSubtaskRow(root) {
+      root.querySelectorAll('.subtask-check').forEach(cb => cb.addEventListener('change', (e) => {
+        e.target.closest('.subtask-item').classList.toggle('is-done', e.target.checked);
+      }));
+      root.querySelectorAll('.subtask-remove').forEach(btn => btn.addEventListener('click', (e) => {
+        e.target.closest('.subtask-item').remove();
+      }));
+    }
+    $('#addSubtaskBtn')?.addEventListener('click', () => {
+      const host = $('#subtasksList');
+      host.insertAdjacentHTML('beforeend', subtaskRowHtml({ text: '', done: false }));
+      bindSubtaskRow(host);
+      host.querySelector('.subtask-item:last-child .subtask-input')?.focus();
+    });
+
+    // ---------- Recurrence: продлеваем задачу при отметке done ----------
+    function nextRecurrenceDate(rec, fromISO) {
+      const d = new Date(fromISO || todayISO());
+      if (rec === 'daily')    d.setDate(d.getDate() + 1);
+      else if (rec === 'weekdays') {
+        do { d.setDate(d.getDate() + 1); } while ([0,6].includes(d.getDay()));
+      }
+      else if (rec === 'weekly')  d.setDate(d.getDate() + 7);
+      else if (rec === 'monthly') d.setMonth(d.getMonth() + 1);
+      else return null;
+      return d.toISOString().slice(0, 10);
+    }
+
+    // ---------- Habit targets ----------
+    function habitProgress(habit) {
+      const target = habit.target_count;
+      if (!target) return null;
+      const period = habit.target_period || 'week';
+      const today = todayISO();
+      const days = period === 'week' ? 7 : 30;
+      const range = Array.from({length: days}, (_, i) => addDaysISO(today, -(days - 1 - i)));
+      const done = range.filter(d => Store.habitLogs.isDone(habit.id, d)).length;
+      return { done, target, period, pct: Math.round(done / target * 100) };
+    }
+
+    // ---------- Emotions chart (SVG line, 30 days) ----------
+    function renderEmotionsChart() {
+      const svg = $('#emotionsChart'); if (!svg) return;
+      const today = todayISO();
+      const days = Array.from({length: 30}, (_, i) => addDaysISO(today, -(29 - i)));
+      const list = Store.emotions.list();
+      const byDate = Object.fromEntries(list.map(e => [e.date, e]));
+      // Mood: 1..7 → ось 0..7. Energy: 1..10. Нормализуем в 0..1.
+      const W = 600, H = 220, padL = 30, padR = 10, padT = 10, padB = 28;
+      const innerW = W - padL - padR, innerH = H - padT - padB;
+      const xAt = (i) => padL + (i / (days.length - 1)) * innerW;
+      const yAt = (v, max) => padT + innerH - (v / max) * innerH;
+      const moodPoints = []; const energyPoints = [];
+      days.forEach((d, i) => {
+        const e = byDate[d]; if (!e) return;
+        if (e.mood != null) moodPoints.push([xAt(i), yAt(e.mood, 7)]);
+        if (e.energy != null) energyPoints.push([xAt(i), yAt(e.energy, 10)]);
+      });
+      const polyline = (pts, color) => pts.length < 2 ? '' :
+        `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`
+        + pts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="${color}"/>`).join('');
+      const grid = [0.25, 0.5, 0.75, 1].map(t => {
+        const y = padT + innerH * (1 - t);
+        return `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="var(--border-soft)" stroke-width="1" stroke-dasharray="2,3"/>`;
+      }).join('');
+      const xLabels = [0, 7, 14, 21, 29].map(i => {
+        const d = new Date(days[i]);
+        return `<text x="${xAt(i)}" y="${H-8}" text-anchor="middle" font-size="10" fill="var(--text-muted)">${d.getDate()}.${String(d.getMonth()+1).padStart(2,'0')}</text>`;
+      }).join('');
+      svg.innerHTML = `${grid}${xLabels}${polyline(moodPoints, '#1F76F2')}${polyline(energyPoints, '#06B6D4')}`;
+      // Корреляция Pearson по парам, где есть и mood и energy
+      const pairs = days.map(d => byDate[d]).filter(e => e && e.mood != null && e.energy != null);
+      if (pairs.length >= 3) {
+        const n = pairs.length;
+        const mx = pairs.reduce((s,e) => s + e.mood, 0) / n;
+        const my = pairs.reduce((s,e) => s + e.energy, 0) / n;
+        const num = pairs.reduce((s,e) => s + (e.mood - mx) * (e.energy - my), 0);
+        const denom = Math.sqrt(pairs.reduce((s,e) => s + (e.mood - mx) ** 2, 0) * pairs.reduce((s,e) => s + (e.energy - my) ** 2, 0));
+        const r = denom ? num / denom : 0;
+        $('#emotCorr').textContent = `Корреляция настроение↔энергия: ${r.toFixed(2)}`;
+      } else {
+        $('#emotCorr').textContent = 'Недостаточно данных для корреляции';
+      }
+    }
+
+    // ---------- Goals100 CSV ----------
+    function csvEscape(v) {
+      const s = String(v ?? '');
+      if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+      return s;
+    }
+    function exportGoalsCSV() {
+      const list = Store.goals100.list();
+      const header = ['#','Цель','Почему важно','Как достичь','Кто поможет','Метрика','Чувства','Достигнута'];
+      const lines = [header.map(csvEscape).join(',')];
+      list.forEach((g, i) => {
+        lines.push([i+1, g.goal, g.why, g.how, g.who, g.metric, g.feelings, g.done ? 'да' : 'нет'].map(csvEscape).join(','));
+      });
+      const blob = new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `planel-goals-${todayISO()}.csv`; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      toast(`Экспортировано ${list.length} целей`, 'success');
+    }
+    function parseCSV(text) {
+      // Простой CSV парсер: учитывает кавычки, переводы строк внутри кавычек
+      const rows = []; let row = []; let cur = ''; let inQuotes = false;
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (inQuotes) {
+          if (c === '"' && text[i+1] === '"') { cur += '"'; i++; }
+          else if (c === '"') inQuotes = false;
+          else cur += c;
+        } else {
+          if (c === '"') inQuotes = true;
+          else if (c === ',') { row.push(cur); cur = ''; }
+          else if (c === '\n' || c === '\r') {
+            if (cur || row.length) { row.push(cur); rows.push(row); row = []; cur = ''; }
+            if (c === '\r' && text[i+1] === '\n') i++;
+          } else cur += c;
+        }
+      }
+      if (cur || row.length) { row.push(cur); rows.push(row); }
+      return rows;
+    }
+    async function importGoalsCSV(file) {
+      const text = await file.text();
+      const rows = parseCSV(text.replace(/^\uFEFF/, ''));
+      if (!rows.length) { toast('Файл пустой', 'error'); return; }
+      // Поддержим как с заголовком (наш экспорт), так и без
+      const header = rows[0].map(s => s.toLowerCase());
+      const hasHeader = header.includes('цель') || header.includes('goal');
+      const dataRows = hasHeader ? rows.slice(1) : rows;
+      const list = Store.goals100.list();
+      let imported = 0;
+      dataRows.forEach(r => {
+        const goal = r[1] || r[0];
+        if (!goal || !goal.trim()) return;
+        list.push({
+          id: uid(),
+          goal: goal.trim(),
+          why: r[2] || '',
+          how: r[3] || '',
+          who: r[4] || '',
+          metric: r[5] || '',
+          feelings: r[6] || '',
+          done: /^(да|yes|true|1)$/i.test((r[7] || '').trim()),
+          created_at: new Date().toISOString()
+        });
+        imported++;
+      });
+      Store.goals100.save(list);
+      toast(`Импортировано ${imported} целей`, 'success');
+      renderGoals100();
+    }
+
+    // ---------- Pomodoro session log ----------
+    function logPomodoro(durationMin) {
+      Store.pomLog.add({ id: uid(), at: new Date().toISOString(), minutes: durationMin });
+      renderPomStats();
+    }
+    function renderPomStats() {
+      const log = Store.pomLog.list();
+      const today = todayISO();
+      const todayCount = log.filter(e => e.at.slice(0,10) === today).length;
+      const weekCutoff = new Date(); weekCutoff.setDate(weekCutoff.getDate() - 6);
+      const weekCount = log.filter(e => new Date(e.at) >= weekCutoff).length;
+      const totalMin = log.reduce((s, e) => s + (e.minutes || 25), 0);
+      const tEl = $('#pomTodayCount'); if (tEl) tEl.textContent = todayCount;
+      const wEl = $('#pomWeekCount');  if (wEl) wEl.textContent = weekCount;
+      const mEl = $('#pomTotalMin');   if (mEl) mEl.textContent = totalMin;
+    }
+
+    // ---------- Search (Cmd/Ctrl+K) ----------
+    let searchSelectedIdx = 0;
+    let searchItems = [];
+    function buildSearchIndex(query) {
+      const q = (query || '').toLowerCase().trim();
+      if (!q) return [];
+      const results = [];
+      state.tasks.forEach(t => {
+        if ((t.title || '').toLowerCase().includes(q) || (t.description || '').toLowerCase().includes(q))
+          results.push({ type:'Задача', label: t.title, action: () => openTaskModal(t.id) });
+      });
+      Store.notes.list().forEach(n => {
+        const all = (n.title + ' ' + (n.content || '') + ' ' + (n.tags || []).join(' ')).toLowerCase();
+        if (all.includes(q)) results.push({ type:'Заметка', label: n.title || '(без названия)', action: () => { switchView('notes'); openNoteModal(n.id); } });
+      });
+      Store.projects.list().forEach(p => {
+        if ((p.name || '').toLowerCase().includes(q) || (p.description || '').toLowerCase().includes(q))
+          results.push({ type:'Проект', label: p.name, action: () => { state.projectFilter = p.id; switchView('tasks'); } });
+      });
+      Store.goals100.list().forEach(g => {
+        if ((g.goal || '').toLowerCase().includes(q)) results.push({ type:'Цель', label: g.goal, action: () => { switchView('goals100'); openGoals100Modal(g.id); } });
+      });
+      Store.habits.list().forEach(h => {
+        if ((h.name || '').toLowerCase().includes(q)) results.push({ type:'Привычка', label: h.name, action: () => switchView('habits') });
+      });
+      return results.slice(0, 30);
+    }
+    function renderSearch() {
+      const host = $('#searchResults');
+      if (!searchItems.length) {
+        host.innerHTML = `<div class="empty-state" style="padding:1.5rem;">${$('#searchInput').value.trim() ? 'Ничего не найдено' : 'Начните вводить запрос'}</div>`;
+        return;
+      }
+      host.innerHTML = searchItems.map((r, i) => `
+        <div class="search-item ${i === searchSelectedIdx ? 'active' : ''}" data-i="${i}">
+          <span class="search-item-title">${escapeHtml(r.label)}</span>
+          <span class="search-item-type">${r.type}</span>
+        </div>
+      `).join('');
+      host.querySelectorAll('.search-item').forEach(el => {
+        el.addEventListener('click', () => activateSearchItem(+el.dataset.i));
+      });
+    }
+    function activateSearchItem(i) {
+      const item = searchItems[i];
+      if (!item) return;
+      closeModal('searchModal');
+      item.action();
+    }
+    function openSearch() {
+      $('#searchInput').value = '';
+      searchItems = []; searchSelectedIdx = 0;
+      renderSearch();
+      openModal('searchModal');
+    }
+    $('#searchInput')?.addEventListener('input', (e) => {
+      searchItems = buildSearchIndex(e.target.value);
+      searchSelectedIdx = 0;
+      renderSearch();
+    });
+    $('#searchInput')?.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); searchSelectedIdx = Math.min(searchItems.length - 1, searchSelectedIdx + 1); renderSearch(); }
+      if (e.key === 'ArrowUp')   { e.preventDefault(); searchSelectedIdx = Math.max(0, searchSelectedIdx - 1); renderSearch(); }
+      if (e.key === 'Enter')     { e.preventDefault(); activateSearchItem(searchSelectedIdx); }
+    });
+
+    // ---------- Hotkeys ----------
+    function isTypingTarget(el) {
+      if (!el) return false;
+      const tag = el.tagName;
+      return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
+    }
+    document.addEventListener('keydown', (e) => {
+      // Cmd/Ctrl + K — search
+      if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault(); openSearch(); return;
+      }
+      // / — search (если не в поле ввода)
+      if (e.key === '/' && !isTypingTarget(e.target)) {
+        e.preventDefault(); openSearch(); return;
+      }
+      // N — новая задача (если не в поле ввода и есть права)
+      if ((e.key === 'n' || e.key === 'N') && !isTypingTarget(e.target) && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault(); if (typeof canWrite !== 'function' || canWrite()) openTaskModal(); return;
+      }
+      // ? — подсказки
+      if (e.key === '?' && !isTypingTarget(e.target)) {
+        e.preventDefault();
+        toast('Горячие: ⌘K/Ctrl+K — поиск, N — новая задача, / — поиск', 'info', 5000);
+      }
+    });
+
+    // ---------- PWA install prompt + service worker ----------
+    let deferredInstall = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstall = e;
+      const dismissed = localStorage.getItem('planel_install_dismissed');
+      if (!dismissed && !window.matchMedia('(display-mode: standalone)').matches) {
+        const banner = $('#installBanner');
+        if (banner) { banner.style.display = 'flex'; banner.classList.remove('hidden'); }
+      }
+    });
+    $('#installAccept')?.addEventListener('click', async () => {
+      if (!deferredInstall) return;
+      deferredInstall.prompt();
+      const result = await deferredInstall.userChoice;
+      if (result.outcome === 'accepted') toast('Установлено!', 'success');
+      deferredInstall = null;
+      $('#installBanner').style.display = 'none';
+    });
+    $('#installDismiss')?.addEventListener('click', () => {
+      localStorage.setItem('planel_install_dismissed', '1');
+      $('#installBanner').style.display = 'none';
+    });
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(err => console.warn('SW reg failed', err));
+      });
+    }
+
+    // ---------- Today ----------
+    function renderTodayView() {
+      const todayLabel = new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      $('#todayDateLabel').textContent = todayLabel.charAt(0).toUpperCase() + todayLabel.slice(1);
+      renderDashboard();  // fills #tasksList
+      renderTodayHabits();// fills #todayHabits
+      // Food summary
+      const goals = Store.food.goals();
+      const today = todayISO();
+      const items = Store.food.list().filter(e => (e.datetime || '').slice(0,10) === today);
+      const cal = items.reduce((s,e) => s + (e.calories || 0), 0);
+      const water = items.reduce((s,e) => s + (e.drinks_ml || 0), 0);
+      $('#todayFoodCal').textContent = cal;
+      $('#todayFoodCalGoal').textContent = goals.calories || 0;
+      $('#todayFoodCalBar').style.width = Math.min(100, goals.calories ? Math.round(cal / goals.calories * 100) : 0) + '%';
+      $('#todayFoodWater').textContent = water;
+      $('#todayFoodWaterGoal').textContent = goals.water || 0;
+      $('#todayFoodWaterBar').style.width = Math.min(100, goals.water ? Math.round(water / goals.water * 100) : 0) + '%';
+      // Emotions
+      const emot = Store.emotions.list().find(e => e.date === today);
+      const status = $('#todayEmotStatus');
+      if (emot) {
+        const MOOD_EMOJI = { 1:'😢', 2:'😕', 3:'😐', 4:'🙂', 5:'😊', 6:'😄', 7:'🤩' };
+        const parts = [];
+        if (emot.mood) parts.push(MOOD_EMOJI[emot.mood]);
+        if (emot.sleep != null) parts.push(`💤 ${emot.sleep}ч`);
+        if (emot.energy != null) parts.push(`⚡ ${emot.energy}/10`);
+        status.textContent = parts.join(' · ') || 'Запись сделана';
+      } else {
+        status.textContent = 'Ещё нет записи';
+      }
+    }
+
+    $('#todayNewTaskBtn')?.addEventListener('click', () => openTaskModal());
+    $('#todayEmotLink')?.addEventListener('click', () => switchView('emotions'));
+
+    // ---------- Notes ----------
+    function renderNotes() {
+      const all = Store.notes.list().slice().sort((a,b) => (b.updated_at || b.created_at).localeCompare(a.updated_at || a.created_at));
+      const q = (state.notesQuery || '').toLowerCase().trim();
+      const filtered = !q ? all : all.filter(n =>
+        (n.title || '').toLowerCase().includes(q) ||
+        (n.content || '').toLowerCase().includes(q) ||
+        (n.tags || []).some(t => t.toLowerCase().includes(q))
+      );
+      const host = $('#notesList');
+      if (!filtered.length) {
+        host.innerHTML = q
+          ? `<div class="card empty-state" style="grid-column:1/-1;"><strong>Ничего не найдено.</strong><br/>Попробуйте другой запрос.</div>`
+          : `<div class="card empty-state" style="grid-column:1/-1;"><strong>Пока нет заметок.</strong><br/>Нажмите «Новая заметка», чтобы начать.</div>`;
+        return;
+      }
+      host.innerHTML = filtered.map(n => {
+        const title = n.title || '(без названия)';
+        const date = new Date(n.updated_at || n.created_at).toLocaleDateString('ru-RU', { day:'numeric', month:'short' });
+        return `
+          <div class="note-card" data-id="${n.id}">
+            <h4>${escapeHtml(title)}</h4>
+            <div class="note-preview">${escapeHtml(n.content || '')}</div>
+            <div class="note-meta">
+              <span>${date}</span>
+              ${(n.tags || []).slice(0, 3).map(t => `<span class="note-tag">#${escapeHtml(t)}</span>`).join('')}
+            </div>
+          </div>`;
+      }).join('');
+      host.querySelectorAll('.note-card').forEach(el => {
+        el.addEventListener('click', () => openNoteModal(el.dataset.id));
+      });
+    }
+
+    function openNoteModal(noteId = null) {
+      const note = noteId ? Store.notes.list().find(n => n.id === noteId) : null;
+      $('#noteError').classList.add('hidden');
+      if (note) {
+        $('#noteModalTitle').textContent = 'Редактировать заметку';
+        $('#noteSubmit').textContent = 'Сохранить';
+        $('#noteDeleteBtn').style.display = '';
+        $('#noteId').value = note.id;
+        $('#noteTitle').value = note.title || '';
+        $('#noteContent').value = note.content || '';
+        $('#noteTags').value = (note.tags || []).join(', ');
+      } else {
+        $('#noteModalTitle').textContent = 'Новая заметка';
+        $('#noteSubmit').textContent = 'Создать';
+        $('#noteDeleteBtn').style.display = 'none';
+        $('#noteId').value = '';
+        $('#noteTitle').value = '';
+        $('#noteContent').value = '';
+        $('#noteTags').value = '';
+      }
+      openModal('noteModal');
+    }
+
+    $('#noteForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = $('#noteId').value;
+      const title = $('#noteTitle').value.trim();
+      const content = $('#noteContent').value.trim();
+      const tags = $('#noteTags').value.split(',').map(s => s.trim()).filter(Boolean).slice(0, 10);
+      const err = $('#noteError');
+      if (!title && !content) { err.textContent = 'Заполните заголовок или содержимое'; err.classList.remove('hidden'); return; }
+      const list = Store.notes.list();
+      const now = new Date().toISOString();
+      if (id) {
+        const idx = list.findIndex(n => n.id === id);
+        if (idx < 0) return;
+        list[idx] = { ...list[idx], title, content, tags, updated_at: now };
+        toast('Заметка обновлена', 'success');
+      } else {
+        list.push({ id: uid(), title, content, tags, created_at: now, updated_at: now });
+        toast('Заметка создана', 'success');
+      }
+      Store.notes.save(list);
+      closeModal('noteModal');
+      renderNotes();
+    });
+
+    $('#noteDeleteBtn').addEventListener('click', async () => {
+      const id = $('#noteId').value;
+      if (!id) return;
+      const ok = await confirmModal('Переместить заметку в корзину?');
+      if (!ok) return;
+      const note = Store.notes.list().find(n => n.id === id);
+      if (note) trashPush('note', note, note.title || '(без названия)');
+      Store.notes.save(Store.notes.list().filter(n => n.id !== id));
+      closeModal('noteModal');
+      renderNotes();
+    });
+
+    $('#newNoteBtn')?.addEventListener('click', () => openNoteModal());
+    $('#notesSearch')?.addEventListener('input', (e) => {
+      state.notesQuery = e.target.value;
+      renderNotes();
+    });
+
+    function updateNotePreview() {
+      const preview = $('#notePreview');
+      if (!preview || preview.classList.contains('hidden')) return;
+      preview.innerHTML = renderMarkdown($('#noteContent').value || '');
+    }
+    $('#noteContent')?.addEventListener('input', updateNotePreview);
+    $('#noteSplitToggle')?.addEventListener('change', (e) => {
+      const editor = $('#noteEditor');
+      const preview = $('#notePreview');
+      editor?.classList.toggle('split-on', e.target.checked);
+      preview?.classList.toggle('hidden', !e.target.checked);
+      if (e.target.checked) updateNotePreview();
+    });
 
     // ---------- Team (сотрудники) ----------
     function roleLabel(role) {
@@ -4089,8 +5180,9 @@
       // Инициализируем собственный workspace
       state.workspace = { owner_id: userId(), role: 'owner' };
       pomodoroDisplay();
+      renderPomStats();
       await loadTasks();
-      renderTodayHabits();
+      renderTodayView();
       renderNotifBadge();
       refreshGoogleStatus();
       loadTeamMembers();

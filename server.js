@@ -67,8 +67,52 @@ app.use((req, res, next) => {
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+  // Tailwind CDN + Google Fonts whitelisted; inline styles разрешены (Tailwind генерит)
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; " +
+    "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; " +
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; " +
+    "font-src 'self' https://fonts.gstatic.com data:; " +
+    "img-src 'self' data:; " +
+    "connect-src 'self' https://*.supabase.co https://accounts.google.com https://oauth2.googleapis.com https://www.googleapis.com; " +
+    "frame-ancestors 'none'; " +
+    "base-uri 'self'"
+  );
   next();
 });
+
+// Простой in-memory rate limiter для /api/*: 60 req / 60s / IP.
+// При превышении — 429.
+const rateBuckets = new Map();
+function rateLimit(maxReq, windowMs) {
+  return (req, res, next) => {
+    const ip = req.ip || req.connection?.remoteAddress || 'unknown';
+    const now = Date.now();
+    const bucket = rateBuckets.get(ip) || { count: 0, reset: now + windowMs };
+    if (now > bucket.reset) { bucket.count = 0; bucket.reset = now + windowMs; }
+    bucket.count++;
+    rateBuckets.set(ip, bucket);
+    res.setHeader('X-RateLimit-Limit', String(maxReq));
+    res.setHeader('X-RateLimit-Remaining', String(Math.max(0, maxReq - bucket.count)));
+    if (bucket.count > maxReq) {
+      const retryAfter = Math.ceil((bucket.reset - now) / 1000);
+      res.setHeader('Retry-After', String(retryAfter));
+      console.warn(`[RATELIMIT] ${ip} blocked, ${bucket.count}/${maxReq} in window`);
+      return res.status(429).json({ error: 'too_many_requests', retry_after: retryAfter });
+    }
+    next();
+  };
+}
+// Чистка старых корзин раз в 5 мин, чтобы Map не рос бесконечно
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, b] of rateBuckets) if (now > b.reset + 60000) rateBuckets.delete(ip);
+}, 5 * 60 * 1000);
+
+app.use('/api/', rateLimit(120, 60_000));
+// Жёстче для /api/auth (защита от brute force)
+app.use(['/api/auth/login', '/api/auth/signup', '/api/admin/login'], rateLimit(20, 60_000));
 
 app.get('/healthz', (req, res) => {
   res.json({

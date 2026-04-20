@@ -1,10 +1,10 @@
-const { authUser, revokeToken, clearGoogleTokens } = require('./_helpers');
+const { authUser, revokeToken, clearGoogleTokens, loadGoogleTokens } = require('./_helpers');
 
 module.exports = async function googleDisconnect(req, res) {
   try {
     const user = await authUser(req);
     if (!user) return res.status(401).json({ error: 'unauthorized' });
-    const g = user.user_metadata?.google;
+    const g = await loadGoogleTokens(user);
     if (g?.refresh_token) await revokeToken(g.refresh_token);
     await clearGoogleTokens(user.id, user.user_metadata);
     return res.json({ ok: true });
