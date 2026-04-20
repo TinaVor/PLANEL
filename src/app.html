@@ -308,6 +308,79 @@
     .workspace-item:hover { background:var(--bg-muted); }
     .workspace-item.active { background:var(--brand-50); }
 
+    /* Сферы жизненного баланса */
+    .sphere-badge {
+      display:inline-flex; align-items:center; gap:0.3rem;
+      padding:0.2rem 0.55rem; border-radius:9999px;
+      font-size:0.7rem; font-weight:600; letter-spacing:0.02em;
+      border:1px solid transparent; white-space:nowrap;
+    }
+    .sphere-health        { background:#FEE2E2; color:#991B1B; border-color:#FECACA; }
+    .sphere-finance       { background:#D1FAE5; color:#065F46; border-color:#A7F3D0; }
+    .sphere-career        { background:#DBEAFE; color:#1E40AF; border-color:#BFDBFE; }
+    .sphere-relationships { background:#FCE7F3; color:#9D174D; border-color:#FBCFE8; }
+    .sphere-rest          { background:#CFFAFE; color:#155E75; border-color:#A5F3FC; }
+    .sphere-growth        { background:#EDE9FE; color:#5B21B6; border-color:#DDD6FE; }
+    .sphere-good_deeds    { background:#FEF3C7; color:#92400E; border-color:#FDE68A; }
+    .sphere-none          { background:var(--bg-muted); color:var(--text-muted); border-color:var(--border-soft); }
+
+    /* Wheel radar */
+    .wheel-radar-wrap { display:flex; justify-content:center; padding:1rem 0; }
+    .sphere-slider {
+      -webkit-appearance:none; appearance:none;
+      width:100%; height:6px; border-radius:9999px;
+      background:var(--bg-muted); outline:none;
+    }
+    .sphere-slider::-webkit-slider-thumb {
+      -webkit-appearance:none; appearance:none;
+      width:18px; height:18px; border-radius:50%; cursor:pointer;
+      background:var(--brand-500); border:2px solid #fff; box-shadow:0 2px 6px rgba(31,118,242,0.4);
+    }
+    .sphere-slider::-moz-range-thumb {
+      width:18px; height:18px; border-radius:50%; cursor:pointer;
+      background:var(--brand-500); border:2px solid #fff; box-shadow:0 2px 6px rgba(31,118,242,0.4);
+    }
+
+    /* Таблицы для дневников и целей */
+    .data-table { width:100%; border-collapse:collapse; font-size:0.84rem; }
+    .data-table thead th {
+      text-align:left; padding:0.5rem 0.65rem 0.5rem 0;
+      font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em;
+      color:var(--text-muted); font-weight:600; border-bottom:1px solid var(--border-soft);
+    }
+    .data-table tbody td {
+      padding:0.55rem 0.65rem 0.55rem 0; border-top:1px solid var(--border-soft);
+      color:var(--text-primary); vertical-align:top;
+    }
+    .data-table tbody tr:first-child td { border-top:none; }
+    .data-table tbody tr:hover { background:var(--bg-muted); }
+    .data-table .row-actions { white-space:nowrap; text-align:right; }
+
+    /* Goal card (100 целей) */
+    .goal-card {
+      border:1px solid var(--border-soft); border-radius:12px; padding:0.85rem 1rem;
+      background:var(--bg-surface); display:flex; flex-direction:column; gap:0.35rem;
+      transition:border-color 140ms ease, box-shadow 140ms ease;
+    }
+    .goal-card:hover { border-color:var(--brand-200); box-shadow:var(--shadow-sm); }
+    .goal-card.done { background:var(--success-50); border-color:#A7F3D0; }
+    .goal-card.done .goal-title { text-decoration:line-through; opacity:0.7; }
+    .goal-num { font-weight:700; color:var(--brand-600); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; }
+    .goal-title { font-weight:700; color:var(--text-strong); font-size:0.95rem; }
+    .goal-details { font-size:0.78rem; color:var(--text-secondary); line-height:1.5; }
+    .goal-details strong { color:var(--text-strong); }
+
+    /* Mood emoji picker */
+    .mood-picker { display:flex; gap:0.4rem; flex-wrap:wrap; }
+    .mood-option {
+      width:40px; height:40px; border-radius:10px;
+      display:inline-flex; align-items:center; justify-content:center;
+      font-size:1.4rem; cursor:pointer; background:var(--bg-surface);
+      border:1px solid var(--border-soft); transition:all 140ms ease;
+    }
+    .mood-option:hover { border-color:var(--brand-300); transform:scale(1.05); }
+    .mood-option.selected { background:var(--brand-500); border-color:var(--brand-500); box-shadow:var(--shadow-brand); }
+
     /* Элементы уведомлений */
     .notif-item { display:block; padding:0.7rem 1rem; border-bottom:1px solid var(--border-soft); cursor:pointer; transition:background 140ms ease; position:relative; }
     .notif-item:last-child { border-bottom:none; }
@@ -431,6 +504,12 @@
             </select>
           </div>
         </div>
+        <div>
+          <label class="form-label">Сфера жизни</label>
+          <select id="taskSphere" class="form-select">
+            <option value="">Без сферы</option>
+          </select>
+        </div>
         <label class="flex items-center gap-2 text-sm cursor-pointer hidden" id="taskGoogleWrap">
           <input type="checkbox" id="taskGoogleSync">
           <span>Добавить в Google Calendar (требуется дедлайн)</span>
@@ -499,6 +578,12 @@
           <label class="form-label">Описание</label>
           <input type="text" id="habitDescription" class="form-input" maxlength="200" placeholder="Коротко, что именно делаете">
         </div>
+        <div>
+          <label class="form-label">Сфера жизни</label>
+          <select id="habitSphere" class="form-select">
+            <option value="">Без сферы</option>
+          </select>
+        </div>
         <p id="habitError" class="text-xs hidden" style="color:var(--danger-700);"></p>
         <div class="flex flex-wrap gap-2 justify-end pt-2">
           <button type="button" class="btn-ghost text-sm" id="habitDeleteBtn" style="display:none;">Удалить</button>
@@ -562,6 +647,22 @@
           <button class="nav-item" data-view="analytics">
             <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg></span>
             <span>Аналитика</span>
+          </button>
+          <button class="nav-item" data-view="wheel">
+            <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M5.6 18.4 18.4 5.6"/></svg></span>
+            <span>Колесо баланса</span>
+          </button>
+          <button class="nav-item" data-view="food">
+            <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v18M8 3v10a2 2 0 0 1-4 0"/><path d="M18 3c-2 0-4 2-4 6s2 4 4 4v8"/></svg></span>
+            <span>Дневник питания</span>
+          </button>
+          <button class="nav-item" data-view="goals100">
+            <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg></span>
+            <span>100 целей</span>
+          </button>
+          <button class="nav-item" data-view="emotions">
+            <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11z"/><path d="M9 10h.01M15 10h.01M9 14c1 1 3 1 4 0"/></svg></span>
+            <span>Дневник эмоций</span>
           </button>
         </nav>
       </div>
@@ -911,6 +1012,185 @@
             </div>
           </section>
 
+          <!-- Колесо жизненного баланса -->
+          <section id="wheel" class="view space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="heading-font text-2xl font-extrabold mb-1">Колесо жизненного баланса</h2>
+                <p class="text-sm text-[color:var(--text-secondary)]">Оцените каждую сферу от 0 до 10, чтобы увидеть дисбаланс</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-2">Ваш баланс</h3>
+                <div class="wheel-radar-wrap">
+                  <svg id="wheelRadar" viewBox="-160 -160 320 320" style="width:100%; max-width:380px; height:auto;"></svg>
+                </div>
+              </div>
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-3">Оценки по сферам</h3>
+                <div id="wheelSliders" class="space-y-3"></div>
+                <div class="mt-5 pt-4 border-t border-[color:var(--border-soft)]">
+                  <h4 class="heading-font font-bold mb-3">Распределение задач и привычек</h4>
+                  <div id="wheelDistribution" class="space-y-2"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Дневник питания -->
+          <section id="food" class="view space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="heading-font text-2xl font-extrabold mb-1">Дневник питания</h2>
+                <p class="text-sm text-[color:var(--text-secondary)]">Записи по приёмам пищи и целям по калориям/воде</p>
+              </div>
+              <button class="btn-primary text-sm" id="foodAddBtn">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                Добавить запись
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="card">
+                <div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">Калории сегодня</div>
+                <div class="flex items-baseline gap-2 mb-2">
+                  <span class="heading-font text-3xl font-extrabold" id="foodCaloriesToday">0</span>
+                  <span class="text-sm text-[color:var(--text-muted)]">/ <span id="foodCaloriesGoal">0</span> ккал</span>
+                </div>
+                <div class="progress"><span id="foodCaloriesBar" style="width:0%"></span></div>
+              </div>
+              <div class="card">
+                <div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">Вода сегодня</div>
+                <div class="flex items-baseline gap-2 mb-2">
+                  <span class="heading-font text-3xl font-extrabold" id="foodWaterToday">0</span>
+                  <span class="text-sm text-[color:var(--text-muted)]">/ <span id="foodWaterGoal">0</span> мл</span>
+                </div>
+                <div class="progress"><span id="foodWaterBar" style="width:0%"></span></div>
+              </div>
+              <div class="card">
+                <h4 class="heading-font font-bold text-sm mb-2">Цели</h4>
+                <form id="foodGoalsForm" class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label class="form-label">Ккал/день</label>
+                    <input type="number" id="foodGoalCal" class="form-input" min="0" max="10000" placeholder="2000">
+                  </div>
+                  <div>
+                    <label class="form-label">Вода, мл</label>
+                    <input type="number" id="foodGoalWater" class="form-input" min="0" max="10000" placeholder="2500">
+                  </div>
+                  <button type="submit" class="btn-ghost text-xs col-span-2 justify-center">Сохранить цели</button>
+                </form>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3 class="heading-font text-lg font-extrabold mb-4">Сегодня</h3>
+              <div class="overflow-x-auto">
+                <table class="data-table" id="foodTable">
+                  <thead>
+                    <tr>
+                      <th>Время</th>
+                      <th>Приём</th>
+                      <th>Что съел</th>
+                      <th>Что выпил</th>
+                      <th>Ккал</th>
+                      <th>Голод</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="foodTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3 class="heading-font text-lg font-extrabold mb-4">Калории за 7 дней</h3>
+              <div class="flex items-end justify-between gap-2" id="foodChart" style="height:140px;"></div>
+              <div class="flex items-center justify-between mt-3 text-xs text-[color:var(--text-muted)]" id="foodChartLabels"></div>
+            </div>
+          </section>
+
+          <!-- 100 целей -->
+          <section id="goals100" class="view space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="heading-font text-2xl font-extrabold mb-1">100 целей</h2>
+                <p class="text-sm text-[color:var(--text-secondary)]">Выписывайте большие цели с планом и метриками достижения</p>
+              </div>
+              <button class="btn-primary text-sm" id="goals100AddBtn">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                Добавить цель
+              </button>
+            </div>
+
+            <div class="card">
+              <div class="flex items-center justify-between mb-4">
+                <span class="heading-font font-bold">Прогресс: <span id="goals100Done">0</span> / 100</span>
+                <span class="text-sm text-[color:var(--text-muted)]" id="goals100Pct">0%</span>
+              </div>
+              <div class="progress"><span id="goals100Bar" style="width:0%"></span></div>
+            </div>
+
+            <div id="goals100List" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+          </section>
+
+          <!-- Дневник эмоций -->
+          <section id="emotions" class="view space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="heading-font text-2xl font-extrabold mb-1">Дневник эмоций</h2>
+                <p class="text-sm text-[color:var(--text-secondary)]">Записывайте сон, энергию, настроение и благодарность</p>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3 class="heading-font text-lg font-extrabold mb-4">Запись на сегодня</h3>
+              <form id="emotionsForm" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="form-label">Сон, часов</label>
+                  <input type="number" id="emotSleep" class="form-input" min="0" max="24" step="0.5" placeholder="7.5">
+                </div>
+                <div>
+                  <label class="form-label">Энергия (1-10)</label>
+                  <input type="range" id="emotEnergy" class="sphere-slider" min="1" max="10" value="5">
+                  <div class="text-xs text-[color:var(--text-muted)] mt-1">Уровень: <span id="emotEnergyVal">5</span></div>
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="form-label">Настроение</label>
+                  <div class="mood-picker" id="emotMoodPicker">
+                    <div class="mood-option" data-mood="1">😢</div>
+                    <div class="mood-option" data-mood="2">😕</div>
+                    <div class="mood-option" data-mood="3">😐</div>
+                    <div class="mood-option" data-mood="4">🙂</div>
+                    <div class="mood-option" data-mood="5">😊</div>
+                    <div class="mood-option" data-mood="6">😄</div>
+                    <div class="mood-option" data-mood="7">🤩</div>
+                  </div>
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="form-label">Значимое событие</label>
+                  <input type="text" id="emotEvent" class="form-input" maxlength="300" placeholder="Что произошло важного?">
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="form-label">Мысль дня</label>
+                  <input type="text" id="emotThought" class="form-input" maxlength="300" placeholder="Инсайт, идея, наблюдение">
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="form-label">Благодарность</label>
+                  <input type="text" id="emotGratitude" class="form-input" maxlength="300" placeholder="За что я сегодня благодарен">
+                </div>
+                <p id="emotMsg" class="text-xs hidden sm:col-span-2"></p>
+                <button type="submit" class="btn-primary text-sm sm:col-span-2 justify-center">Сохранить запись</button>
+              </form>
+            </div>
+
+            <div class="card">
+              <h3 class="heading-font text-lg font-extrabold mb-4">История</h3>
+              <div id="emotionsList" class="space-y-3"></div>
+            </div>
+          </section>
+
           <!-- Профиль -->
           <section id="profile" class="view space-y-6">
             <div class="flex flex-wrap items-center justify-between gap-3">
@@ -1130,6 +1410,23 @@
       { name: 'Серый',      value: 'linear-gradient(135deg, #94A3B8, #475569)' }
     ];
     const PRIORITY_LABEL = { low: 'Низкий', medium: 'Средний', high: 'Высокий' };
+    const SPHERES = [
+      { id: 'health',        label: 'Здоровье',     icon: '🫀' },
+      { id: 'finance',       label: 'Финансы',      icon: '💰' },
+      { id: 'career',        label: 'Карьера',      icon: '💼' },
+      { id: 'relationships', label: 'Отношения',    icon: '❤️' },
+      { id: 'rest',          label: 'Отдых',        icon: '🌴' },
+      { id: 'growth',        label: 'Развитие',     icon: '📚' },
+      { id: 'good_deeds',    label: 'Добрые дела',  icon: '🤝' },
+    ];
+    const SPHERE_LABEL = Object.fromEntries(SPHERES.map(s => [s.id, s.label]));
+    const MEAL_TYPES = [
+      { id: 'breakfast', label: 'Завтрак' },
+      { id: 'lunch',     label: 'Обед' },
+      { id: 'dinner',    label: 'Ужин' },
+      { id: 'snack',     label: 'Перекус' }
+    ];
+    const MEAL_LABEL = Object.fromEntries(MEAL_TYPES.map(m => [m.id, m.label]));
     const STATUS_LABEL = { todo: 'Сделать', in_progress: 'В процессе', done: 'Выполнено' };
     const DAYS_RU = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
     const MONTHS_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
@@ -1284,6 +1581,24 @@
           delete all[habitId];
           saveBucket('habit_logs', all);
         }
+      },
+      wheel: {
+        get: () => loadBucket('wheel', {}),
+        save: (obj) => saveBucket('wheel', obj),
+      },
+      food: {
+        list: () => loadBucket('food', []),
+        save: (arr) => saveBucket('food', arr),
+        goals: () => loadBucket('food_goals', { calories: 2000, water: 2500 }),
+        saveGoals: (g) => saveBucket('food_goals', g),
+      },
+      goals100: {
+        list: () => loadBucket('goals100', []),
+        save: (arr) => saveBucket('goals100', arr),
+      },
+      emotions: {
+        list: () => loadBucket('emotions', []),
+        save: (arr) => saveBucket('emotions', arr),
       }
     };
 
@@ -1448,7 +1763,12 @@
     function switchView(name) {
       views.forEach(v => v.classList.toggle('view-active', v.id === name));
       navButtons.forEach(b => b.classList.toggle('nav-item-active', b.dataset.view === name));
-      const titles = { dashboard:'Добро пожаловать!', tasks:'Задачи и доски', calendar:'Планер', projects:'Цели и проекты', habits:'Привычки', analytics:'Аналитика', profile:'Профиль', admin:'Админ-панель' };
+      const titles = {
+        dashboard:'Добро пожаловать!', tasks:'Задачи и доски', calendar:'Планер',
+        projects:'Цели и проекты', habits:'Привычки', analytics:'Аналитика',
+        wheel:'Колесо баланса', food:'Дневник питания', goals100:'100 целей', emotions:'Дневник эмоций',
+        profile:'Профиль', admin:'Админ-панель'
+      };
       $('#headerTitle').textContent = titles[name] || 'PLANEL';
       if (name === 'dashboard') { renderDashboard(); renderTodayHabits(); }
       if (name === 'tasks')     renderTasksView();
@@ -1456,12 +1776,24 @@
       if (name === 'projects')  renderProjects();
       if (name === 'habits')    renderHabits();
       if (name === 'analytics') renderAnalytics();
+      if (name === 'wheel')     renderWheel();
+      if (name === 'food')      renderFoodDiary();
+      if (name === 'goals100')  renderGoals100();
+      if (name === 'emotions')  renderEmotions();
       if (name === 'profile')   renderProfile();
       if (name === 'admin')     renderAdmin();
     }
     navButtons.forEach(b => b.addEventListener('click', () => switchView(b.dataset.view)));
 
     // ---------- Task modal ----------
+    function getSphere(task) { return Store.taskMeta.for(task.id).sphere || null; }
+
+    function fillSphereSelect(selectEl, selected = '') {
+      if (!selectEl) return;
+      selectEl.innerHTML = `<option value="">Без сферы</option>` + SPHERES.map(s =>
+        `<option value="${s.id}" ${s.id === selected ? 'selected' : ''}>${s.icon} ${s.label}</option>`).join('');
+    }
+
     function openTaskModal(taskId = null, overrides = {}) {
       const projects = Store.projects.list();
       const select = $('#taskProject');
@@ -1482,6 +1814,7 @@
         $('#taskDueDate').value = t.due_date || '';
         $('#taskProject').value = getProjectId(t) || '';
         $('#taskStatus').value = getStatus(t);
+        fillSphereSelect($('#taskSphere'), getSphere(t) || '');
       } else {
         $('#taskModalTitle').textContent = 'Новая задача';
         $('#taskSubmit').textContent = 'Создать';
@@ -1493,6 +1826,7 @@
         $('#taskDueDate').value = overrides.due_date || '';
         $('#taskProject').value = overrides.project_id || '';
         $('#taskStatus').value = overrides.status || 'todo';
+        fillSphereSelect($('#taskSphere'), overrides.sphere || '');
       }
       const gcSync = $('#taskGoogleSync');
       const gcWrap = $('#taskGoogleWrap');
@@ -1510,6 +1844,7 @@
       const due_date = $('#taskDueDate').value || null;
       const project_id = $('#taskProject').value || null;
       const status = $('#taskStatus').value;
+      const sphere = $('#taskSphere').value || null;
       const err = $('#taskError');
       err.classList.add('hidden');
       if (!title) { err.textContent = 'Введите название'; err.classList.remove('hidden'); return; }
@@ -1528,7 +1863,7 @@
           const r = await api(taskUrl(`/api/tasks/${id}`), { method: 'PUT', body: JSON.stringify({ title, description, priority, due_date, done }) });
           if (r.status === 401) return logout();
           if (!r.ok) throw new Error('save_failed');
-          Store.taskMeta.set(id, { project_id, status });
+          Store.taskMeta.set(id, { project_id, status, sphere });
           toast('Задача обновлена', 'success');
         } else {
           const r = await api(taskUrl('/api/tasks'), { method: 'POST', body: JSON.stringify({ title, description, priority, due_date }) });
@@ -1536,7 +1871,7 @@
           if (!r.ok) throw new Error('create_failed');
           const j = await r.json();
           savedId = j.task.id;
-          Store.taskMeta.set(savedId, { project_id, status });
+          Store.taskMeta.set(savedId, { project_id, status, sphere });
           if (status === 'done') {
             await api(taskUrl(`/api/tasks/${savedId}`), { method: 'PUT', body: JSON.stringify({ done: true }) });
           }
@@ -1675,6 +2010,7 @@
         $('#habitId').value = h.id;
         $('#habitName').value = h.name;
         $('#habitDescription').value = h.description || '';
+        fillSphereSelect($('#habitSphere'), h.sphere || '');
       } else {
         $('#habitModalTitle').textContent = 'Новая привычка';
         $('#habitSubmit').textContent = 'Создать';
@@ -1682,6 +2018,7 @@
         $('#habitId').value = '';
         $('#habitName').value = '';
         $('#habitDescription').value = '';
+        fillSphereSelect($('#habitSphere'), '');
       }
       openModal('habitModal');
     }
@@ -1691,16 +2028,17 @@
       const id = $('#habitId').value;
       const name = $('#habitName').value.trim();
       const description = $('#habitDescription').value.trim();
+      const sphere = $('#habitSphere').value || null;
       const err = $('#habitError');
       if (!name) { err.textContent = 'Введите название'; err.classList.remove('hidden'); return; }
       const habits = Store.habits.list();
       if (id) {
         const idx = habits.findIndex(h => h.id === id);
         if (idx < 0) return;
-        habits[idx] = { ...habits[idx], name, description };
+        habits[idx] = { ...habits[idx], name, description, sphere };
         toast('Привычка обновлена', 'success');
       } else {
-        habits.push({ id: uid(), name, description, created_at: new Date().toISOString() });
+        habits.push({ id: uid(), name, description, sphere, created_at: new Date().toISOString() });
         toast('Привычка создана', 'success');
       }
       Store.habits.save(habits);
@@ -1814,11 +2152,19 @@
       bindTaskRowEvents(list);
     }
 
+    function sphereBadgeHtml(sphereId) {
+      if (!sphereId) return '';
+      const s = SPHERES.find(x => x.id === sphereId);
+      if (!s) return '';
+      return `<span class="sphere-badge sphere-${s.id}">${s.icon} ${escapeHtml(s.label)}</span>`;
+    }
+
     function renderTaskRow(t, opts = {}) {
       const today = opts.today || todayISO();
       const status = getStatus(t);
       const projId = getProjectId(t);
       const project = projId ? Store.projects.list().find(p => p.id === projId) : null;
+      const sphereId = getSphere(t);
       const overdue = t.due_date && !t.done && t.due_date < today;
       const dueLabel = t.due_date ? (overdue ? `<span style="color:var(--danger-700);font-weight:600;">📅 ${formatDateRu(t.due_date)} · просрочено</span>` : `📅 ${formatDateRu(t.due_date)}`) : '';
       return `
@@ -1832,6 +2178,7 @@
                 <div class="flex flex-wrap items-center gap-2 text-xs text-[color:var(--text-muted)]">
                   ${dueLabel ? `<span>${dueLabel}</span>` : ''}
                   ${project ? `<span class="status-badge badge-info">${escapeHtml(project.name)}</span>` : ''}
+                  ${sphereBadgeHtml(sphereId)}
                   <span class="status-badge badge-neutral">${STATUS_LABEL[status]}</span>
                 </div>
               </div>
@@ -2792,6 +3139,494 @@
         btn.textContent = prev;
       }
     });
+
+    // ---------- Wheel of Life ----------
+    function renderWheel() {
+      const wheel = Store.wheel.get();
+      // Sliders
+      const host = $('#wheelSliders');
+      host.innerHTML = SPHERES.map(s => {
+        const v = wheel[s.id] ?? 5;
+        return `
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-sm font-medium"><span class="sphere-badge sphere-${s.id}" style="margin-right:0.4rem;">${s.icon} ${escapeHtml(s.label)}</span></span>
+              <span class="heading-font font-bold text-sm" id="wheelVal_${s.id}">${v}</span>
+            </div>
+            <input type="range" min="0" max="10" step="1" value="${v}" class="sphere-slider" data-sphere="${s.id}">
+          </div>`;
+      }).join('');
+      host.querySelectorAll('input[type="range"]').forEach(inp => {
+        inp.addEventListener('input', () => {
+          const id = inp.dataset.sphere;
+          const v = Number(inp.value);
+          const w = Store.wheel.get();
+          w[id] = v;
+          Store.wheel.save(w);
+          $('#wheelVal_' + id).textContent = v;
+          drawWheelRadar();
+        });
+      });
+      drawWheelRadar();
+      renderWheelDistribution();
+    }
+
+    function drawWheelRadar() {
+      const svg = $('#wheelRadar');
+      if (!svg) return;
+      const wheel = Store.wheel.get();
+      const R = 130;
+      const cx = 0, cy = 0;
+      const angle = (i) => -Math.PI / 2 + (i * 2 * Math.PI / SPHERES.length);
+      const pt = (r, i) => ({ x: cx + r * Math.cos(angle(i)), y: cy + r * Math.sin(angle(i)) });
+
+      let html = '';
+      // Grid circles
+      for (let step = 2; step <= 10; step += 2) {
+        const r = R * (step / 10);
+        const pts = SPHERES.map((_, i) => {
+          const p = pt(r, i);
+          return `${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+        }).join(' ');
+        html += `<polygon points="${pts}" fill="none" stroke="#E2E8F0" stroke-width="1" />`;
+      }
+      // Axes
+      SPHERES.forEach((s, i) => {
+        const p = pt(R, i);
+        html += `<line x1="0" y1="0" x2="${p.x.toFixed(1)}" y2="${p.y.toFixed(1)}" stroke="#E2E8F0" stroke-width="1" />`;
+      });
+      // User polygon
+      const userPts = SPHERES.map((s, i) => {
+        const v = wheel[s.id] ?? 5;
+        const p = pt(R * (v / 10), i);
+        return `${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+      }).join(' ');
+      html += `<polygon points="${userPts}" fill="rgba(31,118,242,0.28)" stroke="#1F76F2" stroke-width="2" stroke-linejoin="round"/>`;
+      // Dots
+      SPHERES.forEach((s, i) => {
+        const v = wheel[s.id] ?? 5;
+        const p = pt(R * (v / 10), i);
+        html += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="#1F76F2" />`;
+      });
+      // Labels
+      SPHERES.forEach((s, i) => {
+        const p = pt(R + 22, i);
+        const anchor = p.x > 10 ? 'start' : p.x < -10 ? 'end' : 'middle';
+        html += `<text x="${p.x.toFixed(1)}" y="${p.y.toFixed(1) + 4}" text-anchor="${anchor}" font-size="11" font-weight="700" fill="#0F172A">${s.icon} ${s.label}</text>`;
+      });
+      svg.innerHTML = html;
+    }
+
+    function renderWheelDistribution() {
+      const host = $('#wheelDistribution');
+      const counts = Object.fromEntries(SPHERES.map(s => [s.id, { tasks: 0, habits: 0 }]));
+      state.tasks.forEach(t => { const s = getSphere(t); if (s && counts[s]) counts[s].tasks++; });
+      Store.habits.list().forEach(h => { if (h.sphere && counts[h.sphere]) counts[h.sphere].habits++; });
+      const maxTotal = Math.max(1, ...SPHERES.map(s => counts[s.id].tasks + counts[s.id].habits));
+      host.innerHTML = SPHERES.map(s => {
+        const c = counts[s.id];
+        const total = c.tasks + c.habits;
+        const pct = Math.round(total / maxTotal * 100);
+        return `
+          <div>
+            <div class="flex items-center justify-between text-xs mb-1">
+              <span><span class="sphere-badge sphere-${s.id}">${s.icon} ${escapeHtml(s.label)}</span></span>
+              <span class="text-[color:var(--text-muted)]">${c.tasks} задач · ${c.habits} привычек</span>
+            </div>
+            <div class="progress"><span style="width:${pct}%"></span></div>
+          </div>`;
+      }).join('');
+    }
+
+    // ---------- Food diary ----------
+    let foodEditingId = null;
+
+    function renderFoodDiary() {
+      const goals = Store.food.goals();
+      $('#foodGoalCal').value = goals.calories || '';
+      $('#foodGoalWater').value = goals.water || '';
+      $('#foodCaloriesGoal').textContent = goals.calories || 0;
+      $('#foodWaterGoal').textContent = goals.water || 0;
+
+      const today = todayISO();
+      const all = Store.food.list();
+      const todayItems = all.filter(e => (e.datetime || '').slice(0, 10) === today);
+      const totalCal = todayItems.reduce((s, e) => s + (e.calories || 0), 0);
+      const totalWater = todayItems.reduce((s, e) => s + (e.drinks_ml || 0), 0);
+      $('#foodCaloriesToday').textContent = totalCal;
+      $('#foodWaterToday').textContent = totalWater;
+      $('#foodCaloriesBar').style.width = Math.min(100, goals.calories ? Math.round(totalCal / goals.calories * 100) : 0) + '%';
+      $('#foodWaterBar').style.width    = Math.min(100, goals.water    ? Math.round(totalWater / goals.water * 100) : 0) + '%';
+
+      const body = $('#foodTableBody');
+      if (!todayItems.length) {
+        body.innerHTML = `<tr><td colspan="7" class="py-4 text-[color:var(--text-muted)] text-center">Сегодня ещё нет записей. Нажмите «Добавить запись».</td></tr>`;
+      } else {
+        body.innerHTML = todayItems
+          .slice().sort((a, b) => (a.datetime || '').localeCompare(b.datetime || ''))
+          .map(e => `
+            <tr data-id="${e.id}">
+              <td>${(e.datetime || '').slice(11, 16)}</td>
+              <td>${escapeHtml(MEAL_LABEL[e.meal_type] || '—')}</td>
+              <td>${escapeHtml(e.food || '—')}</td>
+              <td>${escapeHtml(e.drinks || (e.drinks_ml ? e.drinks_ml + ' мл' : '—'))}</td>
+              <td>${e.calories || 0}</td>
+              <td>${e.hunger != null ? e.hunger + '/10' : '—'}</td>
+              <td class="row-actions">
+                <button class="icon-btn food-edit" style="width:30px;height:30px;" data-id="${e.id}" title="Редактировать">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+                </button>
+                <button class="icon-btn food-delete" style="width:30px;height:30px;" data-id="${e.id}" title="Удалить">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                </button>
+              </td>
+            </tr>`).join('');
+        body.querySelectorAll('.food-edit').forEach(b => b.addEventListener('click', () => openFoodModal(b.dataset.id)));
+        body.querySelectorAll('.food-delete').forEach(b => b.addEventListener('click', async () => {
+          const ok = await confirmModal('Удалить запись?'); if (!ok) return;
+          Store.food.save(Store.food.list().filter(x => x.id !== b.dataset.id));
+          renderFoodDiary();
+          toast('Запись удалена', 'success');
+        }));
+      }
+
+      // Chart за 7 дней
+      const days = Array.from({length: 7}, (_, i) => addDaysISO(today, -(6 - i)));
+      const sums = days.map(d => all.filter(e => (e.datetime || '').slice(0, 10) === d)
+        .reduce((s, e) => s + (e.calories || 0), 0));
+      const max = Math.max(1, ...sums, goals.calories || 0);
+      $('#foodChart').innerHTML = sums.map((v, i) => {
+        const h = Math.round(v / max * 100);
+        const isToday = days[i] === today;
+        return `<div class="flex-1 flex flex-col items-center justify-end gap-1" title="${days[i]}: ${v} ккал">
+          <span class="text-xs font-semibold ${isToday ? 'text-[color:var(--brand-700)]' : 'text-[color:var(--text-muted)]'}">${v}</span>
+          <div style="width:100%; height:${h}%; min-height:4px; background:${isToday ? 'linear-gradient(180deg, var(--brand-500), var(--cyan-500))' : 'var(--brand-200)'}; border-radius:6px;"></div>
+        </div>`;
+      }).join('');
+      $('#foodChartLabels').innerHTML = days.map(d => {
+        const dt = new Date(d);
+        const isToday = d === today;
+        return `<span style="flex:1; text-align:center;" class="${isToday ? 'font-semibold text-[color:var(--brand-700)]' : ''}">${dt.getDate()}.${String(dt.getMonth()+1).padStart(2,'0')}</span>`;
+      }).join('');
+    }
+
+    $('#foodGoalsForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const cal = Number($('#foodGoalCal').value) || 0;
+      const water = Number($('#foodGoalWater').value) || 0;
+      Store.food.saveGoals({ calories: cal, water });
+      toast('Цели сохранены', 'success');
+      renderFoodDiary();
+    });
+
+    function openFoodModal(entryId = null) {
+      foodEditingId = entryId;
+      const entry = entryId ? Store.food.list().find(e => e.id === entryId) : null;
+      const now = new Date();
+      const localNow = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+      const formHtml = `
+        <div id="foodDynamicModal" class="modal-overlay" data-modal>
+          <div class="modal-card">
+            <div class="modal-header">
+              <h3 class="heading-font text-lg font-extrabold">${entry ? 'Редактировать запись' : 'Новая запись'}</h3>
+              <button class="modal-close" data-close-modal aria-label="Закрыть">×</button>
+            </div>
+            <form id="foodDynamicForm" class="space-y-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="form-label">Дата и время</label>
+                  <input type="datetime-local" id="fdDatetime" class="form-input" required value="${escapeHtml(entry?.datetime || localNow)}">
+                </div>
+                <div>
+                  <label class="form-label">Приём пищи</label>
+                  <select id="fdMeal" class="form-select">
+                    ${MEAL_TYPES.map(m => `<option value="${m.id}" ${entry?.meal_type === m.id ? 'selected' : ''}>${m.label}</option>`).join('')}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label class="form-label">Что съел</label>
+                <input type="text" id="fdFood" class="form-input" maxlength="300" value="${escapeHtml(entry?.food || '')}" placeholder="Овсянка с ягодами">
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="form-label">Что выпил</label>
+                  <input type="text" id="fdDrinks" class="form-input" maxlength="200" value="${escapeHtml(entry?.drinks || '')}" placeholder="Кофе, вода">
+                </div>
+                <div>
+                  <label class="form-label">Вода, мл</label>
+                  <input type="number" id="fdDrinksMl" class="form-input" min="0" max="10000" value="${entry?.drinks_ml ?? ''}" placeholder="300">
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="form-label">Калории</label>
+                  <input type="number" id="fdCal" class="form-input" min="0" max="10000" value="${entry?.calories ?? ''}" placeholder="450">
+                </div>
+                <div>
+                  <label class="form-label">Голод (1-10)</label>
+                  <input type="number" id="fdHunger" class="form-input" min="1" max="10" value="${entry?.hunger ?? ''}" placeholder="5">
+                </div>
+              </div>
+              <div class="flex gap-2 justify-end pt-2">
+                ${entry ? '<button type="button" class="btn-ghost text-sm" id="fdDelete">Удалить</button>' : ''}
+                <button type="button" class="btn-ghost text-sm" data-close-modal>Отмена</button>
+                <button type="submit" class="btn-primary text-sm">${entry ? 'Сохранить' : 'Добавить'}</button>
+              </div>
+            </form>
+          </div>
+        </div>`;
+      // Удалим прежний если есть
+      $('#foodDynamicModal')?.remove();
+      document.body.insertAdjacentHTML('beforeend', formHtml);
+      const modalEl = $('#foodDynamicModal');
+      openModal('foodDynamicModal');
+      $('#foodDynamicForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const payload = {
+          id: entryId || uid(),
+          datetime: $('#fdDatetime').value,
+          meal_type: $('#fdMeal').value,
+          food: $('#fdFood').value.trim(),
+          drinks: $('#fdDrinks').value.trim(),
+          drinks_ml: Number($('#fdDrinksMl').value) || 0,
+          calories: Number($('#fdCal').value) || 0,
+          hunger: Number($('#fdHunger').value) || null,
+          created_at: entry?.created_at || new Date().toISOString()
+        };
+        const list = Store.food.list();
+        if (entryId) {
+          const idx = list.findIndex(x => x.id === entryId);
+          if (idx >= 0) list[idx] = payload;
+        } else list.push(payload);
+        Store.food.save(list);
+        closeModal('foodDynamicModal');
+        modalEl.remove();
+        toast(entryId ? 'Запись обновлена' : 'Запись добавлена', 'success');
+        renderFoodDiary();
+      });
+      $('#fdDelete')?.addEventListener('click', async () => {
+        const ok = await confirmModal('Удалить запись?'); if (!ok) return;
+        Store.food.save(Store.food.list().filter(x => x.id !== entryId));
+        closeModal('foodDynamicModal'); modalEl.remove();
+        toast('Запись удалена', 'success');
+        renderFoodDiary();
+      });
+    }
+
+    $('#foodAddBtn')?.addEventListener('click', () => openFoodModal());
+
+    // ---------- 100 goals ----------
+    function renderGoals100() {
+      const list = Store.goals100.list();
+      const doneCount = list.filter(g => g.done).length;
+      $('#goals100Done').textContent = doneCount;
+      $('#goals100Pct').textContent = Math.round(doneCount / 100 * 100) + '%';
+      $('#goals100Bar').style.width = Math.min(100, doneCount) + '%';
+
+      const host = $('#goals100List');
+      if (!list.length) {
+        host.innerHTML = `<div class="card empty-state" style="grid-column:1/-1;"><strong>Пока нет целей.</strong><br/>Нажмите «Добавить цель», чтобы начать список из 100.</div>`;
+        return;
+      }
+      host.innerHTML = list.map((g, idx) => `
+        <div class="goal-card ${g.done ? 'done' : ''}" data-id="${g.id}">
+          <div class="flex items-center justify-between">
+            <span class="goal-num">№ ${idx + 1}</span>
+            <div class="flex items-center gap-2">
+              <label class="flex items-center gap-1 text-xs cursor-pointer">
+                <input type="checkbox" class="goal-done" data-id="${g.id}" ${g.done ? 'checked' : ''}>
+                <span>Достигнута</span>
+              </label>
+              <button class="icon-btn goal-edit" data-id="${g.id}" title="Редактировать" style="width:30px;height:30px;">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="goal-title">${escapeHtml(g.goal || 'Без названия')}</div>
+          <div class="goal-details">
+            ${g.why ? `<div><strong>Почему важно:</strong> ${escapeHtml(g.why)}</div>` : ''}
+            ${g.how ? `<div><strong>Как достигну:</strong> ${escapeHtml(g.how)}</div>` : ''}
+            ${g.who ? `<div><strong>Кто поможет:</strong> ${escapeHtml(g.who)}</div>` : ''}
+            ${g.metric ? `<div><strong>Как пойму:</strong> ${escapeHtml(g.metric)}</div>` : ''}
+            ${g.feelings ? `<div><strong>Чувства:</strong> ${escapeHtml(g.feelings)}</div>` : ''}
+          </div>
+        </div>
+      `).join('');
+      host.querySelectorAll('.goal-done').forEach(cb => {
+        cb.addEventListener('change', () => {
+          const arr = Store.goals100.list();
+          const idx = arr.findIndex(g => g.id === cb.dataset.id);
+          if (idx < 0) return;
+          arr[idx].done = cb.checked;
+          Store.goals100.save(arr);
+          renderGoals100();
+        });
+      });
+      host.querySelectorAll('.goal-edit').forEach(btn => {
+        btn.addEventListener('click', () => openGoals100Modal(btn.dataset.id));
+      });
+    }
+
+    function openGoals100Modal(goalId = null) {
+      const list = Store.goals100.list();
+      const g = goalId ? list.find(x => x.id === goalId) : null;
+      $('#goalsDynamicModal')?.remove();
+      document.body.insertAdjacentHTML('beforeend', `
+        <div id="goalsDynamicModal" class="modal-overlay" data-modal>
+          <div class="modal-card">
+            <div class="modal-header">
+              <h3 class="heading-font text-lg font-extrabold">${g ? 'Редактировать цель' : 'Новая цель'}</h3>
+              <button class="modal-close" data-close-modal aria-label="Закрыть">×</button>
+            </div>
+            <form id="goalsDynamicForm" class="space-y-3">
+              <div><label class="form-label">Цель <span style="color:var(--danger-500)">*</span></label>
+                <input type="text" id="glGoal" class="form-input" required maxlength="300" value="${escapeHtml(g?.goal || '')}" placeholder="Пробежать марафон"></div>
+              <div><label class="form-label">Почему это важно?</label>
+                <textarea id="glWhy" class="form-textarea" maxlength="1000">${escapeHtml(g?.why || '')}</textarea></div>
+              <div><label class="form-label">Как я могу этого достичь?</label>
+                <textarea id="glHow" class="form-textarea" maxlength="1000">${escapeHtml(g?.how || '')}</textarea></div>
+              <div><label class="form-label">Кто может мне помочь?</label>
+                <input type="text" id="glWho" class="form-input" maxlength="300" value="${escapeHtml(g?.who || '')}"></div>
+              <div><label class="form-label">Как я пойму, что цель достигнута?</label>
+                <input type="text" id="glMetric" class="form-input" maxlength="500" value="${escapeHtml(g?.metric || '')}"></div>
+              <div><label class="form-label">Какие чувства я испытаю, когда цель будет достигнута?</label>
+                <input type="text" id="glFeelings" class="form-input" maxlength="500" value="${escapeHtml(g?.feelings || '')}"></div>
+              <div class="flex gap-2 justify-end pt-2">
+                ${g ? '<button type="button" class="btn-ghost text-sm" id="glDelete">Удалить</button>' : ''}
+                <button type="button" class="btn-ghost text-sm" data-close-modal>Отмена</button>
+                <button type="submit" class="btn-primary text-sm">${g ? 'Сохранить' : 'Добавить'}</button>
+              </div>
+            </form>
+          </div>
+        </div>`);
+      openModal('goalsDynamicModal');
+      $('#goalsDynamicForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const payload = {
+          id: goalId || uid(),
+          goal: $('#glGoal').value.trim(),
+          why: $('#glWhy').value.trim(),
+          how: $('#glHow').value.trim(),
+          who: $('#glWho').value.trim(),
+          metric: $('#glMetric').value.trim(),
+          feelings: $('#glFeelings').value.trim(),
+          done: g?.done || false,
+          created_at: g?.created_at || new Date().toISOString()
+        };
+        const arr = Store.goals100.list();
+        if (goalId) {
+          const idx = arr.findIndex(x => x.id === goalId);
+          if (idx >= 0) arr[idx] = payload;
+        } else arr.push(payload);
+        Store.goals100.save(arr);
+        closeModal('goalsDynamicModal');
+        $('#goalsDynamicModal').remove();
+        toast(goalId ? 'Цель обновлена' : 'Цель добавлена', 'success');
+        renderGoals100();
+      });
+      $('#glDelete')?.addEventListener('click', async () => {
+        const ok = await confirmModal('Удалить цель?'); if (!ok) return;
+        Store.goals100.save(Store.goals100.list().filter(x => x.id !== goalId));
+        closeModal('goalsDynamicModal'); $('#goalsDynamicModal').remove();
+        toast('Цель удалена', 'success');
+        renderGoals100();
+      });
+    }
+
+    $('#goals100AddBtn')?.addEventListener('click', () => openGoals100Modal());
+
+    // ---------- Emotions diary ----------
+    let selectedMood = null;
+
+    $('#emotEnergy')?.addEventListener('input', (e) => {
+      $('#emotEnergyVal').textContent = e.target.value;
+    });
+
+    $('#emotMoodPicker')?.addEventListener('click', (e) => {
+      const el = e.target.closest('.mood-option');
+      if (!el) return;
+      $$('#emotMoodPicker .mood-option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedMood = Number(el.dataset.mood);
+    });
+
+    $('#emotionsForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const today = todayISO();
+      const entry = {
+        id: uid(),
+        date: today,
+        sleep: Number($('#emotSleep').value) || null,
+        energy: Number($('#emotEnergy').value),
+        mood: selectedMood,
+        event: $('#emotEvent').value.trim(),
+        thought: $('#emotThought').value.trim(),
+        gratitude: $('#emotGratitude').value.trim(),
+        created_at: new Date().toISOString()
+      };
+      if (!entry.event && !entry.thought && !entry.gratitude && !entry.sleep) {
+        showFormMsg('emotMsg', 'Заполните хотя бы одно поле', 'error');
+        return;
+      }
+      const list = Store.emotions.list();
+      // Заменяем запись за сегодня, если уже есть
+      const existingIdx = list.findIndex(x => x.date === today);
+      if (existingIdx >= 0) { entry.id = list[existingIdx].id; list[existingIdx] = entry; }
+      else list.unshift(entry);
+      Store.emotions.save(list);
+      toast('Запись сохранена', 'success');
+      showFormMsg('emotMsg', 'Сохранено', 'success');
+      renderEmotions();
+    });
+
+    function renderEmotions() {
+      const list = Store.emotions.list().slice().sort((a, b) => b.date.localeCompare(a.date));
+      const today = todayISO();
+      const todayEntry = list.find(e => e.date === today);
+      if (todayEntry) {
+        $('#emotSleep').value = todayEntry.sleep ?? '';
+        $('#emotEnergy').value = todayEntry.energy ?? 5;
+        $('#emotEnergyVal').textContent = todayEntry.energy ?? 5;
+        selectedMood = todayEntry.mood;
+        $$('#emotMoodPicker .mood-option').forEach(o => o.classList.toggle('selected', Number(o.dataset.mood) === selectedMood));
+        $('#emotEvent').value = todayEntry.event || '';
+        $('#emotThought').value = todayEntry.thought || '';
+        $('#emotGratitude').value = todayEntry.gratitude || '';
+      }
+      const MOOD_EMOJI = { 1:'😢', 2:'😕', 3:'😐', 4:'🙂', 5:'😊', 6:'😄', 7:'🤩' };
+      const host = $('#emotionsList');
+      if (!list.length) {
+        host.innerHTML = `<div class="empty-state"><strong>Пока нет записей.</strong><br/>Заполните форму выше, чтобы добавить первую.</div>`;
+        return;
+      }
+      host.innerHTML = list.slice(0, 30).map(e => `
+        <div class="card-flat">
+          <div class="flex items-center justify-between mb-2">
+            <span class="heading-font font-bold text-sm">${formatDateRu(e.date)}${e.date === today ? ' · сегодня' : ''}</span>
+            <div class="flex items-center gap-3 text-xs text-[color:var(--text-muted)]">
+              ${e.mood ? `<span style="font-size:1.1rem;">${MOOD_EMOJI[e.mood] || ''}</span>` : ''}
+              ${e.sleep != null ? `<span>💤 ${e.sleep}ч</span>` : ''}
+              ${e.energy != null ? `<span>⚡ ${e.energy}/10</span>` : ''}
+              <button class="icon-btn emot-delete" data-id="${e.id}" style="width:28px;height:28px;" title="Удалить">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+              </button>
+            </div>
+          </div>
+          ${e.event ? `<div class="text-sm mb-1"><strong>Событие:</strong> ${escapeHtml(e.event)}</div>` : ''}
+          ${e.thought ? `<div class="text-sm mb-1"><strong>Мысль:</strong> ${escapeHtml(e.thought)}</div>` : ''}
+          ${e.gratitude ? `<div class="text-sm"><strong>Благодарность:</strong> ${escapeHtml(e.gratitude)}</div>` : ''}
+        </div>
+      `).join('');
+      host.querySelectorAll('.emot-delete').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const ok = await confirmModal('Удалить запись?'); if (!ok) return;
+          Store.emotions.save(Store.emotions.list().filter(x => x.id !== btn.dataset.id));
+          toast('Запись удалена', 'success');
+          renderEmotions();
+        });
+      });
+    }
 
     // ---------- Team (сотрудники) ----------
     function roleLabel(role) {
