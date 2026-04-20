@@ -100,6 +100,13 @@ app.get('/api/google/events', require('./api/google/events'));
 app.post('/api/google/sync-task', require('./api/google/sync-task'));
 app.post('/api/google/disconnect', require('./api/google/disconnect'));
 
+app.post('/api/team/invite', require('./api/team/invite'));
+const teamMembersHandler = require('./api/team/members');
+app.get('/api/team/members', teamMembersHandler);
+app.patch('/api/team/members/:id', teamMembersHandler);
+app.delete('/api/team/members/:id', teamMembersHandler);
+app.get('/api/team/workspaces', require('./api/team/workspaces'));
+
 const tasksHandler = require('./api/tasks');
 app.all('/api/tasks', tasksHandler);
 app.all('/api/tasks/:id', tasksHandler);

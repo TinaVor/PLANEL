@@ -288,6 +288,26 @@
     body.admin-mode .bottom-nav,
     body.admin-mode .hidden-for-admin { display:none !important; }
 
+    /* Viewer mode — скрываем кнопки создания/удаления */
+    body.viewer-mode .hidden-for-viewer { display:none !important; }
+
+    /* Плашка «вы просматриваете чужой workspace» */
+    .workspace-banner {
+      background: var(--brand-50); border:1px solid var(--brand-200); border-radius:10px;
+      padding:0.55rem 0.9rem; font-size:0.82rem; color:var(--brand-700);
+      display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem;
+    }
+    .workspace-banner strong { color:var(--brand-900); }
+
+    .member-row { display:flex; align-items:center; gap:0.75rem; padding:0.65rem 0.9rem; border:1px solid var(--border-soft); border-radius:10px; background:var(--bg-surface); }
+    .member-badge-pending { background:var(--warning-50); color:var(--warning-700); border-color:#FDE68A; }
+    .member-badge-active  { background:var(--success-50); color:var(--success-700); border-color:#A7F3D0; }
+
+    .workspace-item { padding:0.6rem 0.9rem; cursor:pointer; border-bottom:1px solid var(--border-soft); display:flex; align-items:center; justify-content:space-between; gap:0.5rem; }
+    .workspace-item:last-child { border-bottom:none; }
+    .workspace-item:hover { background:var(--bg-muted); }
+    .workspace-item.active { background:var(--brand-50); }
+
     /* Элементы уведомлений */
     .notif-item { display:block; padding:0.7rem 1rem; border-bottom:1px solid var(--border-soft); cursor:pointer; transition:background 140ms ease; position:relative; }
     .notif-item:last-child { border-bottom:none; }
@@ -552,9 +572,20 @@
         <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
           <div class="flex items-center gap-4 min-w-0 flex-1">
             <h2 class="heading-font text-base sm:text-xl font-extrabold leading-tight whitespace-nowrap" id="headerTitle">Добро пожаловать!</h2>
+            <div class="relative hidden-for-admin hidden" id="workspaceWrap">
+              <button class="btn-ghost text-sm" id="workspaceBtn" aria-haspopup="listbox">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+                <span id="workspaceLabel">Моё рабочее пространство</span>
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div id="workspaceMenu" class="hidden absolute left-0 mt-2 w-72 max-w-[90vw] bg-white border border-[color:var(--border-soft)] rounded-xl shadow-lg z-[90]" style="box-shadow: var(--shadow-lg);">
+                <div class="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[color:var(--text-muted)]">Рабочие пространства</div>
+                <div id="workspaceItems" class="max-h-80 overflow-y-auto"></div>
+              </div>
+            </div>
           </div>
           <div class="flex items-center gap-2 sm:gap-2.5 flex-shrink-0">
-            <button class="btn-primary hidden-for-admin" id="newTaskBtn" aria-label="Новая задача">
+            <button class="btn-primary hidden-for-admin hidden-for-viewer" id="newTaskBtn" aria-label="Новая задача">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
               <span class="hidden sm:inline">Новая задача</span>
             </button>
@@ -590,7 +621,7 @@
                     <h3 class="heading-font text-lg font-extrabold mb-0.5">Задачи на сегодня</h3>
                     <p class="text-sm text-[color:var(--text-secondary)]" id="dashboardSubtitle">Ближайшие задачи и дедлайны</p>
                   </div>
-                  <button class="btn-primary text-xs" id="newTaskBtn2">
+                  <button class="btn-primary text-xs hidden-for-viewer" id="newTaskBtn2">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
                     Добавить
                   </button>
@@ -964,6 +995,25 @@
                   </div>
                 </div>
               </div>
+
+              <div class="card lg:col-span-2">
+                <div class="flex items-start justify-between gap-3 mb-4">
+                  <div>
+                    <h3 class="heading-font text-lg font-extrabold mb-1">Сотрудники</h3>
+                    <p class="text-sm text-[color:var(--text-secondary)]">Пригласите коллег и выдайте им доступ к вашим задачам</p>
+                  </div>
+                </div>
+                <form id="teamInviteForm" class="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] gap-2 mb-4">
+                  <input type="email" id="teamInviteEmail" class="form-input" required maxlength="254" placeholder="email@example.com">
+                  <select id="teamInviteRole" class="form-select">
+                    <option value="viewer">Просмотр</option>
+                    <option value="creator">Ставить задачи</option>
+                  </select>
+                  <button type="submit" class="btn-primary text-sm" id="teamInviteSubmit">Пригласить</button>
+                </form>
+                <p id="teamMsg" class="text-xs hidden"></p>
+                <div id="teamMembersList" class="space-y-2"></div>
+              </div>
             </div>
           </section>
 
@@ -1247,6 +1297,9 @@
       calendarSelected: null,
       googleEvents: [],
       showGoogleEvents: false,
+      workspace: null,       // {owner_id, owner_email, owner_name, role}
+      workspaces: [],        // остальные workspace'ы пользователя (как member)
+      teamMembers: [],       // собственные приглашённые сотрудники
     };
     function getStatus(task) {
       const meta = Store.taskMeta.for(task.id);
@@ -1470,21 +1523,22 @@
         const gcSync = $('#taskGoogleSync');
         const pushGoogle = !!(gcSync?.checked && gcWrap && !gcWrap.classList.contains('hidden'));
         let savedId = id;
+        if (!canWrite()) { err.textContent = 'У вас роль «Просмотр» — создавать задачи нельзя'; err.classList.remove('hidden'); return; }
         if (id) {
-          const r = await api(`/api/tasks/${id}`, { method: 'PUT', body: JSON.stringify({ title, description, priority, due_date, done }) });
+          const r = await api(taskUrl(`/api/tasks/${id}`), { method: 'PUT', body: JSON.stringify({ title, description, priority, due_date, done }) });
           if (r.status === 401) return logout();
           if (!r.ok) throw new Error('save_failed');
           Store.taskMeta.set(id, { project_id, status });
           toast('Задача обновлена', 'success');
         } else {
-          const r = await api('/api/tasks', { method: 'POST', body: JSON.stringify({ title, description, priority, due_date }) });
+          const r = await api(taskUrl('/api/tasks'), { method: 'POST', body: JSON.stringify({ title, description, priority, due_date }) });
           if (r.status === 401) return logout();
           if (!r.ok) throw new Error('create_failed');
           const j = await r.json();
           savedId = j.task.id;
           Store.taskMeta.set(savedId, { project_id, status });
           if (status === 'done') {
-            await api(`/api/tasks/${savedId}`, { method: 'PUT', body: JSON.stringify({ done: true }) });
+            await api(taskUrl(`/api/tasks/${savedId}`), { method: 'PUT', body: JSON.stringify({ done: true }) });
           }
           toast('Задача создана', 'success');
         }
@@ -1507,9 +1561,10 @@
     $('#taskDeleteBtn').addEventListener('click', async () => {
       const id = $('#taskId').value;
       if (!id) return;
+      if (!canWrite()) { toast('У вас роль «Просмотр» — удалять нельзя', 'warn'); return; }
       const ok = await confirmModal('Удалить задачу без возможности восстановления?');
       if (!ok) return;
-      const r = await api(`/api/tasks/${id}`, { method: 'DELETE' });
+      const r = await api(taskUrl(`/api/tasks/${id}`), { method: 'DELETE' });
       if (r.status === 401) return logout();
       Store.taskMeta.delete(id);
       closeModal('taskModal');
@@ -1667,17 +1722,40 @@
       renderTodayHabits();
     });
 
+    // ---------- Workspace (owner_id) ----------
+    function currentOwnerId() { return state.workspace?.owner_id || userId(); }
+    function currentRole() { return state.workspace?.role || 'owner'; }
+    function canWrite() { return currentRole() !== 'viewer'; }
+    function ownerQuery() {
+      const oid = currentOwnerId();
+      return oid && oid !== userId() ? `?owner_id=${encodeURIComponent(oid)}` : '';
+    }
+    function ownerSep(path) { return path.includes('?') ? '&' : '?'; }
+    function taskUrl(path) {
+      const oid = currentOwnerId();
+      if (!oid || oid === userId()) return path;
+      return `${path}${ownerSep(path)}owner_id=${encodeURIComponent(oid)}`;
+    }
+
     // ---------- Tasks API ----------
     async function loadTasks() {
       try {
-        const r = await api('/api/tasks');
+        const r = await api(taskUrl('/api/tasks'));
         if (r.status === 401) { logout(); return; }
+        if (r.status === 403) {
+          toast('Доступ к этому рабочему пространству закрыт', 'error');
+          state.workspace = { owner_id: userId(), role: 'owner' };
+          renderWorkspaceSwitcher();
+          return loadTasks();
+        }
         const j = await r.json();
         state.tasks = j.tasks || [];
+        if (j.role) state.workspace = { ...(state.workspace || {}), role: j.role };
       } catch {
         toast('Не удалось загрузить задачи', 'error');
         state.tasks = [];
       }
+      applyRolePermissionsUI();
       renderDashboard();
       renderTasksView();
       renderCalendar();
@@ -1686,8 +1764,10 @@
     }
 
     async function toggleTaskDone(id, done) {
-      const r = await api(`/api/tasks/${id}`, { method: 'PUT', body: JSON.stringify({ done }) });
+      if (!canWrite()) { toast('У вас роль «Просмотр» — изменять задачи нельзя', 'warn'); return; }
+      const r = await api(taskUrl(`/api/tasks/${id}`), { method: 'PUT', body: JSON.stringify({ done }) });
       if (r.status === 401) return logout();
+      if (r.status === 403) { toast('Недостаточно прав', 'error'); return; }
       if (!r.ok) { toast('Не удалось обновить', 'error'); return; }
       const t = state.tasks.find(x => x.id === id);
       if (t) t.done = done;
@@ -2298,8 +2378,9 @@
       $('#profileEmail').value = u.email;
       $('#profilePassword').value = '';
       $('#profilePassword2').value = '';
-      ['profileMsg','nameMsg','passwordMsg'].forEach(id => $('#'+id).classList.add('hidden'));
+      ['profileMsg','nameMsg','passwordMsg','teamMsg'].forEach(id => $('#'+id)?.classList.add('hidden'));
       refreshGoogleStatus();
+      loadTeamMembers();
     }
 
     // ---------- Google Calendar ----------
@@ -2712,6 +2793,188 @@
       }
     });
 
+    // ---------- Team (сотрудники) ----------
+    function roleLabel(role) {
+      return role === 'owner' ? 'Владелец' : role === 'creator' ? 'Ставит задачи' : role === 'viewer' ? 'Просмотр' : role;
+    }
+
+    async function loadTeamMembers() {
+      try {
+        const r = await api('/api/team/members');
+        if (r.status === 401) return logout();
+        if (!r.ok) { state.teamMembers = []; }
+        else { const j = await r.json(); state.teamMembers = j.members || []; }
+      } catch { state.teamMembers = []; }
+      renderTeamMembers();
+    }
+
+    function renderTeamMembers() {
+      const host = $('#teamMembersList');
+      if (!host) return;
+      if (!state.teamMembers.length) {
+        host.innerHTML = `<div class="empty-state" style="padding:1rem;"><strong>Пока никого не пригласили.</strong><br/>Введите email коллеги выше, чтобы добавить.</div>`;
+        return;
+      }
+      host.innerHTML = state.teamMembers.map(m => {
+        const active = !!m.accepted_at && !!m.member_id;
+        return `
+          <div class="member-row" data-id="${m.id}">
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-[color:var(--text-strong)] text-sm truncate">${escapeHtml(m.member_email)}</div>
+              <div class="text-xs text-[color:var(--text-muted)]">${active ? 'Присоединился' : 'Ожидает входа'} · ${new Date(m.invited_at).toLocaleDateString('ru-RU')}</div>
+            </div>
+            <span class="status-badge ${active ? 'member-badge-active' : 'member-badge-pending'}">${active ? '✓ активен' : '⏳ ожидание'}</span>
+            <select class="form-select team-role-select" style="width:auto; padding:0.35rem 0.5rem; font-size:0.8rem;" data-id="${m.id}">
+              <option value="viewer" ${m.role==='viewer'?'selected':''}>Просмотр</option>
+              <option value="creator" ${m.role==='creator'?'selected':''}>Ставит задачи</option>
+            </select>
+            <button class="icon-btn team-remove" data-id="${m.id}" title="Удалить" style="width:32px;height:32px;">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+            </button>
+          </div>`;
+      }).join('');
+      host.querySelectorAll('.team-role-select').forEach(sel => {
+        sel.addEventListener('change', async () => {
+          const r = await api(`/api/team/members/${sel.dataset.id}`, { method:'PATCH', body: JSON.stringify({ role: sel.value }) });
+          if (r.ok) { toast('Роль обновлена', 'success'); loadTeamMembers(); }
+          else toast('Не удалось обновить', 'error');
+        });
+      });
+      host.querySelectorAll('.team-remove').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const ok = await confirmModal('Удалить сотрудника? Он потеряет доступ к вашему рабочему пространству.');
+          if (!ok) return;
+          const r = await api(`/api/team/members/${btn.dataset.id}`, { method:'DELETE' });
+          if (r.ok) { toast('Сотрудник удалён', 'success'); loadTeamMembers(); refreshWorkspaces(); }
+          else toast('Не удалось удалить', 'error');
+        });
+      });
+    }
+
+    $('#teamInviteForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const emailEl = $('#teamInviteEmail');
+      const roleEl = $('#teamInviteRole');
+      const btn = $('#teamInviteSubmit');
+      const msg = $('#teamMsg');
+      msg.classList.add('hidden');
+      const email = emailEl.value.trim();
+      const role = roleEl.value;
+      if (!email) { showFormMsg('teamMsg','Введите email','error'); return; }
+      btn.disabled = true;
+      const prev = btn.textContent;
+      btn.textContent = 'Отправляем…';
+      try {
+        const r = await api('/api/team/invite', { method:'POST', body: JSON.stringify({ email, role }) });
+        const j = await r.json();
+        if (!r.ok) {
+          showFormMsg('teamMsg',
+            j.error === 'invalid_email' ? 'Некорректный email' :
+            j.error === 'cannot_invite_self' ? 'Нельзя пригласить себя' :
+            j.error === 'invalid_role' ? 'Неизвестная роль' : 'Ошибка приглашения', 'error');
+          return;
+        }
+        toast('Приглашение отправлено', 'success');
+        emailEl.value = '';
+        loadTeamMembers();
+      } catch {
+        showFormMsg('teamMsg','Сетевая ошибка','error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = prev;
+      }
+    });
+
+    // ---------- Workspaces (куда меня пригласили) ----------
+    async function refreshWorkspaces() {
+      try {
+        const r = await api('/api/team/workspaces');
+        if (r.status === 401) return logout();
+        if (!r.ok) { state.workspaces = []; renderWorkspaceSwitcher(); return; }
+        const j = await r.json();
+        state.workspaces = j.workspaces || [];
+      } catch { state.workspaces = []; }
+      renderWorkspaceSwitcher();
+    }
+
+    function renderWorkspaceSwitcher() {
+      const wrap = $('#workspaceWrap');
+      const label = $('#workspaceLabel');
+      const items = $('#workspaceItems');
+      const hasExtras = state.workspaces.length > 0;
+      wrap.classList.toggle('hidden', !hasExtras);
+      const currentOid = currentOwnerId();
+      const isOwn = currentOid === userId();
+      label.textContent = isOwn
+        ? 'Моё пространство'
+        : `${state.workspace?.owner_name || state.workspace?.owner_email || 'Чужое пространство'} (${roleLabel(currentRole())})`;
+      const ownLine = `<div class="workspace-item ${isOwn ? 'active' : ''}" data-owner="">
+          <div class="flex-1 min-w-0">
+            <div class="font-semibold text-[color:var(--text-strong)] text-sm">Моё пространство</div>
+            <div class="text-xs text-[color:var(--text-muted)]">Владелец</div>
+          </div>${isOwn ? '<span class="text-xs text-[color:var(--brand-600)]">сейчас</span>' : ''}
+        </div>`;
+      items.innerHTML = ownLine + state.workspaces.map(w => `
+        <div class="workspace-item ${currentOid === w.owner_id ? 'active' : ''}" data-owner="${w.owner_id}" data-role="${w.role}" data-email="${escapeHtml(w.owner_email||'')}" data-name="${escapeHtml(w.owner_name||'')}">
+          <div class="flex-1 min-w-0">
+            <div class="font-semibold text-[color:var(--text-strong)] text-sm truncate">${escapeHtml(w.owner_name || w.owner_email || 'Без имени')}</div>
+            <div class="text-xs text-[color:var(--text-muted)]">${escapeHtml(w.owner_email || '')} · ${roleLabel(w.role)}</div>
+          </div>${currentOid === w.owner_id ? '<span class="text-xs text-[color:var(--brand-600)]">сейчас</span>' : ''}
+        </div>
+      `).join('');
+      items.querySelectorAll('.workspace-item').forEach(el => {
+        el.addEventListener('click', async () => {
+          const oid = el.dataset.owner || userId();
+          if (oid === userId()) {
+            state.workspace = { owner_id: userId(), role: 'owner' };
+          } else {
+            state.workspace = {
+              owner_id: oid,
+              role: el.dataset.role || 'viewer',
+              owner_email: el.dataset.email,
+              owner_name: el.dataset.name
+            };
+          }
+          $('#workspaceMenu').classList.add('hidden');
+          renderWorkspaceSwitcher();
+          applyRolePermissionsUI();
+          await loadTasks();
+        });
+      });
+    }
+
+    $('#workspaceBtn')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      $('#workspaceMenu').classList.toggle('hidden');
+    });
+    document.addEventListener('click', (e) => {
+      const menu = $('#workspaceMenu');
+      if (menu && !menu.classList.contains('hidden') && !menu.contains(e.target) && !$('#workspaceBtn').contains(e.target)) {
+        menu.classList.add('hidden');
+      }
+    });
+
+    function applyRolePermissionsUI() {
+      const isViewer = currentRole() === 'viewer';
+      document.body.classList.toggle('viewer-mode', isViewer);
+      // Баннер если чужое пространство
+      let banner = $('#workspaceBanner');
+      const isOwn = currentOwnerId() === userId();
+      if (isOwn) {
+        banner?.remove();
+        return;
+      }
+      if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'workspaceBanner';
+        banner.className = 'workspace-banner';
+        document.querySelector('main > div.flex-1').prepend(banner);
+      }
+      const w = state.workspace || {};
+      banner.innerHTML = `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z"/></svg>
+        <span>Вы в пространстве <strong>${escapeHtml(w.owner_name || w.owner_email || 'коллеги')}</strong> · роль: <strong>${escapeHtml(roleLabel(w.role))}</strong>${isViewer ? ' (изменения недоступны)' : ''}</span>`;
+    }
+
     // ---------- Boot ----------
     async function bootApp() {
       document.body.classList.remove('admin-mode');
@@ -2733,11 +2996,16 @@
           renderProfile();
         }
       } catch {}
+      // Инициализируем собственный workspace
+      state.workspace = { owner_id: userId(), role: 'owner' };
       pomodoroDisplay();
       await loadTasks();
       renderTodayHabits();
       renderNotifBadge();
       refreshGoogleStatus();
+      loadTeamMembers();
+      refreshWorkspaces();
+      applyRolePermissionsUI();
       // Если пришли обратно из OAuth (?google=connected)
       const qp = new URLSearchParams(location.search);
       if (qp.get('google') === 'connected') {

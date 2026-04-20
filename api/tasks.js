@@ -1,4 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
+const { resolveMembership } = require('./team/_helpers');
 
 const adminClient = () => createClient(
   process.env.SUPABASE_URL,
@@ -28,15 +29,28 @@ module.exports = async function tasks(req, res) {
     const id = req.params?.id;
     if (id && !isUuid(id)) return res.status(400).json({ error: 'invalid_id' });
 
+    // Определяем целевой workspace.
+    const rawOwnerId = (req.query?.owner_id || req.body?.owner_id || '').toString().trim();
+    const targetOwnerId = rawOwnerId && isUuid(rawOwnerId) ? rawOwnerId : user.id;
+
+    const membership = await resolveMembership(user, targetOwnerId);
+    if (!membership) return res.status(403).json({ error: 'no_access' });
+
+    const role = membership.role; // 'owner' | 'creator' | 'viewer'
+    const isWrite = req.method !== 'GET';
+    if (isWrite && role === 'viewer') {
+      return res.status(403).json({ error: 'forbidden_viewer_cannot_write' });
+    }
+
     if (req.method === 'GET') {
       const { data, error } = await db
         .from('tasks')
         .select('id,title,description,priority,done,due_date,created_at')
-        .eq('user_id', user.id)
+        .eq('user_id', targetOwnerId)
         .order('created_at', { ascending: false })
         .limit(500);
       if (error) return res.status(500).json({ error: error.message });
-      return res.json({ tasks: data });
+      return res.json({ tasks: data, role });
     }
 
     if (req.method === 'POST') {
@@ -48,7 +62,7 @@ module.exports = async function tasks(req, res) {
       const now = new Date().toISOString();
 
       const { data, error } = await db.from('tasks').insert({
-        user_id: user.id,
+        user_id: targetOwnerId,
         title,
         description,
         priority,
@@ -79,7 +93,7 @@ module.exports = async function tasks(req, res) {
         .from('tasks')
         .update(patch)
         .eq('id', id)
-        .eq('user_id', user.id)
+        .eq('user_id', targetOwnerId)
         .select('id,title,description,priority,done,due_date,created_at')
         .maybeSingle();
       if (error) return res.status(500).json({ error: error.message });
@@ -93,14 +107,15 @@ module.exports = async function tasks(req, res) {
         .from('tasks')
         .delete({ count: 'exact' })
         .eq('id', id)
-        .eq('user_id', user.id);
+        .eq('user_id', targetOwnerId);
       if (error) return res.status(500).json({ error: error.message });
       if (!count) return res.status(404).json({ error: 'not_found' });
       return res.json({ ok: true });
     }
 
     return res.status(405).json({ error: 'method_not_allowed' });
-  } catch {
+  } catch (e) {
+    console.error('[tasks] fatal:', e.message);
     return res.status(500).json({ error: 'internal_error' });
   }
 };
