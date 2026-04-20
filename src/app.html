@@ -381,6 +381,50 @@
     .mood-option:hover { border-color:var(--brand-300); transform:scale(1.05); }
     .mood-option.selected { background:var(--brand-500); border-color:var(--brand-500); box-shadow:var(--shadow-brand); }
 
+    /* Week view */
+    .week-col { border:1px solid var(--border-soft); border-radius:10px; padding:0.6rem; min-height:180px; display:flex; flex-direction:column; gap:0.35rem; background:var(--bg-surface); }
+    .week-col.is-today { border-color:var(--brand-400); background:var(--brand-50); }
+    .week-col-head { font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); font-weight:700; }
+    .week-col-num { heading-font: inherit; font-weight:800; font-size:1.1rem; color:var(--text-strong); }
+    .week-col.is-today .week-col-num { color:var(--brand-700); }
+    .week-item { font-size:0.78rem; padding:0.3rem 0.5rem; border-radius:6px; background:var(--bg-muted); color:var(--text-primary); cursor:pointer; border-left:3px solid var(--brand-400); line-height:1.3; }
+    .week-item:hover { background:var(--brand-100); }
+    .week-item.is-google { border-left-color:var(--cyan-500); background:#CFFAFE; }
+    .week-item.is-done { opacity:0.55; text-decoration:line-through; }
+
+    /* Year view */
+    .year-mini { border:1px solid var(--border-soft); border-radius:10px; padding:0.65rem; background:var(--bg-surface); cursor:pointer; transition:border-color 140ms ease, background 140ms ease; }
+    .year-mini:hover { border-color:var(--brand-300); background:var(--brand-50); }
+    .year-mini h4 { font-size:0.82rem; font-weight:800; color:var(--text-strong); margin-bottom:0.5rem; }
+    .year-mini .ym-grid { display:grid; grid-template-columns:repeat(7, 1fr); gap:2px; }
+    .year-mini .ym-head { font-size:0.58rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em; text-align:center; padding:0; }
+    .year-mini .ym-day { font-size:0.62rem; aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:3px; color:var(--text-secondary); }
+    .year-mini .ym-day.is-today { background:var(--brand-500); color:#fff; font-weight:700; }
+    .year-mini .ym-day.has-tasks { background:var(--brand-100); color:var(--brand-800); font-weight:600; }
+    .year-mini .ym-day.has-tasks.is-today { background:var(--brand-600); color:#fff; }
+
+    /* Day view */
+    .day-hour { display:grid; grid-template-columns:60px 1fr; gap:0.5rem; border-top:1px dashed var(--border-soft); padding:0.3rem 0; min-height:44px; }
+    .day-hour:first-child { border-top:none; }
+    .day-hour-label { font-size:0.7rem; color:var(--text-muted); text-align:right; padding-right:0.5rem; padding-top:0.15rem; }
+    .day-hour-content { display:flex; flex-direction:column; gap:0.25rem; }
+
+    /* Habit month grid */
+    .habit-month-grid {
+      display:grid; grid-template-columns:repeat(auto-fill, minmax(28px, 1fr));
+      gap:3px;
+    }
+    .habit-month-grid .habit-day {
+      aspect-ratio:1 / 1; border-radius:5px; font-size:0.6rem;
+      border:1px solid var(--border-soft); background:var(--bg-surface);
+      color:var(--text-muted); display:flex; align-items:center; justify-content:center;
+      cursor:pointer; user-select:none;
+    }
+    .habit-month-grid .habit-day:hover { border-color:var(--brand-300); }
+    .habit-month-grid .habit-day.habit-completed { background:var(--brand-500); border-color:var(--brand-500); color:#fff; }
+    .habit-month-grid .habit-day.habit-future { opacity:0.4; cursor:not-allowed; }
+    .habit-month-grid .habit-day.is-today { box-shadow:0 0 0 2px var(--brand-400); }
+
     /* Элементы уведомлений */
     .notif-item { display:block; padding:0.7rem 1rem; border-bottom:1px solid var(--border-soft); cursor:pointer; transition:background 140ms ease; position:relative; }
     .notif-item:last-child { border-bottom:none; }
@@ -644,10 +688,6 @@
             <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11z"/></svg></span>
             <span>Привычки</span>
           </button>
-          <button class="nav-item" data-view="analytics">
-            <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg></span>
-            <span>Аналитика</span>
-          </button>
           <button class="nav-item" data-view="wheel">
             <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M5.6 18.4 18.4 5.6"/></svg></span>
             <span>Колесо баланса</span>
@@ -658,7 +698,7 @@
           </button>
           <button class="nav-item" data-view="goals100">
             <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg></span>
-            <span>100 целей</span>
+            <span>100 целей на год</span>
           </button>
           <button class="nav-item" data-view="emotions">
             <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11z"/><path d="M9 10h.01M15 10h.01M9 14c1 1 3 1 4 0"/></svg></span>
@@ -672,7 +712,6 @@
       <header class="border-b border-[color:var(--border-soft)] px-4 sm:px-6 lg:px-10 py-3 sm:py-4 bg-white/95 backdrop-blur-md sticky top-0 z-20">
         <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
           <div class="flex items-center gap-4 min-w-0 flex-1">
-            <h2 class="heading-font text-base sm:text-xl font-extrabold leading-tight whitespace-nowrap" id="headerTitle">Добро пожаловать!</h2>
             <div class="relative hidden-for-admin hidden" id="workspaceWrap">
               <button class="btn-ghost text-sm" id="workspaceBtn" aria-haspopup="listbox">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
@@ -686,11 +725,6 @@
             </div>
           </div>
           <div class="flex items-center gap-2 sm:gap-2.5 flex-shrink-0">
-            <button class="btn-primary hidden-for-admin hidden-for-viewer" id="newTaskBtn" aria-label="Новая задача">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-              <span class="hidden sm:inline">Новая задача</span>
-            </button>
-
             <div class="relative hidden-for-admin" id="notifWrap">
               <button class="icon-btn" id="notifBtn" aria-label="Уведомления" title="Уведомления">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9z"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
@@ -715,6 +749,31 @@
 
           <!-- Дашборд -->
           <section id="dashboard" class="view view-active space-y-6">
+            <div>
+              <h2 class="heading-font text-2xl font-extrabold mb-1">Дашборд</h2>
+              <p class="text-sm text-[color:var(--text-secondary)]" id="dashboardHello">Обзор задач, аналитика, помодоро и привычки</p>
+            </div>
+
+            <!-- KPI -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div class="card">
+                <div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">Всего задач</div>
+                <div class="heading-font text-3xl font-extrabold" id="statTotal">0</div>
+              </div>
+              <div class="card">
+                <div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">Выполнено</div>
+                <div class="heading-font text-3xl font-extrabold" style="color:var(--success-700);" id="statDone">0</div>
+              </div>
+              <div class="card">
+                <div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">В процессе</div>
+                <div class="heading-font text-3xl font-extrabold" style="color:var(--warning-700);" id="statProgress">0</div>
+              </div>
+              <div class="card">
+                <div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">Просрочено</div>
+                <div class="heading-font text-3xl font-extrabold" style="color:var(--danger-700);" id="statOverdue">0</div>
+              </div>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div class="card lg:col-span-2">
                 <div class="flex items-start justify-between mb-5 gap-3">
@@ -722,10 +781,6 @@
                     <h3 class="heading-font text-lg font-extrabold mb-0.5">Задачи на сегодня</h3>
                     <p class="text-sm text-[color:var(--text-secondary)]" id="dashboardSubtitle">Ближайшие задачи и дедлайны</p>
                   </div>
-                  <button class="btn-primary text-xs hidden-for-viewer" id="newTaskBtn2">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-                    Добавить
-                  </button>
                 </div>
                 <div class="space-y-2" id="tasksList">
                   <div class="text-sm text-[color:var(--text-muted)] py-6 text-center">Загрузка…</div>
@@ -767,6 +822,46 @@
                 </div>
               </div>
             </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-5">Процент выполнения</h3>
+                <div class="space-y-4">
+                  <div class="flex items-center justify-between text-2xl font-extrabold heading-font">
+                    <span style="color:var(--success-700)" id="statDoneBig">0</span>
+                    <span class="text-[color:var(--text-muted)] text-base font-normal"><span id="statTotalSmall">0</span> задач</span>
+                  </div>
+                  <div class="progress success" style="height:10px;"><span id="statOverallBar" style="width:0%"></span></div>
+                  <div class="grid grid-cols-3 gap-3 text-center pt-2">
+                    <div>
+                      <div class="heading-font text-base font-extrabold text-[color:var(--brand-600)]" id="statHighCount">0</div>
+                      <div class="text-xs text-[color:var(--text-muted)]">Высокий</div>
+                    </div>
+                    <div>
+                      <div class="heading-font text-base font-extrabold" style="color:var(--warning-700)" id="statMediumCount">0</div>
+                      <div class="text-xs text-[color:var(--text-muted)]">Средний</div>
+                    </div>
+                    <div>
+                      <div class="heading-font text-base font-extrabold" style="color:var(--success-700)" id="statLowCount">0</div>
+                      <div class="text-xs text-[color:var(--text-muted)]">Низкий</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-5">Загрузка по проектам</h3>
+                <div class="space-y-4" id="projectsBreakdown">
+                  <div class="empty-state"><strong>Пока нет проектов.</strong><br/>Создайте проект в разделе «Цели и проекты», чтобы увидеть разбивку.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3 class="heading-font text-lg font-extrabold mb-5">Активность за 7 дней</h3>
+              <div class="flex items-end justify-between gap-2" id="activityChart" style="height:160px;"></div>
+              <div class="flex items-center justify-between mt-3 text-xs text-[color:var(--text-muted)]" id="activityLabels"></div>
+            </div>
           </section>
 
           <!-- Задачи -->
@@ -776,10 +871,14 @@
                 <h2 class="heading-font text-2xl font-extrabold mb-1">Задачи и доски</h2>
                 <p class="text-sm text-[color:var(--text-secondary)]">Управляйте задачами в любом формате</p>
               </div>
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
                 <button class="pill-filter active" data-task-view="list">Список</button>
                 <button class="pill-filter" data-task-view="board">Доска</button>
                 <button class="pill-filter" data-task-view="matrix">Матрица</button>
+                <button class="btn-primary text-sm hidden-for-viewer" id="newTaskBtn3" aria-label="Новая задача">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                  Новая задача
+                </button>
               </div>
             </div>
 
@@ -865,18 +964,40 @@
                   <input type="checkbox" id="googleCalToggle">
                   <span class="font-semibold text-[color:var(--text-secondary)]">Google-события</span>
                 </label>
-                <button class="btn-ghost text-sm" id="calPrev" aria-label="Предыдущий месяц">‹</button>
-                <span class="heading-font text-base font-extrabold min-w-[140px] text-center" id="calLabel"></span>
-                <button class="btn-ghost text-sm" id="calNext" aria-label="Следующий месяц">›</button>
+                <div class="flex items-center gap-1" id="calModeWrap">
+                  <button class="pill-filter" data-cal-mode="day">День</button>
+                  <button class="pill-filter" data-cal-mode="week">Неделя</button>
+                  <button class="pill-filter active" data-cal-mode="month">Месяц</button>
+                  <button class="pill-filter" data-cal-mode="year">Год</button>
+                </div>
+                <button class="btn-ghost text-sm" id="calPrev" aria-label="Назад">‹</button>
+                <span class="heading-font text-base font-extrabold min-w-[170px] text-center" id="calLabel"></span>
+                <button class="btn-ghost text-sm" id="calNext" aria-label="Вперёд">›</button>
                 <button class="btn-secondary text-sm" id="calToday">Сегодня</button>
               </div>
             </div>
 
-            <div class="card">
+            <!-- Month view -->
+            <div class="card" id="calMonthView">
               <div class="grid grid-cols-7 gap-2 text-center text-xs font-semibold text-[color:var(--text-muted)] uppercase tracking-wider mb-2">
                 <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>
               </div>
               <div class="grid grid-cols-7 gap-2" id="calGrid"></div>
+            </div>
+
+            <!-- Week view -->
+            <div class="card hidden" id="calWeekView">
+              <div class="grid grid-cols-7 gap-2" id="calWeekGrid"></div>
+            </div>
+
+            <!-- Day view -->
+            <div class="card hidden" id="calDayView">
+              <div id="calDayContent"></div>
+            </div>
+
+            <!-- Year view -->
+            <div class="card hidden" id="calYearView">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="calYearGrid"></div>
             </div>
 
             <div class="card" id="calSelectedCard" style="display:none;">
@@ -907,15 +1028,21 @@
                 <h2 class="heading-font text-2xl font-extrabold mb-1">Трекер привычек</h2>
                 <p class="text-sm text-[color:var(--text-secondary)]">Отмечайте дни — строится серия и процент стабильности</p>
               </div>
-              <button class="btn-primary text-sm" id="newHabitBtn">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-                Новая привычка
-              </button>
+              <div class="flex items-center gap-2 flex-wrap">
+                <div class="flex items-center gap-1" id="habitsModeWrap">
+                  <button class="pill-filter active" data-habits-view="week">Неделя</button>
+                  <button class="pill-filter" data-habits-view="month">Месяц</button>
+                </div>
+                <button class="btn-primary text-sm" id="newHabitBtn">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                  Новая привычка
+                </button>
+              </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div class="card lg:col-span-2">
-                <h3 class="heading-font text-lg font-extrabold mb-5">Журнал за неделю</h3>
+                <h3 class="heading-font text-lg font-extrabold mb-5" id="habitsListTitle">Журнал за неделю</h3>
                 <div class="space-y-4" id="habitsList"></div>
               </div>
               <div class="card">
@@ -940,75 +1067,6 @@
                   <div class="text-xs text-[color:var(--text-muted)]" id="habitStatNote">Добавьте привычки, чтобы увидеть статистику</div>
                 </div>
               </div>
-            </div>
-          </section>
-
-          <!-- Аналитика -->
-          <section id="analytics" class="view space-y-6">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h2 class="heading-font text-2xl font-extrabold mb-1">Аналитика</h2>
-                <p class="text-sm text-[color:var(--text-secondary)]">Состояние задач и проектов в реальном времени</p>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div class="card">
-                <div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">Всего задач</div>
-                <div class="heading-font text-3xl font-extrabold" id="statTotal">0</div>
-              </div>
-              <div class="card">
-                <div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">Выполнено</div>
-                <div class="heading-font text-3xl font-extrabold" style="color:var(--success-700);" id="statDone">0</div>
-              </div>
-              <div class="card">
-                <div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">В процессе</div>
-                <div class="heading-font text-3xl font-extrabold" style="color:var(--warning-700);" id="statProgress">0</div>
-              </div>
-              <div class="card">
-                <div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">Просрочено</div>
-                <div class="heading-font text-3xl font-extrabold" style="color:var(--danger-700);" id="statOverdue">0</div>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div class="card">
-                <h3 class="heading-font text-lg font-extrabold mb-5">Процент выполнения</h3>
-                <div class="space-y-4">
-                  <div class="flex items-center justify-between text-2xl font-extrabold heading-font">
-                    <span style="color:var(--success-700)" id="statDoneBig">0</span>
-                    <span class="text-[color:var(--text-muted)] text-base font-normal"><span id="statTotalSmall">0</span> задач</span>
-                  </div>
-                  <div class="progress success" style="height:10px;"><span id="statOverallBar" style="width:0%"></span></div>
-                  <div class="grid grid-cols-3 gap-3 text-center pt-2">
-                    <div>
-                      <div class="heading-font text-base font-extrabold text-[color:var(--brand-600)]" id="statHighCount">0</div>
-                      <div class="text-xs text-[color:var(--text-muted)]">Высокий</div>
-                    </div>
-                    <div>
-                      <div class="heading-font text-base font-extrabold" style="color:var(--warning-700)" id="statMediumCount">0</div>
-                      <div class="text-xs text-[color:var(--text-muted)]">Средний</div>
-                    </div>
-                    <div>
-                      <div class="heading-font text-base font-extrabold" style="color:var(--success-700)" id="statLowCount">0</div>
-                      <div class="text-xs text-[color:var(--text-muted)]">Низкий</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="card">
-                <h3 class="heading-font text-lg font-extrabold mb-5">Загрузка по проектам</h3>
-                <div class="space-y-4" id="projectsBreakdown">
-                  <div class="empty-state"><strong>Пока нет проектов.</strong><br/>Создайте проект в разделе «Цели и проекты», чтобы увидеть разбивку.</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="card">
-              <h3 class="heading-font text-lg font-extrabold mb-5">Активность за 7 дней</h3>
-              <div class="flex items-end justify-between gap-2" id="activityChart" style="height:160px;"></div>
-              <div class="flex items-center justify-between mt-3 text-xs text-[color:var(--text-muted)]" id="activityLabels"></div>
             </div>
           </section>
 
@@ -1111,12 +1169,24 @@
             </div>
           </section>
 
-          <!-- 100 целей -->
+          <!-- 100 целей на год -->
           <section id="goals100" class="view space-y-6">
-            <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center justify-between gap-3" style="position:relative;">
               <div>
-                <h2 class="heading-font text-2xl font-extrabold mb-1">100 целей</h2>
+                <div class="flex items-center gap-2 mb-1">
+                  <h2 class="heading-font text-2xl font-extrabold">100 целей на год</h2>
+                  <button id="smartHelp" class="help-btn" aria-expanded="false" aria-label="Что такое SMART?" title="Что такое SMART?">?</button>
+                </div>
                 <p class="text-sm text-[color:var(--text-secondary)]">Выписывайте большие цели с планом и метриками достижения</p>
+              </div>
+              <div id="smartPopover" class="popover hidden" style="top:60px; left:0; max-width:340px;">
+                <strong>SMART</strong> — критерии сильной цели:<br/>
+                <strong>S</strong>pecific · конкретная (кто, что, где)<br/>
+                <strong>M</strong>easurable · измеримая (цифра/метрика)<br/>
+                <strong>A</strong>chievable · достижимая с вашими ресурсами<br/>
+                <strong>R</strong>elevant · значимая, ведёт к большой цели<br/>
+                <strong>T</strong>ime-bound · с дедлайном<br/>
+                Пример вместо «Похудеть»: «Скинуть 5 кг к 1 сентября через 3 тренировки в неделю и дефицит 400 ккал».
               </div>
               <button class="btn-primary text-sm" id="goals100AddBtn">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
@@ -1609,7 +1679,9 @@
       priorityFilter: '',
       tasksView: 'list',
       calendarDate: new Date(),
+      calendarMode: 'month',
       calendarSelected: null,
+      habitsView: 'week',
       googleEvents: [],
       showGoogleEvents: false,
       workspace: null,       // {owner_id, owner_email, owner_name, role}
@@ -1764,18 +1836,17 @@
       views.forEach(v => v.classList.toggle('view-active', v.id === name));
       navButtons.forEach(b => b.classList.toggle('nav-item-active', b.dataset.view === name));
       const titles = {
-        dashboard:'Добро пожаловать!', tasks:'Задачи и доски', calendar:'Планер',
-        projects:'Цели и проекты', habits:'Привычки', analytics:'Аналитика',
-        wheel:'Колесо баланса', food:'Дневник питания', goals100:'100 целей', emotions:'Дневник эмоций',
+        dashboard:'Дашборд', tasks:'Задачи и доски', calendar:'Планер',
+        projects:'Цели и проекты', habits:'Привычки',
+        wheel:'Колесо баланса', food:'Дневник питания', goals100:'100 целей на год', emotions:'Дневник эмоций',
         profile:'Профиль', admin:'Админ-панель'
       };
-      $('#headerTitle').textContent = titles[name] || 'PLANEL';
-      if (name === 'dashboard') { renderDashboard(); renderTodayHabits(); }
+      document.title = (titles[name] || 'PLANEL') + ' · PLANEL';
+      if (name === 'dashboard') { renderDashboard(); renderTodayHabits(); renderAnalytics(); }
       if (name === 'tasks')     renderTasksView();
       if (name === 'calendar')  renderCalendar();
       if (name === 'projects')  renderProjects();
       if (name === 'habits')    renderHabits();
-      if (name === 'analytics') renderAnalytics();
       if (name === 'wheel')     renderWheel();
       if (name === 'food')      renderFoodDiary();
       if (name === 'goals100')  renderGoals100();
@@ -2311,13 +2382,39 @@
       });
     }
 
-    // ---------- Calendar ----------
+    // ---------- Calendar (Day / Week / Month / Year) ----------
     function googleEventsOn(iso) {
       if (!state.showGoogleEvents) return [];
       return state.googleEvents.filter(e => (e.start || '').slice(0, 10) === iso);
     }
+    function isoOfDate(d) {
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+    // Monday-based week start
+    function weekStart(d) {
+      const x = new Date(d);
+      const diff = (x.getDay() + 6) % 7;
+      x.setDate(x.getDate() - diff);
+      x.setHours(0,0,0,0);
+      return x;
+    }
 
     function renderCalendar() {
+      const mode = state.calendarMode;
+      $$('[data-cal-mode]').forEach(b => b.classList.toggle('active', b.dataset.calMode === mode));
+      $('#calMonthView').classList.toggle('hidden', mode !== 'month');
+      $('#calWeekView').classList.toggle('hidden',  mode !== 'week');
+      $('#calDayView').classList.toggle('hidden',   mode !== 'day');
+      $('#calYearView').classList.toggle('hidden',  mode !== 'year');
+      $('#calSelectedCard').style.display = (mode === 'month' && state.calendarSelected) ? '' : 'none';
+
+      if (mode === 'month') renderCalendarMonth();
+      if (mode === 'week')  renderCalendarWeek();
+      if (mode === 'day')   renderCalendarDay();
+      if (mode === 'year')  renderCalendarYear();
+    }
+
+    function renderCalendarMonth() {
       const date = state.calendarDate;
       $('#calLabel').textContent = `${MONTHS_RU[date.getMonth()]} ${date.getFullYear()}`;
       const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -2353,25 +2450,143 @@
       grid.querySelectorAll('.cal-day[data-iso]').forEach(el => {
         el.addEventListener('click', () => {
           state.calendarSelected = el.dataset.iso;
+          $('#calSelectedCard').style.display = '';
           renderCalendarSelected();
         });
       });
       if (state.calendarSelected) renderCalendarSelected();
     }
 
+    function renderCalendarWeek() {
+      const start = weekStart(state.calendarDate);
+      const end = new Date(start); end.setDate(end.getDate() + 6);
+      const fmt = (d) => `${d.getDate()} ${MONTHS_RU[d.getMonth()].slice(0,3).toLowerCase()}`;
+      $('#calLabel').textContent = `${fmt(start)} — ${fmt(end)} ${end.getFullYear()}`;
+      const today = todayISO();
+      const grid = $('#calWeekGrid');
+      let html = '';
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(start); d.setDate(d.getDate() + i);
+        const iso = isoOfDate(d);
+        const dayTasks = state.tasks.filter(t => t.due_date === iso);
+        const dayGoogle = googleEventsOn(iso);
+        const isToday = iso === today;
+        const items = [];
+        dayTasks.forEach(t => {
+          items.push(`<div class="week-item ${t.done ? 'is-done' : ''}" data-task-id="${t.id}">${escapeHtml(t.title)}</div>`);
+        });
+        dayGoogle.forEach(ev => {
+          const time = ev.all_day ? '' : (ev.start ? new Date(ev.start).toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'}) + ' ' : '');
+          items.push(`<div class="week-item is-google" title="${escapeHtml(ev.summary)}">${time}${escapeHtml(ev.summary)}</div>`);
+        });
+        html += `
+          <div class="week-col ${isToday ? 'is-today' : ''}" data-iso="${iso}">
+            <div class="week-col-head">${DAYS_RU[i]}</div>
+            <div class="week-col-num">${d.getDate()}</div>
+            ${items.length ? items.join('') : `<div class="text-xs text-[color:var(--text-muted)] mt-2">—</div>`}
+          </div>`;
+      }
+      grid.innerHTML = html;
+      grid.querySelectorAll('.week-item[data-task-id]').forEach(el => {
+        el.addEventListener('click', (e) => { e.stopPropagation(); openTaskModal(el.dataset.taskId); });
+      });
+      grid.querySelectorAll('.week-col').forEach(el => {
+        el.addEventListener('click', () => openTaskModal(null, { due_date: el.dataset.iso }));
+      });
+    }
+
+    function renderCalendarDay() {
+      const d = new Date(state.calendarDate);
+      const iso = isoOfDate(d);
+      const isToday = iso === todayISO();
+      $('#calLabel').textContent = `${d.getDate()} ${MONTHS_RU[d.getMonth()]} ${d.getFullYear()}${isToday ? ' · сегодня' : ''}`;
+      const host = $('#calDayContent');
+      const dayTasks = state.tasks.filter(t => t.due_date === iso);
+      const dayGoogle = googleEventsOn(iso);
+
+      // Hour grid from 6:00 to 23:00
+      let hoursHtml = '';
+      for (let h = 6; h <= 23; h++) {
+        const label = String(h).padStart(2, '0') + ':00';
+        const atHour = dayGoogle.filter(ev => {
+          if (!ev.start || ev.all_day) return false;
+          return new Date(ev.start).getHours() === h;
+        });
+        const evHtml = atHour.map(ev => {
+          const time = ev.start ? new Date(ev.start).toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'}) : '';
+          return `<div class="week-item is-google"><strong>${time}</strong> · ${escapeHtml(ev.summary)}</div>`;
+        }).join('');
+        hoursHtml += `<div class="day-hour"><div class="day-hour-label">${label}</div><div class="day-hour-content">${evHtml}</div></div>`;
+      }
+
+      const allDayGoogle = dayGoogle.filter(ev => ev.all_day);
+      const allDayHtml = allDayGoogle.length
+        ? `<div class="mb-3"><div class="text-xs font-semibold text-[color:var(--text-muted)] uppercase tracking-wider mb-2">Весь день (Google)</div>${allDayGoogle.map(ev => `<div class="week-item is-google">${escapeHtml(ev.summary)}</div>`).join('')}</div>`
+        : '';
+
+      const tasksHtml = dayTasks.length
+        ? `<div class="mb-3"><div class="text-xs font-semibold text-[color:var(--text-muted)] uppercase tracking-wider mb-2">Задачи</div>${dayTasks.map(t => renderTaskRow(t)).join('')}</div>`
+        : `<div class="empty-state"><strong>На этот день задач нет.</strong><br/><button class="btn-ghost text-xs mt-2" id="calAddForDay">+ Создать задачу на ${formatDateRu(iso)}</button></div>`;
+
+      host.innerHTML = `${allDayHtml}${tasksHtml}<div class="text-xs font-semibold text-[color:var(--text-muted)] uppercase tracking-wider mt-4 mb-2">Расписание</div>${hoursHtml}`;
+      $('#calAddForDay')?.addEventListener('click', () => openTaskModal(null, { due_date: iso }));
+      const tasksWrap = host.querySelector('div.mb-3:nth-of-type(1)') || host;
+      bindTaskRowEvents(host);
+    }
+
+    function renderCalendarYear() {
+      const year = state.calendarDate.getFullYear();
+      $('#calLabel').textContent = `${year}`;
+      const today = todayISO();
+      const grid = $('#calYearGrid');
+      let html = '';
+      for (let m = 0; m < 12; m++) {
+        const firstDay = new Date(year, m, 1);
+        const lastDay = new Date(year, m + 1, 0);
+        const firstWeekday = (firstDay.getDay() + 6) % 7;
+        const daysInMonth = lastDay.getDate();
+        let cells = '';
+        DAYS_RU.forEach(d => { cells += `<div class="ym-head">${d[0]}</div>`; });
+        for (let i = 0; i < firstWeekday; i++) cells += `<div class="ym-day"></div>`;
+        for (let day = 1; day <= daysInMonth; day++) {
+          const iso = `${year}-${String(m + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+          const count = state.tasks.filter(t => t.due_date === iso).length + googleEventsOn(iso).length;
+          const isToday = iso === today;
+          cells += `<div class="ym-day ${count ? 'has-tasks' : ''} ${isToday ? 'is-today' : ''}" data-iso="${iso}" title="${iso}${count ? ' · '+count+' задач/событий' : ''}">${day}</div>`;
+        }
+        html += `<div class="year-mini" data-month="${m}">
+          <h4>${MONTHS_RU[m]}</h4>
+          <div class="ym-grid">${cells}</div>
+        </div>`;
+      }
+      grid.innerHTML = html;
+      grid.querySelectorAll('.year-mini').forEach(el => {
+        el.addEventListener('click', () => {
+          state.calendarDate = new Date(year, +el.dataset.month, 1);
+          state.calendarMode = 'month';
+          renderCalendar();
+        });
+      });
+      grid.querySelectorAll('.ym-day[data-iso]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const [Y, M, D] = el.dataset.iso.split('-').map(Number);
+          state.calendarDate = new Date(Y, M - 1, D);
+          state.calendarMode = 'day';
+          renderCalendar();
+        });
+      });
+    }
+
     function renderCalendarSelected() {
       const iso = state.calendarSelected;
       if (!iso) return;
-      const card = $('#calSelectedCard');
       const list = $('#calSelectedList');
-      card.style.display = '';
       $('#calSelectedTitle').textContent = `Задачи на ${formatDateRu(iso)}`;
       const dayTasks = state.tasks.filter(t => t.due_date === iso);
       const dayGoogle = googleEventsOn(iso);
       const parts = [];
-      if (dayTasks.length) {
-        parts.push(dayTasks.map(t => renderTaskRow(t)).join(''));
-      }
+      if (dayTasks.length) parts.push(dayTasks.map(t => renderTaskRow(t)).join(''));
       if (dayGoogle.length) {
         parts.push(`<div class="text-xs font-semibold text-[color:var(--text-muted)] uppercase tracking-wider mt-3 mb-2">Google Calendar</div>`);
         parts.push(dayGoogle.map(ev => {
@@ -2379,7 +2594,6 @@
           return `<div class="card-flat" style="border-left:3px solid var(--brand-500);">
             <div class="font-semibold text-[color:var(--text-strong)] text-sm mb-1">${escapeHtml(ev.summary)}</div>
             <div class="text-xs text-[color:var(--text-muted)]">${time}${ev.html_link ? ` · <a href="${escapeHtml(ev.html_link)}" target="_blank" rel="noopener" class="text-[color:var(--brand-600)]">открыть в Google ↗</a>` : ''}</div>
-            ${ev.description ? `<div class="text-xs text-[color:var(--text-secondary)] mt-1">${escapeHtml(ev.description.slice(0,140))}${ev.description.length>140?'…':''}</div>` : ''}
           </div>`;
         }).join(''));
       }
@@ -2392,22 +2606,32 @@
       }
     }
 
-    $('#calPrev').addEventListener('click', () => {
-      state.calendarDate = new Date(state.calendarDate.getFullYear(), state.calendarDate.getMonth() - 1, 1);
+    function calStep(dir) {
+      const d = new Date(state.calendarDate);
+      if (state.calendarMode === 'month') d.setMonth(d.getMonth() + dir);
+      else if (state.calendarMode === 'week') d.setDate(d.getDate() + dir * 7);
+      else if (state.calendarMode === 'day') d.setDate(d.getDate() + dir);
+      else if (state.calendarMode === 'year') d.setFullYear(d.getFullYear() + dir);
+      state.calendarDate = d;
       state.calendarSelected = null;
       $('#calSelectedCard').style.display = 'none';
       renderCalendar();
-    });
-    $('#calNext').addEventListener('click', () => {
-      state.calendarDate = new Date(state.calendarDate.getFullYear(), state.calendarDate.getMonth() + 1, 1);
-      state.calendarSelected = null;
-      $('#calSelectedCard').style.display = 'none';
-      renderCalendar();
-    });
+    }
+
+    $('#calPrev').addEventListener('click', () => calStep(-1));
+    $('#calNext').addEventListener('click', () => calStep(1));
     $('#calToday').addEventListener('click', () => {
       state.calendarDate = new Date();
       state.calendarSelected = todayISO();
       renderCalendar();
+    });
+    $$('[data-cal-mode]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.calendarMode = btn.dataset.calMode;
+        state.calendarSelected = null;
+        $('#calSelectedCard').style.display = 'none';
+        renderCalendar();
+      });
     });
 
     // ---------- Projects ----------
@@ -2461,17 +2685,31 @@
     function renderHabits() {
       const habits = Store.habits.list();
       const list = $('#habitsList');
+      const title = $('#habitsListTitle');
+      $$('[data-habits-view]').forEach(b => b.classList.toggle('active', b.dataset.habitsView === state.habitsView));
+      if (title) title.textContent = state.habitsView === 'month' ? 'Журнал за 30 дней' : 'Журнал за неделю';
       if (!habits.length) {
         list.innerHTML = `<div class="empty-state"><strong>Пока нет привычек.</strong><br/>Создайте первую — например, «Утренний ритуал».</div>`;
         renderHabitStats();
         return;
       }
-      // Week = last 7 days ending today
       const today = todayISO();
-      const weekDays = Array.from({length: 7}, (_, i) => addDaysISO(today, -(6 - i)));
+      const isMonth = state.habitsView === 'month';
+      const dayCount = isMonth ? 30 : 7;
+      const days = Array.from({length: dayCount}, (_, i) => addDaysISO(today, -(dayCount - 1 - i)));
+
       list.innerHTML = habits.map(h => {
         const streak = computeStreak(h.id);
-        const weekDone = weekDays.filter(d => Store.habitLogs.isDone(h.id, d)).length;
+        const periodDone = days.filter(d => Store.habitLogs.isDone(h.id, d)).length;
+        const badge = streak > 0
+          ? `🔥 ${streak} дн.`
+          : `${periodDone}/${dayCount} ${isMonth ? 'за 30 дней' : 'за неделю'}`;
+        const cellsHtml = days.map((d, i) => {
+          const done = Store.habitLogs.isDone(h.id, d);
+          const isToday = d === today;
+          const label = isMonth ? new Date(d).getDate() : DAYS_RU[i];
+          return `<div class="habit-day ${done ? 'habit-completed' : ''} ${isToday ? 'is-today' : ''}" data-habit-id="${h.id}" data-date="${d}" title="${d}${isToday ? ' · сегодня' : ''}">${label}</div>`;
+        }).join('');
         return `
           <div class="habit-row" data-id="${h.id}">
             <div class="habit-row-actions">
@@ -2480,17 +2718,11 @@
               </button>
             </div>
             <div class="flex items-center justify-between mb-3 pr-14">
-              <h4 class="font-semibold text-[color:var(--text-strong)]">${escapeHtml(h.name)}</h4>
-              <span class="status-badge ${streak >= 3 ? 'priority-low' : (weekDone > 0 ? 'badge-info' : 'badge-neutral')}">${streak > 0 ? '🔥 ' + streak + ' дн.' : weekDone + '/7 за неделю'}</span>
+              <h4 class="font-semibold text-[color:var(--text-strong)]">${escapeHtml(h.name)}${h.sphere ? ' <span class="sphere-badge sphere-'+h.sphere+'" style="margin-left:0.4rem;">'+SPHERES.find(s=>s.id===h.sphere)?.icon+'</span>' : ''}</h4>
+              <span class="status-badge ${streak >= 3 ? 'priority-low' : (periodDone > 0 ? 'badge-info' : 'badge-neutral')}">${badge}</span>
             </div>
             ${h.description ? `<p class="text-xs text-[color:var(--text-muted)] mb-3">${escapeHtml(h.description)}</p>` : ''}
-            <div class="habit-grid">
-              ${weekDays.map((d, i) => {
-                const done = Store.habitLogs.isDone(h.id, d);
-                const isToday = d === today;
-                return `<div class="habit-day ${done ? 'habit-completed' : ''}" data-habit-id="${h.id}" data-date="${d}" title="${d}${isToday ? ' · сегодня' : ''}">${DAYS_RU[i]}</div>`;
-              }).join('')}
-            </div>
+            <div class="${isMonth ? 'habit-month-grid' : 'habit-grid'}">${cellsHtml}</div>
           </div>`;
       }).join('');
 
@@ -2509,6 +2741,13 @@
       });
       renderHabitStats();
     }
+
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-habits-view]');
+      if (!btn) return;
+      state.habitsView = btn.dataset.habitsView;
+      renderHabits();
+    });
 
     function computeStreak(habitId) {
       let streak = 0;
@@ -2696,9 +2935,25 @@
       }
     });
 
+    const smartHelpBtn = $('#smartHelp');
+    const smartPopover = $('#smartPopover');
+    smartHelpBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const open = !smartPopover.classList.contains('hidden');
+      smartPopover.classList.toggle('hidden', open);
+      smartHelpBtn.setAttribute('aria-expanded', String(!open));
+    });
+    document.addEventListener('click', (e) => {
+      if (smartPopover && !smartPopover.classList.contains('hidden') && !smartPopover.contains(e.target) && e.target !== smartHelpBtn) {
+        smartPopover.classList.add('hidden');
+        smartHelpBtn?.setAttribute('aria-expanded', 'false');
+      }
+    });
+
     // ---------- Header / global buttons ----------
-    $('#newTaskBtn').addEventListener('click', () => openTaskModal());
-    $('#newTaskBtn2').addEventListener('click', () => openTaskModal());
+    $('#newTaskBtn')?.addEventListener('click', () => openTaskModal());
+    $('#newTaskBtn2')?.addEventListener('click', () => openTaskModal());
+    $('#newTaskBtn3')?.addEventListener('click', () => openTaskModal());
     $('#newProjectBtn').addEventListener('click', () => openProjectModal());
     $('#newHabitBtn').addEventListener('click', () => openHabitModal());
     $('#quickAddHabit').addEventListener('click', () => openHabitModal());
