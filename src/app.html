@@ -1441,8 +1441,10 @@
         $('#taskProject').value = overrides.project_id || '';
         $('#taskStatus').value = overrides.status || 'todo';
       }
-      $('#taskGoogleSync').checked = false;
-      $('#taskGoogleWrap').classList.toggle('hidden', !googleState.connected);
+      const gcSync = $('#taskGoogleSync');
+      const gcWrap = $('#taskGoogleWrap');
+      if (gcSync) gcSync.checked = false;
+      if (gcWrap) gcWrap.classList.toggle('hidden', !googleState.connected);
       openModal('taskModal');
     }
 
@@ -1464,7 +1466,9 @@
       submit.textContent = '…';
       try {
         const done = status === 'done';
-        const pushGoogle = $('#taskGoogleSync').checked && !$('#taskGoogleWrap').classList.contains('hidden');
+        const gcWrap = $('#taskGoogleWrap');
+        const gcSync = $('#taskGoogleSync');
+        const pushGoogle = !!(gcSync?.checked && gcWrap && !gcWrap.classList.contains('hidden'));
         let savedId = id;
         if (id) {
           const r = await api(`/api/tasks/${id}`, { method: 'PUT', body: JSON.stringify({ title, description, priority, due_date, done }) });
