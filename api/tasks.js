@@ -79,22 +79,38 @@ module.exports = async function tasks(req, res) {
       const due_date = req.body?.due_date && /^\d{4}-\d{2}-\d{2}$/.test(req.body.due_date) ? req.body.due_date : null;
       const now = new Date().toISOString();
 
-      const { data, error } = await db.from('tasks').insert({
+      const basePayload = {
         user_id: targetOwnerId,
-        created_by: user.id,
         title,
         description,
         priority,
         due_date,
         done: false,
         created_at: now,
-        updated_at: now
-      }).select('id,title,description,priority,done,due_date,created_at,created_by').single();
+        updated_at: now,
+      };
+      // Пытаемся писать с created_by (нужна миграция tasks-created-by.sql).
+      // Если колонки ещё нет (PGRST204) — gracefully деградируем и создаём
+      // задачу без автора, чтобы прод не ломался на пендинг-миграции.
+      let { data, error } = await db.from('tasks')
+        .insert({ ...basePayload, created_by: user.id })
+        .select('id,title,description,priority,done,due_date,created_at,created_by')
+        .single();
+      if (error && error.code === 'PGRST204' && /created_by/.test(error.message || '')) {
+        console.warn('[tasks POST] created_by column missing — retrying without it. Apply docs/tasks-created-by.sql.');
+        ({ data, error } = await db.from('tasks')
+          .insert(basePayload)
+          .select('id,title,description,priority,done,due_date,created_at')
+          .single());
+      }
       if (error) {
         console.error('[tasks POST] insert error:', error);
         return res.status(500).json({ error: error.message });
       }
-      const task = { ...data, created_by_email: data.created_by === user.id ? user.email : null };
+      const task = {
+        ...data,
+        created_by_email: data.created_by === user.id ? user.email : null,
+      };
       return res.status(201).json({ task });
     }
 

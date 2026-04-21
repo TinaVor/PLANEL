@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>PLANEL — Tasks, Goals, Habits</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#1F76F2" />
   <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="icon" type="image/svg+xml" href="/icon.svg" />
@@ -58,14 +58,23 @@
     }
 
     * { box-sizing: border-box; }
-    html, body { background: var(--bg-app); }
+    /* -webkit-tap-highlight убирает синюю подсветку при тапе на iOS/Android.
+       overscroll-behavior-y выключает pull-to-refresh в Chrome Android. */
+    html, body {
+      background: var(--bg-app);
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior-y: contain;
+    }
 
     body {
       margin: 0;
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       line-height: 1.6;
       color: var(--text-primary);
+      /* 100dvh корректно считает высоту на iOS (учитывая URL-bar в Safari).
+         100vh оставляем как fallback для старых браузеров. */
       min-height: 100vh;
+      min-height: 100dvh;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -83,6 +92,7 @@
         radial-gradient(800px 500px at 110% -10%, rgba(6,182,212,0.10), transparent 60%),
         var(--bg-app);
       min-height: 100vh;
+      min-height: 100dvh;
       position: relative;
     }
 
@@ -198,7 +208,9 @@
     .cal-day.is-empty:hover { background:transparent; }
     .cal-num { font-weight:700; color:var(--text-primary); }
 
-    .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:rgba(255,255,255,0.94); backdrop-filter:blur(14px); border-top:1px solid var(--border-soft); padding:0.5rem 0; z-index:100; display:none; }
+    /* padding-bottom с safe-area-inset-bottom — чтобы нижняя панель на iPhone
+       с домашним индикатором не заходила под него и кнопки были нажимаемы. */
+    .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:rgba(255,255,255,0.94); backdrop-filter:blur(14px); border-top:1px solid var(--border-soft); padding:0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom, 0px)); z-index:100; display:none; }
     .bottom-nav .nav-item { width:auto; flex-direction:column; gap:0.15rem; padding:0.4rem 0.5rem; font-size:0.72rem; }
     .bottom-nav .nav-item.nav-item-active { background:transparent; color:var(--brand-600); box-shadow:none; }
     .bottom-nav .nav-item.nav-item-active .nav-icon { color:var(--brand-600); }
@@ -206,7 +218,7 @@
     @media (max-width: 1023.98px) {
       .bottom-nav { display:block; }
       .desktop-sidebar { display:none !important; }
-      main { padding-bottom:88px !important; }
+      main { padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)) !important; }
     }
 
     .icon { width:18px; height:18px; stroke-width:2; }
@@ -3026,7 +3038,17 @@
     function logout() {
       localStorage.removeItem(TOKEN_KEY);
       localStorage.removeItem(USER_KEY);
+      localStorage.removeItem('planel_refresh_token');
       state.tasks = [];
+      // Сбрасываем in-memory состояние, которое не должно «утечь» к новому пользователю
+      // при смене аккаунта в одном и том же браузере (без перезагрузки страницы).
+      if (typeof onbStepIdx !== 'undefined') onbStepIdx = 0;
+      if (typeof studyState !== 'undefined') { studyState.cardId = null; studyState.flipped = false; }
+      if (typeof deferredInstall !== 'undefined') deferredInstall = null;
+      // Скрываем все открытые модалки и дропдауны, чтобы не показывать чужие данные
+      // во время анимации открытия формы логина.
+      document.querySelectorAll('[data-modal]').forEach(m => m.classList.add('hidden'));
+      $('#notifDropdown')?.classList.add('hidden');
       setAuthMode('login');
       showAuth();
     }

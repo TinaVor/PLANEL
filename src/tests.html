@@ -1226,6 +1226,157 @@
     });
   });
 
+  // ---------- Onboarding tour ----------
+  // Логика: флаг onboarding.done в Store; тур показывается при первом
+  // bootApp(), его можно пропустить (также помечает done).
+  function createOnbState() {
+    let onbStepIdx = 0;
+    const total = 7;
+    return {
+      next: () => { if (onbStepIdx < total - 1) onbStepIdx++; return onbStepIdx; },
+      prev: () => { if (onbStepIdx > 0) onbStepIdx--; return onbStepIdx; },
+      reset: () => { onbStepIdx = 0; return onbStepIdx; },
+      currentIdx: () => onbStepIdx,
+      total,
+      progress: () => Math.round((onbStepIdx + 1) / total * 100),
+    };
+  }
+  group('Onboarding tour', (t) => {
+    const onb = createOnbState();
+    t('стартовый шаг = 0', () => eq(onb.currentIdx(), 0));
+    t('прогресс первого шага ~14%', () => eq(onb.progress(), 14));
+    t('next двигает на следующий шаг', () => { onb.next(); eq(onb.currentIdx(), 1); });
+    t('prev возвращает назад', () => { onb.prev(); eq(onb.currentIdx(), 0); });
+    t('prev на стартовом шаге не уходит в минус', () => { onb.prev(); eq(onb.currentIdx(), 0); });
+    t('last step держится, не перелетает за last', () => {
+      for (let i = 0; i < 10; i++) onb.next();
+      eq(onb.currentIdx(), onb.total - 1);
+    });
+    t('прогресс последнего шага = 100%', () => eq(onb.progress(), 100));
+    t('reset возвращает к 0', () => { onb.reset(); eq(onb.currentIdx(), 0); });
+
+    // Flag done
+    function shouldShowOnBoot(stored) { return !stored.done; }
+    t('первый вход: done=false → показать', () => eq(shouldShowOnBoot({ done: false }), true));
+    t('повторный вход: done=true → скрыть', () => eq(shouldShowOnBoot({ done: true }), false));
+    t('skip = done: тоже отмечает как пройденное', () => {
+      const state = { done: false };
+      // Имитируем пропуск
+      state.done = true;
+      eq(shouldShowOnBoot(state), false);
+    });
+  });
+
+  // ---------- Notifications delete ----------
+  // Собственные удаляются физически, broadcast'ы — через dismissed-мапу.
+  function filterNotificationsForUser(own, broadcasts, dismissed, currentUid) {
+    return [...own, ...broadcasts.filter(b => !b.target_user_id || b.target_user_id === currentUid)]
+      .filter(n => !dismissed[n.id]);
+  }
+  function deleteNotifState(state, id) {
+    const owned = state.own.find(n => n.id === id);
+    if (owned) {
+      return { ...state, own: state.own.filter(n => n.id !== id) };
+    } else {
+      return { ...state, dismissed: { ...state.dismissed, [id]: true } };
+    }
+  }
+  group('Notifications delete', (t) => {
+    const own = [{ id: 'o1', subject: 'Owned 1' }, { id: 'o2', subject: 'Owned 2' }];
+    const broadcasts = [{ id: 'b1', subject: 'Broadcast 1' }];
+
+    t('delete собственного уведомления убирает его из own', () => {
+      const after = deleteNotifState({ own, broadcasts, dismissed: {} }, 'o1');
+      eq(after.own.length, 1);
+      eq(after.own[0].id, 'o2');
+    });
+    t('delete broadcast добавляет в dismissed', () => {
+      const after = deleteNotifState({ own, broadcasts, dismissed: {} }, 'b1');
+      eq(after.dismissed.b1, true);
+      eq(after.own.length, 2);
+    });
+    t('dismissed broadcast не показывается в списке', () => {
+      const list = filterNotificationsForUser(own, broadcasts, { b1: true }, 'u1');
+      eq(list.length, 2);
+      assert(!list.find(n => n.id === 'b1'));
+    });
+    t('таргетированный broadcast для другого юзера скрыт изначально', () => {
+      const targeted = [{ id: 'b2', target_user_id: 'other' }];
+      const list = filterNotificationsForUser([], targeted, {}, 'me');
+      eq(list.length, 0);
+    });
+    t('таргетированный broadcast для меня виден', () => {
+      const targeted = [{ id: 'b3', target_user_id: 'me' }];
+      const list = filterNotificationsForUser([], targeted, {}, 'me');
+      eq(list.length, 1);
+    });
+    t('после delete счётчик уменьшается', () => {
+      const before = filterNotificationsForUser(own, broadcasts, {}, 'u1').length;
+      const state = deleteNotifState({ own, broadcasts, dismissed: {} }, 'o1');
+      const after = filterNotificationsForUser(state.own, broadcasts, state.dismissed, 'u1').length;
+      eq(after, before - 1);
+    });
+  });
+
+  // ---------- Auth hash consume (email confirm flow) ----------
+  // Когда Supabase после email-confirm редиректит на Site URL, токены
+  // приходят в hash. Парсим и сохраняем.
+  function parseAuthHash(hash) {
+    if (!hash || !hash.includes('access_token=')) return null;
+    const h = new URLSearchParams(hash.replace(/^#/, ''));
+    const access = h.get('access_token');
+    if (!access) return null;
+    return { access, refresh: h.get('refresh_token'), type: h.get('type'), expires_in: h.get('expires_in') };
+  }
+  group('Auth hash consume', (t) => {
+    t('пустой hash → null', () => eq(parseAuthHash(''), null));
+    t('hash без access_token → null', () => eq(parseAuthHash('#type=signup&expires_in=3600'), null));
+    t('валидный hash парсится', () => {
+      const r = parseAuthHash('#access_token=AAA&refresh_token=RRR&type=signup&expires_in=3600');
+      eq(r.access, 'AAA');
+      eq(r.refresh, 'RRR');
+      eq(r.type, 'signup');
+    });
+    t('hash без префикса # тоже парсится', () => {
+      const r = parseAuthHash('access_token=AAA&refresh_token=RRR');
+      eq(r.access, 'AAA');
+    });
+    t('access_token без refresh_token парсится', () => {
+      const r = parseAuthHash('#access_token=AAA&type=signup');
+      eq(r.access, 'AAA');
+      eq(r.refresh, null);
+    });
+    t('percent-encoded значения декодируются (URLSearchParams это делает)', () => {
+      const r = parseAuthHash('#access_token=abc%2Bxyz&refresh_token=ref');
+      eq(r.access, 'abc+xyz');
+    });
+  });
+
+  // ---------- PWA install state ----------
+  // Логика выбора состояния кнопки: есть ли deferredPrompt, уже ли standalone.
+  function computeInstallState({ deferredAvailable, isStandalone }) {
+    if (isStandalone) return { label: 'Установлено', disabled: true, mode: 'standalone' };
+    if (deferredAvailable) return { label: 'Установить', disabled: false, mode: 'available' };
+    return { label: 'Недоступно', disabled: true, mode: 'browser_menu' };
+  }
+  group('PWA install state', (t) => {
+    t('уже запущено как PWA → «Установлено»', () => {
+      const s = computeInstallState({ deferredAvailable: true, isStandalone: true });
+      eq(s.mode, 'standalone');
+      eq(s.disabled, true);
+    });
+    t('есть deferredPrompt → «Установить»', () => {
+      const s = computeInstallState({ deferredAvailable: true, isStandalone: false });
+      eq(s.mode, 'available');
+      eq(s.disabled, false);
+    });
+    t('Safari / событие не пришло → «Недоступно» с инструкцией', () => {
+      const s = computeInstallState({ deferredAvailable: false, isStandalone: false });
+      eq(s.mode, 'browser_menu');
+      eq(s.disabled, true);
+    });
+  });
+
   clearTestKeys();
 
   // ---------- Рендер ----------
