@@ -45,12 +45,30 @@ module.exports = async function tasks(req, res) {
     if (req.method === 'GET') {
       const { data, error } = await db
         .from('tasks')
-        .select('id,title,description,priority,done,due_date,created_at')
+        .select('id,title,description,priority,done,due_date,created_at,created_by')
         .eq('user_id', targetOwnerId)
         .order('created_at', { ascending: false })
         .limit(500);
       if (error) return res.status(500).json({ error: error.message });
-      return res.json({ tasks: data, role });
+
+      // Обогащаем задачи email'ом автора. Email не хранится в tasks, поэтому
+      // резолвим его один раз на запрос через auth.admin.getUserById для
+      // уникальных created_by. Легаси задачи без created_by оставляем как null.
+      const ids = Array.from(new Set(
+        (data || []).map(t => t.created_by).filter(Boolean)
+      ));
+      const emailById = {};
+      await Promise.all(ids.map(async (id) => {
+        try {
+          const { data: u } = await db.auth.admin.getUserById(id);
+          if (u?.user?.email) emailById[id] = u.user.email;
+        } catch {}
+      }));
+      const enriched = (data || []).map(t => ({
+        ...t,
+        created_by_email: t.created_by ? (emailById[t.created_by] || null) : null,
+      }));
+      return res.json({ tasks: enriched, role });
     }
 
     if (req.method === 'POST') {
@@ -63,6 +81,7 @@ module.exports = async function tasks(req, res) {
 
       const { data, error } = await db.from('tasks').insert({
         user_id: targetOwnerId,
+        created_by: user.id,
         title,
         description,
         priority,
@@ -70,12 +89,13 @@ module.exports = async function tasks(req, res) {
         done: false,
         created_at: now,
         updated_at: now
-      }).select('id,title,description,priority,done,due_date,created_at').single();
+      }).select('id,title,description,priority,done,due_date,created_at,created_by').single();
       if (error) {
         console.error('[tasks POST] insert error:', error);
         return res.status(500).json({ error: error.message });
       }
-      return res.status(201).json({ task: data });
+      const task = { ...data, created_by_email: data.created_by === user.id ? user.email : null };
+      return res.status(201).json({ task });
     }
 
     if (req.method === 'PUT') {
@@ -94,11 +114,18 @@ module.exports = async function tasks(req, res) {
         .update(patch)
         .eq('id', id)
         .eq('user_id', targetOwnerId)
-        .select('id,title,description,priority,done,due_date,created_at')
+        .select('id,title,description,priority,done,due_date,created_at,created_by')
         .maybeSingle();
       if (error) return res.status(500).json({ error: error.message });
       if (!data) return res.status(404).json({ error: 'not_found' });
-      return res.json({ task: data });
+      let created_by_email = null;
+      if (data.created_by) {
+        try {
+          const { data: u } = await db.auth.admin.getUserById(data.created_by);
+          created_by_email = u?.user?.email || null;
+        } catch {}
+      }
+      return res.json({ task: { ...data, created_by_email } });
     }
 
     if (req.method === 'DELETE') {

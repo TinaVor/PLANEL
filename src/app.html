@@ -449,6 +449,64 @@
     .note-card .note-meta { display:flex; flex-wrap:wrap; gap:0.3rem; align-items:center; margin-top:auto; font-size:0.7rem; color:var(--text-muted); }
     .note-tag { background:var(--brand-50); color:var(--brand-700); padding:0.1rem 0.5rem; border-radius:9999px; font-weight:600; font-size:0.68rem; border:1px solid var(--brand-100); }
 
+    /* ============ Flashcards (Anki-style) ============ */
+    /* Интервалы хранятся в днях; SM-2 lite-вариант рассчитывает новый интервал
+       и ease factor на каждом ответе пользователя (см. computeCardReview). */
+    .card-study {
+      background: linear-gradient(135deg, var(--brand-50), rgba(214,234,255,0.5));
+      border: 1px solid var(--brand-100);
+      border-radius: 16px;
+      padding: 1.5rem;
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    body.dark-mode .card-study {
+      background: linear-gradient(135deg, #11192A, #182238);
+      border-color: var(--border-soft);
+    }
+    .card-study-side { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--brand-700); }
+    body.dark-mode .card-study-side { color: var(--brand-300); }
+    .card-study-body { flex: 1; font-size: 1.05rem; line-height: 1.5; color: var(--text-strong); white-space: pre-wrap; }
+    .card-rate-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+    @media (min-width: 640px) { .card-rate-grid { grid-template-columns: repeat(4, 1fr); } }
+    .card-rate-btn {
+      border: 1px solid var(--border-soft); background: var(--bg-surface); padding: 0.6rem 0.5rem; border-radius: 10px;
+      font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+      transition: border-color 140ms ease, transform 140ms ease, background 140ms ease;
+    }
+    .card-rate-btn:hover { transform: translateY(-1px); }
+    .card-rate-btn[data-quality="1"] { color: #B91C1C; } .card-rate-btn[data-quality="1"]:hover { background: #FEE2E2; border-color: #FCA5A5; }
+    .card-rate-btn[data-quality="2"] { color: #C2410C; } .card-rate-btn[data-quality="2"]:hover { background: #FFEDD5; border-color: #FDBA74; }
+    .card-rate-btn[data-quality="3"] { color: #047857; } .card-rate-btn[data-quality="3"]:hover { background: #D1FAE5; border-color: #6EE7B7; }
+    .card-rate-btn[data-quality="4"] { color: #1E40AF; } .card-rate-btn[data-quality="4"]:hover { background: #DBEAFE; border-color: #93C5FD; }
+    .card-rate-next { font-size: 0.7rem; color: var(--text-muted); font-weight: 500; }
+    .card-item { display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.7rem; border-radius:8px; background:var(--bg-muted); }
+    .card-item:hover { background:var(--brand-50); }
+    body.dark-mode .card-item:hover { background:var(--bg-surface); }
+    .card-item-due { font-size: 0.7rem; padding: 0.1rem 0.5rem; border-radius: 9999px; font-weight: 600; }
+    .card-due-now    { background:#FEE2E2; color:#B91C1C; border:1px solid #FCA5A5; }
+    .card-due-soon   { background:#FEF3C7; color:#92400E; border:1px solid #FDE68A; }
+    .card-due-later  { background:var(--bg-surface); color:var(--text-muted); border:1px solid var(--border-soft); }
+    .card-due-new    { background:#DBEAFE; color:#1E40AF; border:1px solid #93C5FD; }
+
+    /* ============ Zettelkasten ============ */
+    .zettel-card {
+      background: var(--bg-surface); border: 1px solid var(--border-soft);
+      border-radius: 12px; padding: 1rem; cursor: pointer;
+      display: flex; flex-direction: column; gap: 0.5rem; min-height: 160px;
+      transition: border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+    }
+    .zettel-card:hover { border-color: var(--brand-300); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+    .zettel-id { font-family: ui-monospace, Menlo, monospace; font-size: 0.7rem; color: var(--text-muted); }
+    .zettel-card h4 { font-weight:700; font-size:0.95rem; color:var(--text-strong); line-height:1.3; }
+    .zettel-card .zettel-preview { font-size:0.82rem; color:var(--text-secondary); line-height:1.5; flex:1; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+    .zettel-card .zettel-meta { display:flex; flex-wrap:wrap; gap:0.3rem; align-items:center; margin-top:auto; font-size:0.7rem; color:var(--text-muted); }
+    .zettel-link { color: var(--brand-600); font-weight: 600; }
+    .zettel-link:hover { text-decoration: underline; }
+    .zettel-link-missing { color: var(--warning-700); border-bottom: 1px dashed var(--warning-700); cursor: pointer; }
+
     /* ============ Dark theme ============ */
     body.dark-mode {
       --bg-app:        #0B1220;
@@ -638,7 +696,10 @@
     /* ============ Search modal ============ */
     .search-overlay { display:flex; align-items:flex-start; justify-content:center; padding-top:10vh; }
     .search-card { width:100%; max-width:600px; }
-    .search-input {
+    /* Плагин Tailwind forms даёт собственный padding для [type="search"] с
+       той же специфичностью (1 attribute), но грузится после нашего <style>,
+       поэтому перебивает. Повышаем специфичность селектором input.search-input. */
+    input.search-input {
       width:100%; padding:0.85rem 1rem 0.85rem 2.7rem; border-radius:12px;
       border:1px solid var(--border-soft); background:var(--bg-surface);
       font-size:1rem; color:var(--text-primary);
@@ -950,6 +1011,7 @@
           <input type="checkbox" id="taskGoogleSync">
           <span>Добавить в Google Calendar<span class="beta-badge">Бета</span>(требуется дедлайн)</span>
         </label>
+        <p id="taskAuthorInfo" class="text-xs text-[color:var(--text-muted)] hidden"></p>
         <p id="taskError" class="text-xs hidden" style="color:var(--danger-700);"></p>
         <div class="flex flex-wrap gap-2 justify-end pt-2">
           <button type="button" class="btn-ghost text-sm" id="taskDeleteBtn" style="display:none;">Удалить</button>
@@ -1083,6 +1145,68 @@
           <button type="button" class="btn-ghost text-sm" id="noteDeleteBtn" style="display:none;">Удалить</button>
           <button type="button" class="btn-ghost text-sm" data-close-modal>Отмена</button>
           <button type="submit" class="btn-primary text-sm" id="noteSubmit">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Card Modal (Anki-style flashcard editor) -->
+  <div id="cardModal" class="modal-overlay hidden" data-modal>
+    <div class="modal-card" style="max-width:560px;">
+      <div class="modal-header">
+        <h3 class="heading-font text-lg font-extrabold" id="cardModalTitle">Новая карточка</h3>
+        <button class="modal-close" data-close-modal aria-label="Закрыть">×</button>
+      </div>
+      <form id="cardForm" class="space-y-3">
+        <input type="hidden" id="cardId">
+        <div>
+          <label class="form-label">Вопрос <span style="color:var(--danger-500)">*</span></label>
+          <textarea id="cardFront" class="form-textarea" maxlength="1000" required placeholder="Что спросить у себя?" style="min-height:80px;"></textarea>
+        </div>
+        <div>
+          <label class="form-label">Ответ <span style="color:var(--danger-500)">*</span></label>
+          <textarea id="cardBack" class="form-textarea" maxlength="2000" required placeholder="Правильный ответ" style="min-height:100px;"></textarea>
+        </div>
+        <div>
+          <label class="form-label">Теги <span class="normal-case text-[color:var(--text-muted)] tracking-normal">· через запятую</span></label>
+          <input type="text" id="cardTags" class="form-input" maxlength="200" placeholder="английский, история">
+        </div>
+        <p id="cardError" class="text-xs hidden" style="color:var(--danger-700);"></p>
+        <div class="flex flex-wrap gap-2 justify-end pt-2">
+          <button type="button" class="btn-ghost text-sm" id="cardDeleteBtn" style="display:none;">Удалить</button>
+          <button type="button" class="btn-ghost text-sm" data-close-modal>Отмена</button>
+          <button type="submit" class="btn-primary text-sm" id="cardSubmit">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Zettel Modal -->
+  <div id="zettelModal" class="modal-overlay hidden" data-modal>
+    <div class="modal-card" style="max-width:720px;">
+      <div class="modal-header">
+        <h3 class="heading-font text-lg font-extrabold" id="zettelModalTitle">Новый Zettel</h3>
+        <button class="modal-close" data-close-modal aria-label="Закрыть">×</button>
+      </div>
+      <form id="zettelForm" class="space-y-3">
+        <input type="hidden" id="zettelId">
+        <div>
+          <label class="form-label">Заголовок <span style="color:var(--danger-500)">*</span></label>
+          <input type="text" id="zettelTitle" class="form-input" maxlength="200" required placeholder="Одна атомарная мысль">
+        </div>
+        <div>
+          <label class="form-label">Содержимое <span class="normal-case text-[color:var(--text-muted)] tracking-normal">· Markdown + [[ссылки]] на другие Zettel</span></label>
+          <textarea id="zettelContent" class="form-textarea" maxlength="20000" placeholder="Суть в 2–5 предложениях. Для связей используйте [[заголовок другого Zettel]] — будет автоматическая двусторонняя связь." style="min-height:220px;"></textarea>
+        </div>
+        <div>
+          <label class="form-label">Теги <span class="normal-case text-[color:var(--text-muted)] tracking-normal">· через запятую</span></label>
+          <input type="text" id="zettelTags" class="form-input" maxlength="200" placeholder="идея, книга, проект">
+        </div>
+        <p id="zettelError" class="text-xs hidden" style="color:var(--danger-700);"></p>
+        <div class="flex flex-wrap gap-2 justify-end pt-2">
+          <button type="button" class="btn-ghost text-sm" id="zettelDeleteBtn" style="display:none;">Удалить</button>
+          <button type="button" class="btn-ghost text-sm" data-close-modal>Отмена</button>
+          <button type="submit" class="btn-primary text-sm" id="zettelSubmit">Сохранить</button>
         </div>
       </form>
     </div>
@@ -1592,7 +1716,7 @@
               <div class="card">
                 <h3 class="heading-font text-lg font-extrabold mb-5">Статистика</h3>
                 <div class="text-center space-y-4">
-                  <p class="text-sm text-[color:var(--text-secondary)]">Стабильность за 30 дней</p>
+                  <p class="text-sm text-[color:var(--text-secondary)]" id="habitStatTitle">Стабильность за 7 дней</p>
                   <div class="relative w-32 h-32 mx-auto">
                     <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90">
                       <circle cx="18" cy="18" r="15.9155" fill="none" stroke="var(--bg-muted)" stroke-width="3.5"/>
@@ -1971,9 +2095,18 @@
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 class="heading-font text-2xl font-extrabold mb-1">Заметки</h2>
-                <p class="text-sm text-[color:var(--text-secondary)]">Быстрые заметки, идеи, выписки</p>
+                <p class="text-sm text-[color:var(--text-secondary)]">Обычные заметки, карточки для запоминания и Zettelkasten</p>
               </div>
-              <div class="flex items-center gap-2 flex-wrap">
+              <div class="flex items-center gap-2 flex-wrap" id="notesModeWrap">
+                <button class="pill-filter active" data-notes-mode="list">Заметки</button>
+                <button class="pill-filter" data-notes-mode="cards">Карточки</button>
+                <button class="pill-filter" data-notes-mode="zettel">Zettelkasten</button>
+              </div>
+            </div>
+
+            <!-- Обычные заметки -->
+            <div id="notesListView" class="space-y-6">
+              <div class="flex flex-wrap items-center justify-end gap-2">
                 <div class="relative">
                   <svg class="icon absolute left-3 top-1/2 -translate-y-1/2 text-[color:var(--text-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
                   <input type="search" id="notesSearch" placeholder="Поиск" class="pl-9 pr-3 py-2 rounded-lg text-sm form-input" style="min-width:200px;">
@@ -1983,8 +2116,50 @@
                   Новая заметка
                 </button>
               </div>
+              <div id="notesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </div>
-            <div id="notesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+            <!-- Карточки (Anki-style, с SM-2 lite) -->
+            <div id="cardsView" class="hidden space-y-6">
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="cardsStats"></div>
+
+              <div class="card">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                  <div>
+                    <h3 class="heading-font text-lg font-extrabold">Обучение</h3>
+                    <p class="text-sm text-[color:var(--text-secondary)]">Карточки показываются по кривой забывания: чем увереннее ответ, тем реже возвращается.</p>
+                  </div>
+                  <button class="btn-primary text-sm" id="newCardBtn">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                    Новая карточка
+                  </button>
+                </div>
+                <div id="cardStudyArea"></div>
+              </div>
+
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-3">Все карточки</h3>
+                <div id="cardsList" class="space-y-2"></div>
+              </div>
+            </div>
+
+            <!-- Zettelkasten -->
+            <div id="zettelView" class="hidden space-y-6">
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="zettelStats"></div>
+
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="relative flex-1" style="min-width:200px; max-width:360px;">
+                  <svg class="icon absolute left-3 top-1/2 -translate-y-1/2 text-[color:var(--text-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                  <input type="search" id="zettelSearch" placeholder="Поиск по заголовку, тегу, содержимому" class="pl-9 pr-3 py-2 rounded-lg text-sm form-input w-full">
+                </div>
+                <button class="btn-primary text-sm" id="newZettelBtn">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                  Новый Zettel
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="zettelList"></div>
+            </div>
           </section>
 
           <!-- Награды -->
@@ -2611,6 +2786,14 @@
         get: () => loadBucket('life_weeks', { gender: '', birth_date: '' }),
         save: (obj) => saveBucket('life_weeks', obj),
       },
+      cards: {
+        list: () => loadBucket('cards', []),
+        save: (arr) => saveBucket('cards', arr),
+      },
+      zettels: {
+        list: () => loadBucket('zettels', []),
+        save: (arr) => saveBucket('zettels', arr),
+      },
       game: {
         get: () => loadBucket('game', { xp: 0, events: [], achievements: [] }),
         save: (obj) => saveBucket('game', obj),
@@ -2824,6 +3007,8 @@
         `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
 
       $('#taskError').classList.add('hidden');
+      const authorInfo = $('#taskAuthorInfo');
+      if (authorInfo) { authorInfo.classList.add('hidden'); authorInfo.textContent = ''; }
       if (taskId) {
         const t = state.tasks.find(x => x.id === taskId);
         if (!t) return;
@@ -2843,6 +3028,11 @@
         const ex = Store.taskExtras.for(t.id);
         $('#taskTimeStart').value = ex.time_start || '';
         $('#taskDuration').value  = ex.duration_min || '';
+        // В модалке — полная фраза «Поставил(а): email», только если автор не вы.
+        if (authorInfo && t.created_by && t.created_by_email && t.created_by !== userId()) {
+          authorInfo.textContent = 'Поставил(а): ' + t.created_by_email;
+          authorInfo.classList.remove('hidden');
+        }
       } else {
         $('#taskModalTitle').textContent = 'Новая задача';
         $('#taskSubmit').textContent = 'Создать';
@@ -3245,6 +3435,18 @@
       return `<span class="sphere-badge sphere-${s.id}" style="display:inline-flex;align-items:center;gap:0.3rem;">${sphereIcon(s.id, 12)}${escapeHtml(s.label)}</span>`;
     }
 
+    // Автор задачи отображается только если это НЕ текущий пользователь.
+    // Для своих задач ничего не показываем, чтобы не засорять карточку.
+    // Для легаси-задач (created_by = null) тоже молчим — мы не знаем, кто ставил.
+    function taskAuthorBadge(t) {
+      if (!t.created_by || !t.created_by_email) return '';
+      if (t.created_by === userId()) return '';
+      return `<span class="status-badge badge-info" title="Поставил(а): ${escapeHtml(t.created_by_email)}" style="display:inline-flex;align-items:center;gap:0.25rem;">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+        ${escapeHtml(t.created_by_email)}
+      </span>`;
+    }
+
     function renderTaskRow(t, opts = {}) {
       const today = opts.today || todayISO();
       const status = getStatus(t);
@@ -3255,6 +3457,7 @@
       const subs = extras.subtasks || [];
       const subDone = subs.filter(s => s.done).length;
       const recBadge = extras.recurrence ? `<span class="status-badge badge-info" title="Повтор" style="display:inline-flex;align-items:center;padding:0.25rem 0.4rem;">${svgIcon('recurring', 11)}</span>` : '';
+      const authorBadge = taskAuthorBadge(t);
       const overdue = t.due_date && !t.done && t.due_date < today;
       const dueLabel = t.due_date ? (overdue ? `<span style="color:var(--danger-700);font-weight:600;display:inline-flex;align-items:center;gap:0.25rem;">${svgIcon('calendar_alt', 12)}${formatDateRu(t.due_date)} · просрочено</span>` : `<span style="display:inline-flex;align-items:center;gap:0.25rem;">${svgIcon('calendar_alt', 12)}${formatDateRu(t.due_date)}</span>`) : '';
       const subtasksPreview = subs.length ? `
@@ -3262,7 +3465,7 @@
           ${subs.slice(0, 5).map((s, i) => `
             <label class="subtask-preview-item">
               <input type="checkbox" class="subtask-preview-toggle" data-task-id="${t.id}" data-sub-idx="${i}" ${s.done ? 'checked' : ''}>
-              <span class="${s.done ? 'line-through opacity-60' : ''}">${escapeHtml(s.title || '')}</span>
+              <span class="${s.done ? 'line-through opacity-60' : ''}">${escapeHtml(s.text || s.title || '')}</span>
             </label>
           `).join('')}
           ${subs.length > 5 ? `<div class="text-xs text-[color:var(--text-muted)] mt-1">+ ещё ${subs.length - 5}</div>` : ''}
@@ -3281,6 +3484,7 @@
                   ${sphereBadgeHtml(sphereId)}
                   ${subs.length ? `<button type="button" class="status-badge badge-neutral subtasks-toggle" data-task-id="${t.id}" style="border:none;cursor:pointer;display:inline-flex;align-items:center;gap:0.25rem;">${svgIcon('checkbox', 11)}${subDone}/${subs.length}</button>` : ''}
                   ${recBadge}
+                  ${authorBadge}
                   <span class="status-badge badge-neutral">${STATUS_LABEL[status]}</span>
                 </div>
                 ${subtasksPreview}
@@ -3914,6 +4118,12 @@
       const circle = $('#habitStatCircle');
       const pctEl = $('#habitStatPct');
       const noteEl = $('#habitStatNote');
+      const titleEl = $('#habitStatTitle');
+      // Окно статистики совпадает с текущей вкладкой журнала, чтобы
+      // «Неделя» и «Месяц» показывали согласованные цифры.
+      const isMonth = state.habitsView === 'month';
+      const windowDays = isMonth ? 30 : 7;
+      if (titleEl) titleEl.textContent = `Стабильность за ${windowDays} дней`;
       if (!habits.length) {
         circle.setAttribute('stroke-dasharray', '0 100');
         pctEl.textContent = '0%';
@@ -3921,7 +4131,7 @@
         return;
       }
       const today = todayISO();
-      const days = Array.from({length: 30}, (_, i) => addDaysISO(today, -(29 - i)));
+      const days = Array.from({length: windowDays}, (_, i) => addDaysISO(today, -(windowDays - 1 - i)));
       const total = habits.length * days.length;
       let done = 0;
       habits.forEach(h => days.forEach(d => { if (Store.habitLogs.isDone(h.id, d)) done++; }));
@@ -6966,6 +7176,423 @@
       editor?.classList.toggle('split-on', e.target.checked);
       preview?.classList.toggle('hidden', !e.target.checked);
       if (e.target.checked) updateNotePreview();
+    });
+
+    // ---------- Notes mode switcher (заметки / карточки / zettel) ----------
+    function setNotesMode(mode) {
+      $$('[data-notes-mode]').forEach(b => b.classList.toggle('active', b.dataset.notesMode === mode));
+      $('#notesListView')?.classList.toggle('hidden', mode !== 'list');
+      $('#cardsView')?.classList.toggle('hidden', mode !== 'cards');
+      $('#zettelView')?.classList.toggle('hidden', mode !== 'zettel');
+      if (mode === 'cards') renderCardsView();
+      if (mode === 'zettel') renderZettels();
+    }
+    $('#notesModeWrap')?.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-notes-mode]');
+      if (btn) setNotesMode(btn.dataset.notesMode);
+    });
+
+    // ---------- Flashcards (Anki-style, SM-2 lite) ----------
+    // Алгоритм:
+    //  - каждая карточка хранит interval (дней), ease factor (минимум 1.3) и next_due (ISO).
+    //  - quality: 1 «Не помню», 2 «Сложно», 3 «Хорошо», 4 «Легко».
+    //  - Ответ 1 сбрасывает интервал к 1 дню и уменьшает ease.
+    //  - Ответы 2/3/4 умножают текущий интервал на ease (+/− поправки), ease слегка растёт.
+    //  - На первом правильном повторении интервал = 1 день, на втором — 6 дней.
+    // Это упрощённый SM-2, достаточный для бытового повторения без перегрузки.
+    const CARD_QUALITY = [
+      { q:1, label:'Не помню',  hint:'Сбросить' },
+      { q:2, label:'Сложно',    hint:'Короткий интервал' },
+      { q:3, label:'Хорошо',    hint:'Обычный рост' },
+      { q:4, label:'Легко',     hint:'Реже повторять' },
+    ];
+
+    function computeCardReview(card, quality) {
+      const nowISO = todayISO();
+      let { interval = 0, ease = 2.5, repetitions = 0 } = card;
+      if (quality === 1) {
+        repetitions = 0;
+        interval = 1;
+        ease = Math.max(1.3, ease - 0.2);
+      } else {
+        repetitions += 1;
+        if (repetitions === 1) interval = 1;
+        else if (repetitions === 2) interval = 6;
+        else interval = Math.max(1, Math.round(interval * ease));
+        // Адаптация ease: 2 — штраф, 3 — не меняем, 4 — бонус
+        if (quality === 2) ease = Math.max(1.3, ease - 0.15);
+        else if (quality === 4) ease = ease + 0.1;
+      }
+      return {
+        interval,
+        ease,
+        repetitions,
+        next_due: addDaysISO(nowISO, interval),
+        last_review: nowISO,
+      };
+    }
+
+    function cardsDueNow(cards, today = todayISO()) {
+      // «Новые» (без next_due) всегда в очереди; остальные — если next_due <= сегодня
+      return cards.filter(c => !c.next_due || c.next_due <= today);
+    }
+
+    function renderCardsView() {
+      renderCardsStats();
+      renderCardStudy();
+      renderCardsList();
+    }
+
+    function renderCardsStats() {
+      const list = Store.cards.list();
+      const today = todayISO();
+      const due = cardsDueNow(list, today).length;
+      const newCount = list.filter(c => !c.next_due).length;
+      const learned = list.filter(c => (c.repetitions || 0) >= 2).length;
+      $('#cardsStats').innerHTML = `
+        <div class="lw-stat-card"><div class="lw-stat-label">Всего</div><div class="lw-stat-value">${list.length}</div><div class="lw-stat-sub">карточек</div></div>
+        <div class="lw-stat-card"><div class="lw-stat-label">К повторению</div><div class="lw-stat-value" style="color:var(--danger-700);">${due}</div><div class="lw-stat-sub">готовы сейчас</div></div>
+        <div class="lw-stat-card"><div class="lw-stat-label">Новые</div><div class="lw-stat-value" style="color:var(--brand-600);">${newCount}</div><div class="lw-stat-sub">ни разу не отвечали</div></div>
+        <div class="lw-stat-card"><div class="lw-stat-label">В долгосрочной</div><div class="lw-stat-value" style="color:var(--success-700);">${learned}</div><div class="lw-stat-sub">повторений ≥ 2</div></div>
+      `;
+    }
+
+    // Состояние текущей сессии обучения: показываем front, по клику — back + оценки
+    const studyState = { cardId: null, flipped: false };
+
+    function pickNextDueCard() {
+      const list = Store.cards.list();
+      const due = cardsDueNow(list);
+      if (!due.length) return null;
+      // Приоритет: самые просроченные / новые вперёд
+      due.sort((a, b) => (a.next_due || '').localeCompare(b.next_due || ''));
+      return due[0];
+    }
+
+    function renderCardStudy() {
+      const host = $('#cardStudyArea');
+      if (!host) return;
+      const card = studyState.cardId
+        ? Store.cards.list().find(c => c.id === studyState.cardId)
+        : pickNextDueCard();
+
+      if (!card) {
+        host.innerHTML = `<div class="empty-state"><strong>Всё повторено 🎉</strong><br/>Нет карточек к повторению на сегодня. Добавьте новые или возвращайтесь завтра.</div>`;
+        return;
+      }
+      studyState.cardId = card.id;
+
+      if (!studyState.flipped) {
+        host.innerHTML = `
+          <div class="card-study">
+            <span class="card-study-side">Вопрос</span>
+            <div class="card-study-body">${escapeHtml(card.front || '')}</div>
+            <button class="btn-primary text-sm" id="cardFlipBtn">Показать ответ</button>
+          </div>`;
+        $('#cardFlipBtn').addEventListener('click', () => { studyState.flipped = true; renderCardStudy(); });
+        return;
+      }
+
+      // Показываем варианты оценок с будущим интервалом справа
+      const rateBtns = CARD_QUALITY.map(opt => {
+        const next = computeCardReview(card, opt.q);
+        const nextLabel = next.interval === 1 ? 'через 1 день' : `через ${next.interval} дней`;
+        return `<button class="card-rate-btn" data-quality="${opt.q}">
+          <span>${escapeHtml(opt.label)}</span>
+          <span class="card-rate-next">${nextLabel}</span>
+        </button>`;
+      }).join('');
+      host.innerHTML = `
+        <div class="card-study">
+          <span class="card-study-side">Ответ</span>
+          <div class="card-study-body">${escapeHtml(card.back || '')}</div>
+          <div class="card-rate-grid">${rateBtns}</div>
+        </div>`;
+      host.querySelectorAll('.card-rate-btn').forEach(btn => {
+        btn.addEventListener('click', () => rateCurrentCard(Number(btn.dataset.quality)));
+      });
+    }
+
+    function rateCurrentCard(quality) {
+      const list = Store.cards.list();
+      const idx = list.findIndex(c => c.id === studyState.cardId);
+      if (idx < 0) return;
+      const patch = computeCardReview(list[idx], quality);
+      list[idx] = { ...list[idx], ...patch };
+      Store.cards.save(list);
+      studyState.cardId = null;
+      studyState.flipped = false;
+      renderCardsView();
+    }
+
+    function renderCardsList() {
+      const host = $('#cardsList');
+      const list = Store.cards.list().slice().sort((a, b) => (a.next_due || '').localeCompare(b.next_due || ''));
+      if (!list.length) {
+        host.innerHTML = `<div class="empty-state"><strong>Пока нет карточек.</strong><br/>Нажмите «Новая карточка», чтобы начать.</div>`;
+        return;
+      }
+      const today = todayISO();
+      host.innerHTML = list.map(c => {
+        let dueClass = 'card-due-later', dueLabel = 'позже';
+        if (!c.next_due) { dueClass = 'card-due-new'; dueLabel = 'новая'; }
+        else if (c.next_due <= today) { dueClass = 'card-due-now'; dueLabel = 'сейчас'; }
+        else if (c.next_due <= addDaysISO(today, 2)) { dueClass = 'card-due-soon'; dueLabel = `до ${formatDateRu(c.next_due)}`; }
+        else { dueLabel = formatDateRu(c.next_due); }
+        return `<div class="card-item" data-id="${c.id}">
+          <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(c.front || '')}</span>
+          <span class="card-item-due ${dueClass}">${dueLabel}</span>
+          <button class="icon-btn card-edit" style="width:30px;height:30px;" data-id="${c.id}" title="Редактировать">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+          </button>
+        </div>`;
+      }).join('');
+      host.querySelectorAll('.card-edit').forEach(btn => {
+        btn.addEventListener('click', () => openCardModal(btn.dataset.id));
+      });
+    }
+
+    function openCardModal(cardId = null) {
+      $('#cardError').classList.add('hidden');
+      if (cardId) {
+        const c = Store.cards.list().find(x => x.id === cardId);
+        if (!c) return;
+        $('#cardModalTitle').textContent = 'Редактировать карточку';
+        $('#cardId').value = c.id;
+        $('#cardFront').value = c.front || '';
+        $('#cardBack').value = c.back || '';
+        $('#cardTags').value = (c.tags || []).join(', ');
+        $('#cardDeleteBtn').style.display = '';
+      } else {
+        $('#cardModalTitle').textContent = 'Новая карточка';
+        $('#cardId').value = '';
+        $('#cardFront').value = '';
+        $('#cardBack').value = '';
+        $('#cardTags').value = '';
+        $('#cardDeleteBtn').style.display = 'none';
+      }
+      openModal('cardModal');
+    }
+
+    $('#newCardBtn')?.addEventListener('click', () => openCardModal());
+    $('#cardForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = $('#cardId').value;
+      const front = $('#cardFront').value.trim();
+      const back = $('#cardBack').value.trim();
+      const tags = $('#cardTags').value.split(',').map(t => t.trim()).filter(Boolean);
+      if (!front || !back) {
+        $('#cardError').textContent = 'Заполните вопрос и ответ';
+        $('#cardError').classList.remove('hidden');
+        return;
+      }
+      const list = Store.cards.list();
+      if (id) {
+        const idx = list.findIndex(c => c.id === id);
+        if (idx >= 0) list[idx] = { ...list[idx], front, back, tags };
+      } else {
+        list.push({
+          id: uid(), front, back, tags,
+          interval: 0, ease: 2.5, repetitions: 0,
+          next_due: null, last_review: null,
+          created_at: new Date().toISOString()
+        });
+      }
+      Store.cards.save(list);
+      closeModal('cardModal');
+      toast('Карточка сохранена', 'success');
+      renderCardsView();
+    });
+    $('#cardDeleteBtn')?.addEventListener('click', async () => {
+      const id = $('#cardId').value;
+      if (!id) return;
+      const ok = await confirmModal('Удалить карточку?'); if (!ok) return;
+      const list = Store.cards.list();
+      const c = list.find(x => x.id === id);
+      if (c) trashPush('card', c, c.front || '');
+      Store.cards.save(list.filter(x => x.id !== id));
+      if (studyState.cardId === id) { studyState.cardId = null; studyState.flipped = false; }
+      closeModal('cardModal');
+      toast('Карточка удалена', 'success');
+      renderCardsView();
+    });
+
+    // ---------- Zettelkasten ----------
+    // Атомарные заметки с двусторонними связями. Связи извлекаются из
+    // текста вида [[заголовок другого Zettel]] — при сохранении строим
+    // обратные ссылки, при отрисовке показываем backlinks.
+    const state_zettel = { query: '' };
+
+    function parseZettelLinks(text) {
+      // Возвращает массив уникальных заголовков, на которые ссылается текст
+      const re = /\[\[([^\]]+)\]\]/g;
+      const set = new Set();
+      let m;
+      while ((m = re.exec(text || '')) !== null) {
+        const t = m[1].trim();
+        if (t) set.add(t);
+      }
+      return Array.from(set);
+    }
+
+    function zettelByTitle(list, title) {
+      const t = title.toLowerCase();
+      return list.find(z => (z.title || '').toLowerCase() === t) || null;
+    }
+
+    function renderZettelContent(content, list) {
+      // Сначала экранируем и рендерим markdown, затем превращаем [[link]]
+      // в кликабельные ссылки. Missing-таргеты помечаем пунктирной рамкой.
+      let html = renderMarkdown(content || '');
+      html = html.replace(/\[\[([^\]]+)\]\]/g, (_, raw) => {
+        const title = raw.trim();
+        const target = zettelByTitle(list, title);
+        if (target) return `<a class="zettel-link" data-zettel-link="${escapeHtml(target.id)}" href="#">${escapeHtml(title)}</a>`;
+        return `<span class="zettel-link-missing" data-zettel-missing="${escapeHtml(title)}">${escapeHtml(title)}</span>`;
+      });
+      return html;
+    }
+
+    function renderZettels() {
+      const list = Store.zettels.list();
+      const q = (state_zettel.query || '').toLowerCase().trim();
+      const filtered = q
+        ? list.filter(z => ((z.title || '') + ' ' + (z.content || '') + ' ' + (z.tags || []).join(' ')).toLowerCase().includes(q))
+        : list;
+
+      // Индекс backlinks: кто ссылается на данный id по совпадению заголовка
+      const backlinks = new Map(); // id -> [sourceZettel]
+      list.forEach(z => {
+        parseZettelLinks(z.content).forEach(title => {
+          const target = zettelByTitle(list, title);
+          if (target) {
+            if (!backlinks.has(target.id)) backlinks.set(target.id, []);
+            backlinks.get(target.id).push(z);
+          }
+        });
+      });
+
+      const orphans = list.filter(z => !parseZettelLinks(z.content).length && !backlinks.has(z.id)).length;
+      const totalLinks = list.reduce((s, z) => s + parseZettelLinks(z.content).length, 0);
+      const withLinks = list.filter(z => parseZettelLinks(z.content).length > 0 || backlinks.has(z.id)).length;
+      $('#zettelStats').innerHTML = `
+        <div class="lw-stat-card"><div class="lw-stat-label">Всего</div><div class="lw-stat-value">${list.length}</div><div class="lw-stat-sub">заметок</div></div>
+        <div class="lw-stat-card"><div class="lw-stat-label">Связей</div><div class="lw-stat-value" style="color:var(--brand-600);">${totalLinks}</div><div class="lw-stat-sub">ссылок [[…]]</div></div>
+        <div class="lw-stat-card"><div class="lw-stat-label">В сети</div><div class="lw-stat-value" style="color:var(--success-700);">${withLinks}</div><div class="lw-stat-sub">есть входящие или исходящие</div></div>
+        <div class="lw-stat-card"><div class="lw-stat-label">Осиротевшие</div><div class="lw-stat-value" style="color:var(--warning-700);">${orphans}</div><div class="lw-stat-sub">ни с чем не связаны</div></div>
+      `;
+
+      const host = $('#zettelList');
+      if (!filtered.length) {
+        host.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><strong>Нет Zettel.</strong><br/>Начните с одной атомарной мысли. Потом свяжите её через [[заголовок]] с другими — получится ваш «второй мозг».</div>`;
+        return;
+      }
+
+      host.innerHTML = filtered
+        .slice().sort((a, b) => (b.updated_at || b.created_at || '').localeCompare(a.updated_at || a.created_at || ''))
+        .map(z => {
+          const links = parseZettelLinks(z.content);
+          const inbound = (backlinks.get(z.id) || []).length;
+          const tagsHtml = (z.tags || []).slice(0, 4).map(t => `<span class="note-tag">${escapeHtml(t)}</span>`).join(' ');
+          return `<div class="zettel-card" data-id="${z.id}">
+            <span class="zettel-id">${escapeHtml(z.zid || '')}</span>
+            <h4>${escapeHtml(z.title || '(без названия)')}</h4>
+            <div class="zettel-preview">${renderZettelContent(z.content, list)}</div>
+            <div class="zettel-meta">
+              ${tagsHtml}
+              ${links.length ? `<span title="Исходящих связей">→ ${links.length}</span>` : ''}
+              ${inbound ? `<span title="Входящих связей" style="color:var(--brand-600); font-weight:600;">← ${inbound}</span>` : ''}
+            </div>
+          </div>`;
+        }).join('');
+
+      host.querySelectorAll('.zettel-card').forEach(el => {
+        el.addEventListener('click', (e) => {
+          // Клик по внутренней ссылке — открыть связанный Zettel; остальное — редактирование самого
+          const linkEl = e.target.closest('.zettel-link');
+          if (linkEl) {
+            e.preventDefault();
+            openZettelModal(linkEl.dataset.zettelLink);
+            return;
+          }
+          const missingEl = e.target.closest('.zettel-link-missing');
+          if (missingEl) {
+            // Откроем модалку нового Zettel с предзаполненным заголовком —
+            // быстрая точка входа для «битых» ссылок.
+            e.preventDefault();
+            openZettelModal(null, { title: missingEl.dataset.zettelMissing });
+            return;
+          }
+          openZettelModal(el.dataset.id);
+        });
+      });
+    }
+
+    function openZettelModal(zettelId = null, preset = {}) {
+      $('#zettelError').classList.add('hidden');
+      const list = Store.zettels.list();
+      if (zettelId) {
+        const z = list.find(x => x.id === zettelId);
+        if (!z) return;
+        $('#zettelModalTitle').textContent = `Zettel · ${z.zid || ''}`;
+        $('#zettelId').value = z.id;
+        $('#zettelTitle').value = z.title || '';
+        $('#zettelContent').value = z.content || '';
+        $('#zettelTags').value = (z.tags || []).join(', ');
+        $('#zettelDeleteBtn').style.display = '';
+      } else {
+        $('#zettelModalTitle').textContent = 'Новый Zettel';
+        $('#zettelId').value = '';
+        $('#zettelTitle').value = preset.title || '';
+        $('#zettelContent').value = '';
+        $('#zettelTags').value = '';
+        $('#zettelDeleteBtn').style.display = 'none';
+      }
+      openModal('zettelModal');
+    }
+
+    $('#newZettelBtn')?.addEventListener('click', () => openZettelModal());
+    $('#zettelSearch')?.addEventListener('input', (e) => {
+      state_zettel.query = e.target.value;
+      renderZettels();
+    });
+    $('#zettelForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = $('#zettelId').value;
+      const title = $('#zettelTitle').value.trim();
+      const content = $('#zettelContent').value.trim();
+      const tags = $('#zettelTags').value.split(',').map(t => t.trim()).filter(Boolean);
+      if (!title) {
+        $('#zettelError').textContent = 'Укажите заголовок';
+        $('#zettelError').classList.remove('hidden');
+        return;
+      }
+      const list = Store.zettels.list();
+      const now = new Date().toISOString();
+      if (id) {
+        const idx = list.findIndex(z => z.id === id);
+        if (idx >= 0) list[idx] = { ...list[idx], title, content, tags, updated_at: now };
+      } else {
+        // zid — «timestamp-style» идентификатор в духе классического Luhmann-Zettelkasten
+        const zid = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
+        list.push({ id: uid(), zid, title, content, tags, created_at: now, updated_at: now });
+      }
+      Store.zettels.save(list);
+      closeModal('zettelModal');
+      toast('Zettel сохранён', 'success');
+      renderZettels();
+    });
+    $('#zettelDeleteBtn')?.addEventListener('click', async () => {
+      const id = $('#zettelId').value;
+      if (!id) return;
+      const ok = await confirmModal('Удалить этот Zettel? Ссылки на него в других заметках станут «битыми».'); if (!ok) return;
+      const list = Store.zettels.list();
+      const z = list.find(x => x.id === id);
+      if (z) trashPush('zettel', z, z.title || '');
+      Store.zettels.save(list.filter(x => x.id !== id));
+      closeModal('zettelModal');
+      toast('Zettel удалён', 'success');
+      renderZettels();
     });
 
     // ---------- Team (сотрудники) ----------
