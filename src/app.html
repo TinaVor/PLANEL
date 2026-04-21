@@ -503,6 +503,103 @@
     body.dark-mode .matrix-cell[data-q="q2"] { background:#3D2B0A; border-color:#92400E; }
     body.dark-mode .matrix-cell[data-q="q3"] { background:#0C2042; border-color:#0E4AA8; }
     body.dark-mode .matrix-cell[data-q="q4"] { background:var(--bg-muted); border-color:var(--border-soft); }
+    /* ============ Life in weeks ============ */
+    /* Каждый период жизни задан двумя цветами: «живой» saturated (для прожитых
+       недель) и «будущий» pastel. Через CSS-переменные темы автоматически
+       инвертируются при включении dark-mode. */
+    #lifeWeeksSvg .lw-cell { stroke: var(--border-soft); stroke-width: 0.3; }
+    #lifeWeeksSvg .lw-cell.lw-lived { stroke: none; }
+    /* Детство — розовый */
+    #lifeWeeksSvg .lw-p-childhood          { fill: #FBCFE8; }
+    #lifeWeeksSvg .lw-p-childhood.lw-lived { fill: #EC4899; }
+    /* Школа — голубой */
+    #lifeWeeksSvg .lw-p-school             { fill: #DBEAFE; }
+    #lifeWeeksSvg .lw-p-school.lw-lived    { fill: #3B82F6; }
+    /* Учёба — фиолетовый */
+    #lifeWeeksSvg .lw-p-education          { fill: #EDE9FE; }
+    #lifeWeeksSvg .lw-p-education.lw-lived { fill: #8B5CF6; }
+    /* Карьера — зелёный */
+    #lifeWeeksSvg .lw-p-career             { fill: #D1FAE5; }
+    #lifeWeeksSvg .lw-p-career.lw-lived    { fill: #10B981; }
+    /* Пенсия — оранжевый */
+    #lifeWeeksSvg .lw-p-retirement          { fill: #FED7AA; }
+    #lifeWeeksSvg .lw-p-retirement.lw-lived { fill: #F97316; }
+    /* На случай, если неделя не попала ни в один период (недостижимо, но страхуемся) */
+    #lifeWeeksSvg .lw-p-none                { fill: var(--bg-muted); }
+
+    body.dark-mode #lifeWeeksSvg .lw-p-childhood           { fill: #500724; }
+    body.dark-mode #lifeWeeksSvg .lw-p-childhood.lw-lived  { fill: #F472B6; }
+    body.dark-mode #lifeWeeksSvg .lw-p-school              { fill: #0C2042; }
+    body.dark-mode #lifeWeeksSvg .lw-p-school.lw-lived     { fill: #60A5FA; }
+    body.dark-mode #lifeWeeksSvg .lw-p-education           { fill: #2E1065; }
+    body.dark-mode #lifeWeeksSvg .lw-p-education.lw-lived  { fill: #A78BFA; }
+    body.dark-mode #lifeWeeksSvg .lw-p-career              { fill: #022C22; }
+    body.dark-mode #lifeWeeksSvg .lw-p-career.lw-lived     { fill: #34D399; }
+    body.dark-mode #lifeWeeksSvg .lw-p-retirement          { fill: #431407; }
+    body.dark-mode #lifeWeeksSvg .lw-p-retirement.lw-lived { fill: #FB923C; }
+
+    /* Текущая неделя: прозрачная обводка поверх клетки, заметная, но не режущая глаз */
+    #lifeWeeksSvg .lw-current { stroke: #0F172A; stroke-width: 2; fill: none; pointer-events: none; }
+    body.dark-mode #lifeWeeksSvg .lw-current { stroke: #F1F5F9; }
+
+    /* Точечное событие — янтарная клетка поверх периода с белой обводкой
+       и лёгкой тенью, визуально «плавает» над сеткой. */
+    #lifeWeeksSvg .lw-milestone { fill: #F59E0B; stroke: #FFFFFF; stroke-width: 1.2; cursor: help; filter: drop-shadow(0 1px 1.5px rgba(146, 64, 14, 0.35)); }
+    #lifeWeeksSvg .lw-milestone:hover { fill: #FBBF24; }
+    body.dark-mode #lifeWeeksSvg .lw-milestone { fill: #FBBF24; stroke: var(--bg-surface); filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6)); }
+    /* Подпись рядом с маркером: белый halo через paint-order, чтобы читалось
+       и на светлом, и на тёмном периоде. pointer-events:none, чтобы текст
+       не мешал наведению на сам маркер. */
+    #lifeWeeksSvg .lw-milestone-label {
+      font-family: "Inter", system-ui, sans-serif;
+      font-size: 7.5px;
+      font-weight: 700;
+      fill: #1F2937;
+      stroke: #FFFFFF;
+      stroke-width: 2.4;
+      paint-order: stroke;
+      pointer-events: none;
+    }
+    body.dark-mode #lifeWeeksSvg .lw-milestone-label { fill: #F1F5F9; stroke: var(--bg-surface); }
+
+    /* Чипсы периодов — цвет фона с той же палитрой, что и клетки */
+    .lw-period-chip { display:inline-flex; align-items:center; gap:0.4rem; padding:0.25rem 0.6rem; border-radius:9999px; font-size:0.75rem; font-weight:600; }
+    .lw-period-chip.lw-p-childhood  { background:#FCE7F3; color:#9D174D; }
+    .lw-period-chip.lw-p-school     { background:#DBEAFE; color:#1E40AF; }
+    .lw-period-chip.lw-p-education  { background:#EDE9FE; color:#5B21B6; }
+    .lw-period-chip.lw-p-career     { background:#D1FAE5; color:#065F46; }
+    .lw-period-chip.lw-p-retirement { background:#FED7AA; color:#9A3412; }
+    body.dark-mode .lw-period-chip.lw-p-childhood  { background:#500724; color:#F9A8D4; }
+    body.dark-mode .lw-period-chip.lw-p-school     { background:#0C2042; color:#93C5FD; }
+    body.dark-mode .lw-period-chip.lw-p-education  { background:#2E1065; color:#C4B5FD; }
+    body.dark-mode .lw-period-chip.lw-p-career     { background:#022C22; color:#6EE7B7; }
+    body.dark-mode .lw-period-chip.lw-p-retirement { background:#431407; color:#FDBA74; }
+    .lw-period-dot { width:10px; height:10px; border-radius:3px; display:inline-block; }
+    .lw-period-dot.lw-p-childhood  { background:#EC4899; }
+    .lw-period-dot.lw-p-school     { background:#3B82F6; }
+    .lw-period-dot.lw-p-education  { background:#8B5CF6; }
+    .lw-period-dot.lw-p-career     { background:#10B981; }
+    .lw-period-dot.lw-p-retirement { background:#F97316; }
+    .lw-period-age { color:var(--text-muted); font-weight:500; margin-left:0.2rem; }
+
+    .lw-legend { display:inline-flex; align-items:center; gap:0.4rem; color:var(--text-secondary); }
+    .lw-legend-dot { width:12px; height:12px; border-radius:3px; display:inline-block; }
+    .lw-legend-empty   { background:#DBEAFE; border:1px solid #93C5FD; }
+    .lw-legend-lived   { background:#3B82F6; }
+    .lw-legend-current { background:transparent; border:2px solid #0F172A; }
+    .lw-legend-event   { background:#F59E0B; border:1px solid #FFFFFF; box-shadow: 0 1px 2px rgba(146,64,14,0.4); }
+    body.dark-mode .lw-legend-current { border-color:#F1F5F9; }
+    body.dark-mode .lw-legend-event   { background:#FBBF24; border-color:var(--bg-surface); }
+
+    .lw-event-row { display:flex; gap:0.6rem; align-items:center; font-size:0.82rem; padding:0.3rem 0.5rem; border-radius:8px; }
+    .lw-event-row:hover { background:var(--bg-muted); }
+    .lw-event-row .lw-event-marker { width:10px; height:10px; border-radius:3px; background:#F59E0B; border:1px solid #FFFFFF; box-shadow: 0 1px 2px rgba(146,64,14,0.35); flex-shrink:0; }
+    body.dark-mode .lw-event-row .lw-event-marker { background:#FBBF24; border-color:var(--bg-surface); }
+    .lw-stat-card { background:var(--bg-surface); border:1px solid var(--border-soft); border-radius:12px; padding:0.9rem 1rem; }
+    .lw-stat-label { font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.2rem; }
+    .lw-stat-value { font-family:"Manrope", "Inter", sans-serif; font-size:1.5rem; font-weight:800; color:var(--text-strong); line-height:1.1; }
+    .lw-stat-sub { font-size:0.72rem; color:var(--text-muted); margin-top:0.2rem; }
+
     /* Beta label */
     .beta-badge {
       display:inline-flex; align-items:center;
@@ -512,6 +609,30 @@
       color:#FFFFFF; text-transform:uppercase;
       box-shadow:0 2px 6px rgba(31,118,242,0.3);
       margin-left:0.4rem; vertical-align:middle;
+    }
+
+    /* ============ Header search trigger ============ */
+    /* На мобильных — компактная круглая кнопка-иконка; на sm+ превращается
+       в полноценный «pseudo-input» с подсказкой и хоткеем ⌘K. Клик везде
+       открывает ту же модалку, что и Cmd+K. */
+    .header-search {
+      display:inline-flex; align-items:center; gap:0.5rem;
+      height:38px; width:38px;
+      padding:0; border-radius:10px;
+      background:var(--bg-muted); border:1px solid var(--border-soft);
+      color:var(--text-secondary); cursor:pointer;
+      transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+    }
+    .header-search:hover { background:var(--brand-50); border-color:var(--brand-100); color:var(--brand-700); }
+    body.dark-mode .header-search:hover { background:var(--bg-surface); border-color:var(--border-strong); color:var(--text-primary); }
+    .header-search .icon { width:18px; height:18px; margin:0 auto; }
+    .header-search-label { display:none; flex:1; min-width:0; text-align:left; font-size:0.86rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .header-search-kbd { display:none; }
+    @media (min-width: 640px) {
+      .header-search { width:100%; max-width:420px; padding:0 0.85rem; justify-content:flex-start; }
+      .header-search .icon { margin:0; flex-shrink:0; }
+      .header-search-label { display:inline; }
+      .header-search-kbd { display:inline-flex; flex-shrink:0; }
     }
 
     /* ============ Search modal ============ */
@@ -1007,31 +1128,19 @@
           </button>
           <button class="nav-item" data-view="tasks">
             <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 9h8M8 13h6M8 17h4"/></svg></span>
-            <span>Задачи и доски</span>
+            <span>Задачи</span>
           </button>
           <button class="nav-item" data-view="calendar">
             <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
-            <span>Планер</span>
+            <span>Календарь</span>
           </button>
           <button class="nav-item" data-view="projects">
             <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg></span>
-            <span>Цели и проекты</span>
+            <span>Проекты</span>
           </button>
           <button class="nav-item" data-view="habits">
             <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11z"/></svg></span>
             <span>Привычки</span>
-          </button>
-          <button class="nav-item" data-view="wheel">
-            <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M5.6 18.4 18.4 5.6"/></svg></span>
-            <span>Колесо баланса</span>
-          </button>
-          <button class="nav-item" data-view="food">
-            <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v18M8 3v10a2 2 0 0 1-4 0"/><path d="M18 3c-2 0-4 2-4 6s2 4 4 4v8"/></svg></span>
-            <span>Дневник питания</span>
-          </button>
-          <button class="nav-item" data-view="goals100">
-            <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg></span>
-            <span>100 целей на год</span>
           </button>
           <button class="nav-item" data-view="emotions">
             <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11z"/><path d="M9 10h.01M15 10h.01M9 14c1 1 3 1 4 0"/></svg></span>
@@ -1040,6 +1149,14 @@
           <button class="nav-item" data-view="notes">
             <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span>
             <span>Заметки</span>
+          </button>
+          <button class="nav-item" data-view="wheel">
+            <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M5.6 18.4 18.4 5.6"/></svg></span>
+            <span>Колесо баланса</span>
+          </button>
+          <button class="nav-item" data-view="goals100">
+            <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg></span>
+            <span>100 целей на год</span>
           </button>
           <button class="nav-item" data-view="achievements">
             <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4"/><path d="M17 4H7v6a5 5 0 0 0 10 0z"/><path d="M17 4h3v3a3 3 0 0 1-3 3"/><path d="M7 4H4v3a3 3 0 0 0 3 3"/></svg></span>
@@ -1052,16 +1169,6 @@
         </nav>
       </div>
 
-      <!-- Bottom of sidebar: theme toggle -->
-      <div class="mt-auto pt-4 border-t border-[color:var(--border-soft)]">
-        <label class="flex items-center justify-between px-2 py-1 cursor-pointer">
-          <span class="text-sm text-[color:var(--text-secondary)] flex items-center gap-2">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            Тёмная тема
-          </span>
-          <span class="switch"><input type="checkbox" id="darkToggle"><span class="slider"></span></span>
-        </label>
-      </div>
     </aside>
 
     <main class="flex-1 flex flex-col min-w-0">
@@ -1079,12 +1186,15 @@
                 <div id="workspaceItems" class="max-h-80 overflow-y-auto"></div>
               </div>
             </div>
+
+            <!-- Глобальный поиск: на sm+ выглядит как поле ввода, но клик открывает модалку (сам ввод и обработка — там). -->
+            <button type="button" id="headerSearchBtn" class="header-search hidden-for-admin" aria-label="Поиск по приложению" title="Поиск (⌘K / Ctrl+K)">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              <span class="header-search-label">Поиск по задачам, заметкам, проектам…</span>
+              <span class="header-search-kbd kbd">⌘K</span>
+            </button>
           </div>
           <div class="flex items-center gap-2 sm:gap-2.5 flex-shrink-0">
-            <button class="icon-btn lg:hidden" id="mobThemeToggle" aria-label="Переключить тёмную тему" title="Тёмная тема">
-              <svg class="icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-              <svg class="icon theme-icon-sun hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-            </button>
             <div class="relative hidden-for-admin" id="notifWrap">
               <button class="icon-btn" id="notifBtn" aria-label="Уведомления" title="Уведомления">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9z"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
@@ -1145,7 +1255,7 @@
               <div class="space-y-6">
                 <div class="card">
                   <div class="flex items-center justify-between mb-4">
-                    <h3 class="heading-font text-base font-extrabold">Привычки · Сегодня</h3>
+                    <h3 class="heading-font text-base font-extrabold">Привычки сегодня</h3>
                     <button class="btn-ghost text-xs" id="quickAddHabit">+ Добавить</button>
                   </div>
                   <div class="space-y-1" id="todayHabits">
@@ -1271,7 +1381,7 @@
               <div class="card">
                 <h3 class="heading-font text-lg font-extrabold mb-5">Загрузка по проектам</h3>
                 <div class="space-y-4" id="projectsBreakdown">
-                  <div class="empty-state"><strong>Пока нет проектов.</strong><br/>Создайте проект в разделе «Цели и проекты», чтобы увидеть разбивку.</div>
+                  <div class="empty-state"><strong>Пока нет проектов.</strong><br/>Создайте проект в разделе «Проекты», чтобы увидеть разбивку.</div>
                 </div>
               </div>
             </div>
@@ -1287,7 +1397,7 @@
           <section id="tasks" class="view space-y-6">
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 class="heading-font text-2xl font-extrabold mb-1">Задачи и доски</h2>
+                <h2 class="heading-font text-2xl font-extrabold mb-1">Задачи</h2>
                 <p class="text-sm text-[color:var(--text-secondary)]">Управляйте задачами в любом формате</p>
               </div>
               <div class="flex items-center gap-2 flex-wrap">
@@ -1371,11 +1481,11 @@
             </div>
           </section>
 
-          <!-- Планер -->
+          <!-- Календарь -->
           <section id="calendar" class="view space-y-6">
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 class="heading-font text-2xl font-extrabold mb-1">Планер</h2>
+                <h2 class="heading-font text-2xl font-extrabold mb-1">Календарь</h2>
                 <p class="text-sm text-[color:var(--text-secondary)]">Задачи с дедлайнами по дням</p>
               </div>
               <div class="flex items-center gap-2 flex-wrap">
@@ -1438,13 +1548,19 @@
           <section id="projects" class="view space-y-6">
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 class="heading-font text-2xl font-extrabold mb-1">Цели и проекты</h2>
+                <h2 class="heading-font text-2xl font-extrabold mb-1">Проекты</h2>
                 <p class="text-sm text-[color:var(--text-secondary)]">Группируйте задачи по проектам и отслеживайте прогресс</p>
               </div>
-              <button class="btn-primary text-sm" id="newProjectBtn">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-                Новый проект
-              </button>
+              <div class="flex items-center gap-2 flex-wrap">
+                <button class="btn-ghost text-sm" id="projectsTemplatesBtn" title="Готовые шаблоны проектов">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                  Шаблоны
+                </button>
+                <button class="btn-primary text-sm" id="newProjectBtn">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                  Новый проект
+                </button>
+              </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="projectsGrid"></div>
           </section>
@@ -1510,7 +1626,7 @@
               <div class="card">
                 <h3 class="heading-font text-lg font-extrabold mb-2">Ваш баланс</h3>
                 <div class="wheel-radar-wrap">
-                  <svg id="wheelRadar" viewBox="-160 -160 320 320" style="width:100%; max-width:380px; height:auto;"></svg>
+                  <svg id="wheelRadar" viewBox="-220 -180 440 360" preserveAspectRatio="xMidYMid meet" style="width:100%; max-width:440px; height:auto; overflow:visible;"></svg>
                 </div>
               </div>
               <div class="card">
@@ -1521,86 +1637,12 @@
                     <h4 class="heading-font font-bold">Распределение задач и привычек</h4>
                     <button type="button" class="btn-primary text-xs" id="buildWheelFromActivityBtn" title="Пересчитать колесо по фактической активности: чем больше задач и привычек в сфере, тем выше оценка">
                       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M21 12a9 9 0 0 1-9 9"/><path d="M3 12a9 9 0 0 1 9-9"/><path d="m17 8 4-4-4-4"/><path d="m7 16-4 4 4 4"/></svg>
-                      Построить по задачам и привычкам
+                      Построить колесо
                     </button>
                   </div>
                   <div id="wheelDistribution" class="space-y-2"></div>
                 </div>
               </div>
-            </div>
-          </section>
-
-          <!-- Дневник питания -->
-          <section id="food" class="view space-y-6">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h2 class="heading-font text-2xl font-extrabold mb-1">Дневник питания</h2>
-                <p class="text-sm text-[color:var(--text-secondary)]">Записи по приёмам пищи и целям по калориям/воде</p>
-              </div>
-              <button class="btn-primary text-sm" id="foodAddBtn">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-                Добавить запись
-              </button>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div class="card">
-                <div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">Калории сегодня</div>
-                <div class="flex items-baseline gap-2 mb-2">
-                  <span class="heading-font text-3xl font-extrabold" id="foodCaloriesToday">0</span>
-                  <span class="text-sm text-[color:var(--text-muted)]">/ <span id="foodCaloriesGoal">0</span> ккал</span>
-                </div>
-                <div class="progress"><span id="foodCaloriesBar" style="width:0%"></span></div>
-                <div class="text-xs text-[color:var(--text-muted)] mt-2" id="foodMacrosToday">Б 0 · Ж 0 · У 0 г</div>
-              </div>
-              <div class="card">
-                <div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">Вода сегодня</div>
-                <div class="flex items-baseline gap-2 mb-2">
-                  <span class="heading-font text-3xl font-extrabold" id="foodWaterToday">0</span>
-                  <span class="text-sm text-[color:var(--text-muted)]">/ <span id="foodWaterGoal">0</span> мл</span>
-                </div>
-                <div class="progress"><span id="foodWaterBar" style="width:0%"></span></div>
-              </div>
-              <div class="card">
-                <h4 class="heading-font font-bold text-sm mb-2">Цели</h4>
-                <form id="foodGoalsForm" class="grid grid-cols-2 gap-2">
-                  <div>
-                    <label class="form-label">Ккал/день</label>
-                    <input type="number" id="foodGoalCal" class="form-input" min="0" max="10000" placeholder="2000">
-                  </div>
-                  <div>
-                    <label class="form-label">Вода, мл</label>
-                    <input type="number" id="foodGoalWater" class="form-input" min="0" max="10000" placeholder="2500">
-                  </div>
-                  <button type="submit" class="btn-ghost text-xs col-span-2 justify-center">Сохранить цели</button>
-                </form>
-              </div>
-            </div>
-
-            <div class="card">
-              <h3 class="heading-font text-lg font-extrabold mb-4">Сегодня</h3>
-              <div class="overflow-x-auto">
-                <table class="data-table" id="foodTable">
-                  <thead>
-                    <tr>
-                      <th>Время</th>
-                      <th>Приём</th>
-                      <th>Что съел</th>
-                      <th>Что выпил</th>
-                      <th>Ккал</th>
-                      <th>Голод</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody id="foodTableBody"></tbody>
-                </table>
-              </div>
-            </div>
-
-            <div class="card">
-              <h3 class="heading-font text-lg font-extrabold mb-4">Калории за 7 дней</h3>
-              <div class="flex items-end justify-between gap-2" id="foodChart" style="height:140px;"></div>
-              <div class="flex items-center justify-between mt-3 text-xs text-[color:var(--text-muted)]" id="foodChartLabels"></div>
             </div>
           </section>
 
@@ -1612,7 +1654,7 @@
                   <h2 class="heading-font text-2xl font-extrabold">100 целей на год</h2>
                   <button id="smartHelp" class="help-btn" aria-expanded="false" aria-label="Что такое SMART?" title="Что такое SMART?">?</button>
                 </div>
-                <p class="text-sm text-[color:var(--text-secondary)]">Выписывайте большие цели с планом и метриками достижения</p>
+                <p class="text-sm text-[color:var(--text-secondary)]">Большие цели с планом и жизнь в неделях</p>
               </div>
               <div id="smartPopover" class="popover hidden" style="top:60px; left:0; max-width:340px;">
                 <strong>SMART</strong> — критерии сильной цели:<br/>
@@ -1623,7 +1665,15 @@
                 <strong>T</strong>ime-bound · с дедлайном<br/>
                 Пример вместо «Похудеть»: «Скинуть 5 кг к 1 сентября через 3 тренировки в неделю и дефицит 400 ккал».
               </div>
-              <div class="flex items-center gap-2 flex-wrap">
+              <div class="flex items-center gap-2 flex-wrap" id="goals100ModeWrap">
+                <button class="pill-filter active" data-goals-mode="list">Цели</button>
+                <button class="pill-filter" data-goals-mode="life">Жизнь в неделях</button>
+              </div>
+            </div>
+
+            <!-- 100 целей -->
+            <div id="goalsListView" class="space-y-6">
+              <div class="flex items-center gap-2 flex-wrap justify-end">
                 <button class="btn-ghost text-sm" id="goalsTemplatesBtn" title="Готовые шаблоны">
                   <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
                   Шаблоны
@@ -1642,17 +1692,66 @@
                   Добавить цель
                 </button>
               </div>
-            </div>
 
-            <div class="card">
-              <div class="flex items-center justify-between mb-4">
-                <span class="heading-font font-bold">Прогресс: <span id="goals100Done">0</span> / 100</span>
-                <span class="text-sm text-[color:var(--text-muted)]" id="goals100Pct">0%</span>
+              <div class="card">
+                <div class="flex items-center justify-between mb-4">
+                  <span class="heading-font font-bold">Прогресс: <span id="goals100Done">0</span> / 100</span>
+                  <span class="text-sm text-[color:var(--text-muted)]" id="goals100Pct">0%</span>
+                </div>
+                <div class="progress"><span id="goals100Bar" style="width:0%"></span></div>
               </div>
-              <div class="progress"><span id="goals100Bar" style="width:0%"></span></div>
+
+              <div id="goals100List" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
 
-            <div id="goals100List" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            <!-- Жизнь в неделях -->
+            <div id="lifeWeeksView" class="hidden space-y-6">
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-1">Жизнь в неделях</h3>
+                <p class="text-sm text-[color:var(--text-secondary)] mb-4">Сетка 90 × 52 недели — вся ожидаемая жизнь. Синим отмечены прожитые недели, янтарным — типичные периоды значимых событий для статистики по полу.</p>
+                <form id="lifeWeeksForm" class="grid grid-cols-1 sm:grid-cols-[auto_auto_1fr] gap-3 items-end">
+                  <div>
+                    <label class="form-label">Пол</label>
+                    <select id="lwGender" class="form-select" required>
+                      <option value="male">Мужчина</option>
+                      <option value="female">Женщина</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="form-label">Дата рождения</label>
+                    <input type="date" id="lwBirthDate" class="form-input" required>
+                  </div>
+                  <button type="submit" class="btn-primary text-sm justify-self-start sm:justify-self-end">Построить</button>
+                </form>
+                <p id="lwMsg" class="text-xs hidden mt-2"></p>
+              </div>
+
+              <div id="lifeWeeksResult" class="hidden space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="lifeWeeksStats"></div>
+
+                <div class="card">
+                  <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                    <h3 class="heading-font text-lg font-extrabold">Ваша жизнь</h3>
+                  </div>
+                  <div id="lifeWeeksPeriods" class="flex flex-wrap gap-2 mb-4"></div>
+                  <div class="overflow-x-auto">
+                    <svg id="lifeWeeksSvg" viewBox="0 0 572 990" preserveAspectRatio="xMidYMid meet" style="width:100%; min-width:520px; height:auto; display:block;"></svg>
+                  </div>
+                  <div class="flex flex-wrap gap-3 mt-4 text-xs">
+                    <span class="lw-legend"><span class="lw-legend-dot lw-legend-lived"></span>Прожитые недели (насыщенный цвет)</span>
+                    <span class="lw-legend"><span class="lw-legend-dot lw-legend-empty"></span>Будущие недели (светлее)</span>
+                    <span class="lw-legend"><span class="lw-legend-dot lw-legend-current"></span>Текущая неделя</span>
+                    <span class="lw-legend"><span class="lw-legend-dot lw-legend-event"></span>Точечное событие</span>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <h3 class="heading-font text-lg font-extrabold mb-3">Точечные события</h3>
+                  <div id="lifeWeeksEventsList" class="space-y-1.5"></div>
+                  <p class="text-xs text-[color:var(--text-muted)] mt-3">Это средние социально-демографические ориентиры по России — числа различаются по полу. Ваша жизнь не обязана следовать статистике.</p>
+                </div>
+              </div>
+            </div>
           </section>
 
           <!-- Дневник -->
@@ -1660,12 +1759,84 @@
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 class="heading-font text-2xl font-extrabold mb-1">Дневник</h2>
-                <p class="text-sm text-[color:var(--text-secondary)]">Эмоции и рефлексия дня</p>
+                <p class="text-sm text-[color:var(--text-secondary)]">Питание, эмоции, рефлексия и благодарность</p>
               </div>
               <div class="flex items-center gap-2 flex-wrap" id="diaryModeWrap">
+                <button class="pill-filter" data-diary-mode="food">Питание</button>
                 <button class="pill-filter active" data-diary-mode="emotions">Эмоции</button>
-                <button class="pill-filter" data-diary-mode="reflection">Рефлексия дня</button>
-                <button class="pill-filter" data-diary-mode="gratitude">Дневник благодарности</button>
+                <button class="pill-filter" data-diary-mode="reflection">Рефлексия</button>
+                <button class="pill-filter" data-diary-mode="gratitude">Благодарность</button>
+              </div>
+            </div>
+
+            <!-- Питание -->
+            <div id="diaryFoodView" class="hidden space-y-6">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <p class="text-sm text-[color:var(--text-secondary)]">Записи по приёмам пищи и целям по калориям / воде</p>
+                <button class="btn-primary text-sm" id="foodAddBtn">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                  Добавить запись
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="card">
+                  <div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">Калории сегодня</div>
+                  <div class="flex items-baseline gap-2 mb-2">
+                    <span class="heading-font text-3xl font-extrabold" id="foodCaloriesToday">0</span>
+                    <span class="text-sm text-[color:var(--text-muted)]">/ <span id="foodCaloriesGoal">0</span> ккал</span>
+                  </div>
+                  <div class="progress"><span id="foodCaloriesBar" style="width:0%"></span></div>
+                  <div class="text-xs text-[color:var(--text-muted)] mt-2" id="foodMacrosToday">Б 0 · Ж 0 · У 0 г</div>
+                </div>
+                <div class="card">
+                  <div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">Вода сегодня</div>
+                  <div class="flex items-baseline gap-2 mb-2">
+                    <span class="heading-font text-3xl font-extrabold" id="foodWaterToday">0</span>
+                    <span class="text-sm text-[color:var(--text-muted)]">/ <span id="foodWaterGoal">0</span> мл</span>
+                  </div>
+                  <div class="progress"><span id="foodWaterBar" style="width:0%"></span></div>
+                </div>
+                <div class="card">
+                  <h4 class="heading-font font-bold text-sm mb-2">Цели</h4>
+                  <form id="foodGoalsForm" class="grid grid-cols-2 gap-2">
+                    <div>
+                      <label class="form-label">Ккал/день</label>
+                      <input type="number" id="foodGoalCal" class="form-input" min="0" max="10000" placeholder="2000">
+                    </div>
+                    <div>
+                      <label class="form-label">Вода, мл</label>
+                      <input type="number" id="foodGoalWater" class="form-input" min="0" max="10000" placeholder="2500">
+                    </div>
+                    <button type="submit" class="btn-ghost text-xs col-span-2 justify-center">Сохранить цели</button>
+                  </form>
+                </div>
+              </div>
+
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-4">Сегодня</h3>
+                <div class="overflow-x-auto">
+                  <table class="data-table" id="foodTable">
+                    <thead>
+                      <tr>
+                        <th>Время</th>
+                        <th>Приём</th>
+                        <th>Что съел</th>
+                        <th>Что выпил</th>
+                        <th>Ккал</th>
+                        <th>Голод</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="foodTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-4">Калории за 7 дней</h3>
+                <div class="flex items-end justify-between gap-2" id="foodChart" style="height:140px;"></div>
+                <div class="flex items-center justify-between mt-3 text-xs text-[color:var(--text-muted)]" id="foodChartLabels"></div>
               </div>
             </div>
 
@@ -1873,6 +2044,20 @@
                   <div class="text-sm text-[color:var(--text-muted)]" id="profileHeaderEmail">—</div>
                 </div>
               </div>
+            </div>
+
+            <div class="card">
+              <h3 class="heading-font text-lg font-extrabold mb-4">Оформление</h3>
+              <label class="flex items-center justify-between gap-3 cursor-pointer">
+                <span class="flex items-center gap-2.5">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                  <span>
+                    <span class="block text-sm font-semibold text-[color:var(--text-strong)]">Тёмная тема</span>
+                    <span class="block text-xs text-[color:var(--text-muted)]">Применяется ко всему приложению</span>
+                  </span>
+                </span>
+                <span class="switch"><input type="checkbox" id="darkToggle"><span class="slider"></span></span>
+              </label>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -2089,7 +2274,7 @@
         </button>
         <button class="nav-item" data-view="calendar">
           <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
-          <span>Планер</span>
+          <span>Календарь</span>
         </button>
         <button class="nav-item" data-view="notes">
           <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span>
@@ -2422,6 +2607,10 @@
         list: () => loadBucket('gratitude', []),
         save: (arr) => saveBucket('gratitude', arr),
       },
+      lifeWeeks: {
+        get: () => loadBucket('life_weeks', { gender: '', birth_date: '' }),
+        save: (obj) => saveBucket('life_weeks', obj),
+      },
       game: {
         get: () => loadBucket('game', { xp: 0, events: [], achievements: [] }),
         save: (obj) => saveBucket('game', obj),
@@ -2594,10 +2783,10 @@
       views.forEach(v => v.classList.toggle('view-active', v.id === name));
       navButtons.forEach(b => b.classList.toggle('nav-item-active', b.dataset.view === name));
       const titles = {
-        today:'Сегодня', dashboard:'Дашборд', tasks:'Задачи и доски', calendar:'Планер',
-        projects:'Цели и проекты', habits:'Привычки',
-        wheel:'Колесо баланса', food:'Дневник питания', goals100:'100 целей на год', emotions:'Дневник эмоций',
-        notes:'Заметки', achievements:'Награды', trash:'Корзина', profile:'Профиль', admin:'Админ-панель'
+        today:'Сегодня', dashboard:'Дашборд', tasks:'Задачи', calendar:'Календарь',
+        projects:'Проекты', habits:'Привычки', emotions:'Дневник', notes:'Заметки',
+        wheel:'Колесо баланса', goals100:'100 целей на год',
+        achievements:'Награды', trash:'Корзина', profile:'Профиль', admin:'Админ-панель'
       };
       document.title = (titles[name] || 'PLANEL') + ' · PLANEL';
       if (name === 'today')     renderTodayView();
@@ -2607,7 +2796,6 @@
       if (name === 'projects')  renderProjects();
       if (name === 'habits')    renderHabits();
       if (name === 'wheel')     renderWheel();
-      if (name === 'food')      renderFoodDiary();
       if (name === 'goals100')  renderGoals100();
       if (name === 'emotions')  renderEmotions();
       if (name === 'notes')     renderNotes();
@@ -3796,7 +3984,7 @@
       const brHost = $('#projectsBreakdown');
       const unassigned = tasks.filter(t => !getProjectId(t)).length;
       if (!projects.length) {
-        brHost.innerHTML = `<div class="empty-state"><strong>Пока нет проектов.</strong><br/>Создайте проект в разделе «Цели и проекты», чтобы увидеть разбивку.</div>`;
+        brHost.innerHTML = `<div class="empty-state"><strong>Пока нет проектов.</strong><br/>Создайте проект в разделе «Проекты», чтобы увидеть разбивку.</div>`;
       } else {
         const rows = projects.map(p => {
           const tList = tasks.filter(t => getProjectId(t) === p.id);
@@ -4645,11 +4833,14 @@
         const p = pt(R * (v / 10), i);
         html += `<circle class="wr-dot" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" />`;
       });
-      // Labels
+      // Labels. Подписи сфер (включая длинные вроде «Добрые дела») размещаются
+      // за пределами самой диаграммы, поэтому viewBox SVG расширен до 440×360.
+      // Anchor выбирается по квадранту: для боковых подписей text-anchor
+      // переводится в start/end, чтобы они не заезжали на полигон.
       SPHERES.forEach((s, i) => {
-        const p = pt(R + 22, i);
+        const p = pt(R + 18, i);
         const anchor = p.x > 10 ? 'start' : p.x < -10 ? 'end' : 'middle';
-        html += `<text class="wr-label" x="${p.x.toFixed(1)}" y="${p.y.toFixed(1) + 4}" text-anchor="${anchor}" font-size="11" font-weight="700">${s.label}</text>`;
+        html += `<text class="wr-label" x="${p.x.toFixed(1)}" y="${(p.y + 4).toFixed(1)}" text-anchor="${anchor}" font-size="12" font-weight="700">${s.label}</text>`;
       });
       svg.innerHTML = html;
     }
@@ -4983,6 +5174,202 @@
       });
     }
 
+    // ---------- Life in Weeks (Gantt-style сетка 90×52) ----------
+    // Адаптация концепции Tim Urban "Your Life in Weeks": 90 лет × 52 недели =
+    // 4680 клеток. Все числа недель — статистические ориентиры по России
+    // (медиана или типичный возраст), не прогноз для конкретного человека.
+    const LIFE_WEEKS_ROWS = 90;
+    const LIFE_WEEKS_COLS = 52;
+    const LIFE_WEEKS_TOTAL = LIFE_WEEKS_ROWS * LIFE_WEEKS_COLS;
+
+    // Большие периоды жизни — фоновая заливка клеток.
+    // Границы привязаны к российским средним: школа с 7 лет, вуз ~18–22,
+    // пенсия 2026 года: 64 для мужчин / 59 для женщин.
+    const LIFE_PERIODS = [
+      { id:'childhood',  label:'Детство',   male:{from:0,    to:313},                 female:{from:0,    to:313} },
+      { id:'school',     label:'Школа',     male:{from:314,  to:938},                 female:{from:314,  to:938} },
+      { id:'education',  label:'Университет', male:{from:939,  to:1199},              female:{from:939,  to:1199} },
+      { id:'career',     label:'Карьера',   male:{from:1200, to:3334},                female:{from:1200, to:3076} },
+      { id:'retirement', label:'Пенсия',    male:{from:3335, to:LIFE_WEEKS_TOTAL-1},  female:{from:3077, to:LIFE_WEEKS_TOTAL-1} },
+    ];
+
+    // Точечные события — одна клетка на событие с tooltip.
+    // `short` — компактный вариант для подписи прямо на сетке (иначе длинный
+    // текст залезает на соседние строки). `label` — полное название для списка.
+    // Женские числа ниже там, где статистика это диктует (например, первый ребёнок,
+    // свадьба, пенсия, средний возраст жизни).
+    const LIFE_MILESTONES = [
+      { id:'passport',    label:'Первый паспорт (14 лет)',          short:'Паспорт',         male: 728,  female: 728 },
+      { id:'first_love',  label:'Первая любовь',                     short:'Первая любовь',   male: 832,  female: 780 },
+      { id:'adult',       label:'Совершеннолетие (18 лет)',         short:'Совершеннолетие', male: 939,  female: 939 },
+      { id:'first_job',   label:'Первая работа',                     short:'Первая работа',   male: 1044, female: 1044 },
+      { id:'first_car',   label:'Первая машина',                     short:'Первая машина',   male: 1193, female: 1193 },
+      { id:'first_apt',   label:'Первая квартира',                   short:'Первая квартира', male: 1305, female: 1305 },
+      { id:'first_child', label:'Первый ребёнок',                    short:'Первый ребёнок',  male: 1560, female: 1404 },
+      { id:'wedding',     label:'Первая свадьба',                    short:'Свадьба',         male: 1618, female: 1460 },
+      { id:'divorce',     label:'Развод',                            short:'Развод',          male: 1748, female: 1722 },
+      { id:'second_wed',  label:'Вторая свадьба',                    short:'2-я свадьба',     male: 2087, female: 2087 },
+      { id:'grandchild',  label:'Первый внук / внучка',              short:'Первый внук',     male: 3120, female: 2808 },
+      { id:'avg_life',    label:'Средняя продолжительность жизни',   short:'Средняя продолжительность жизни', male: 3864, female: 4029 },
+    ];
+
+    function setGoals100Mode(mode) {
+      $$('[data-goals-mode]').forEach(b => b.classList.toggle('active', b.dataset.goalsMode === mode));
+      $('#goalsListView')?.classList.toggle('hidden', mode !== 'list');
+      $('#lifeWeeksView')?.classList.toggle('hidden', mode !== 'life');
+      if (mode === 'life') renderLifeWeeks();
+    }
+    $('#goals100ModeWrap')?.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-goals-mode]');
+      if (btn) setGoals100Mode(btn.dataset.goalsMode);
+    });
+
+    function renderLifeWeeks() {
+      const cfg = Store.lifeWeeks.get();
+      if (cfg.gender) $('#lwGender').value = cfg.gender;
+      if (cfg.birth_date) $('#lwBirthDate').value = cfg.birth_date;
+      if (cfg.gender && cfg.birth_date) {
+        drawLifeWeeks(cfg);
+        $('#lifeWeeksResult').classList.remove('hidden');
+      } else {
+        $('#lifeWeeksResult').classList.add('hidden');
+      }
+    }
+
+    // Определяет, к какому периоду жизни относится конкретная неделя для
+    // заданного пола. Возвращает id периода или null.
+    function periodOfWeek(weekIdx, gender) {
+      for (const p of LIFE_PERIODS) {
+        const r = p[gender];
+        if (weekIdx >= r.from && weekIdx <= r.to) return p.id;
+      }
+      return null;
+    }
+
+    function drawLifeWeeks(cfg) {
+      const svg = $('#lifeWeeksSvg');
+      if (!svg) return;
+      const now = new Date();
+      const birth = new Date(cfg.birth_date);
+      // Округляем вниз — только полностью прожитые недели считаются пройденными
+      const MS_WEEK = 7 * 24 * 60 * 60 * 1000;
+      const weeksLived = Math.max(0, Math.floor((now - birth) / MS_WEEK));
+
+      const cell = 10, gap = 1, step = cell + gap;
+      let parts = '';
+      // Фон: каждая клетка получает класс периода и «lived», если неделя прожита.
+      // Стили (цвет периода + сатурация «прожито / будущее») задаются в CSS.
+      for (let r = 0; r < LIFE_WEEKS_ROWS; r++) {
+        for (let c = 0; c < LIFE_WEEKS_COLS; c++) {
+          const idx = r * LIFE_WEEKS_COLS + c;
+          const lived = idx < weeksLived;
+          const periodId = periodOfWeek(idx, cfg.gender) || 'none';
+          const cls = `lw-cell lw-p-${periodId}${lived ? ' lw-lived' : ''}`;
+          parts += `<rect class="${cls}" x="${c * step}" y="${r * step}" width="${cell}" height="${cell}" rx="1.5" />`;
+        }
+      }
+      // Подсветка текущей недели: прозрачная обводка поверх клетки, цвет периода
+      // остаётся виден. Если пользователь уже за пределами 90 лет — пропускаем.
+      if (weeksLived < LIFE_WEEKS_TOTAL) {
+        const c = weeksLived % LIFE_WEEKS_COLS;
+        const r = Math.floor(weeksLived / LIFE_WEEKS_COLS);
+        parts += `<rect class="lw-current" x="${c * step - 0.5}" y="${r * step - 0.5}" width="${cell + 1}" height="${cell + 1}" rx="2" fill="none"><title>Текущая неделя · №${weeksLived + 1}</title></rect>`;
+      }
+      // Точечные события — янтарная клетка-маркер + подпись прямо на сетке.
+      // Подпись кладётся на ту же строку: вправо от клетки, если она в левой
+      // половине, влево — если в правой, чтобы текст не уходил за границы
+      // сетки. Белая обводка текста читается на любом цвете периода.
+      LIFE_MILESTONES.forEach(m => {
+        const wk = m[cfg.gender];
+        if (wk == null || wk >= LIFE_WEEKS_TOTAL) return;
+        const c = wk % LIFE_WEEKS_COLS;
+        const r = Math.floor(wk / LIFE_WEEKS_COLS);
+        const size = 9;
+        const offset = (cell - size) / 2;
+        const x = c * step + offset;
+        const y = r * step + offset;
+        const marker = `<rect class="lw-milestone" data-m="${m.id}" x="${x}" y="${y}" width="${size}" height="${size}" rx="2"><title>${escapeHtml(m.label)} · неделя ${wk} · ~${(wk / 52).toFixed(1)} лет</title></rect>`;
+
+        const labelOnRight = c < LIFE_WEEKS_COLS / 2;
+        const labelX = labelOnRight ? (c + 1) * step + 2 : c * step - 2;
+        const labelY = r * step + cell / 2 + 3.2;
+        const anchor = labelOnRight ? 'start' : 'end';
+        const text = `<text class="lw-milestone-label" x="${labelX}" y="${labelY}" text-anchor="${anchor}">${escapeHtml(m.short || m.label)}</text>`;
+        parts += marker + text;
+      });
+      svg.innerHTML = parts;
+
+      // Сводка по возрасту. «Пройдено» — доля от средней продолжительности
+      // для выбранного пола (статистический ориентир, не прогноз).
+      const ageYears = weeksLived / 52;
+      const avgWeeks = LIFE_MILESTONES.find(e => e.id === 'avg_life')[cfg.gender];
+      const livedPct = Math.min(100, Math.round(weeksLived / avgWeeks * 100));
+      const currentPeriod = LIFE_PERIODS.find(p => p.id === periodOfWeek(weeksLived, cfg.gender));
+      $('#lifeWeeksStats').innerHTML = `
+        <div class="lw-stat-card">
+          <div class="lw-stat-label">Вам</div>
+          <div class="lw-stat-value">${ageYears.toFixed(1)}</div>
+          <div class="lw-stat-sub">лет</div>
+        </div>
+        <div class="lw-stat-card">
+          <div class="lw-stat-label">Сейчас</div>
+          <div class="lw-stat-value" style="font-size:1.1rem;">${currentPeriod ? escapeHtml(currentPeriod.label) : '—'}</div>
+          <div class="lw-stat-sub">период жизни</div>
+        </div>
+        <div class="lw-stat-card">
+          <div class="lw-stat-label">Пройдено</div>
+          <div class="lw-stat-value">${livedPct}%</div>
+          <div class="lw-stat-sub">от средней продолжительности</div>
+        </div>
+      `;
+
+      // Легенда периодов — показывает диапазоны с учётом пола
+      $('#lifeWeeksPeriods').innerHTML = LIFE_PERIODS.map(p => {
+        const r = p[cfg.gender];
+        const yFrom = (r.from / 52).toFixed(0);
+        const yTo = r.to >= LIFE_WEEKS_TOTAL - 1 ? '…' : (r.to / 52).toFixed(0);
+        return `<span class="lw-period-chip lw-p-${p.id}"><span class="lw-period-dot lw-p-${p.id}"></span>${escapeHtml(p.label)}<span class="lw-period-age">${yFrom}–${yTo} лет</span></span>`;
+      }).join('');
+
+      // Список точечных событий
+      $('#lifeWeeksEventsList').innerHTML = LIFE_MILESTONES.map(m => {
+        const wk = m[cfg.gender];
+        const years = (wk / 52).toFixed(1);
+        const reached = weeksLived >= wk;
+        return `<div class="lw-event-row">
+          <span class="lw-event-marker"></span>
+          <span style="flex:1; color:var(--text-primary);">${escapeHtml(m.label)}</span>
+          <span class="text-[color:var(--text-muted)]">неделя ${wk} · ~${years} лет</span>
+          ${reached ? '<span class="status-badge badge-info">пройдено</span>' : ''}
+        </div>`;
+      }).join('');
+    }
+
+    $('#lifeWeeksForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const gender = $('#lwGender').value;
+      const birth_date = $('#lwBirthDate').value;
+      if (!gender || !birth_date) {
+        showFormMsg('lwMsg', 'Укажите пол и дату рождения', 'error');
+        return;
+      }
+      // Санитарная проверка: дата рождения должна быть в прошлом и не абсурдно давней
+      const birth = new Date(birth_date);
+      const now = new Date();
+      if (isNaN(birth.getTime()) || birth > now) {
+        showFormMsg('lwMsg', 'Дата рождения должна быть в прошлом', 'error');
+        return;
+      }
+      if ((now - birth) / (365.25 * 24 * 3600 * 1000) > 120) {
+        showFormMsg('lwMsg', 'Похоже, дата слишком далёкая — проверьте ввод', 'error');
+        return;
+      }
+      Store.lifeWeeks.save({ gender, birth_date });
+      $('#lifeWeeksResult').classList.remove('hidden');
+      drawLifeWeeks({ gender, birth_date });
+      $('#lwMsg')?.classList.add('hidden');
+    });
+
     function openGoals100Modal(goalId = null) {
       const list = Store.goals100.list();
       const g = goalId ? list.find(x => x.id === goalId) : null;
@@ -5172,21 +5559,17 @@
     }
 
     // ---------- Dark theme ----------
-    // Тема переключается из двух мест (свитч в сайдбаре и иконка в шапке на мобильном),
-    // оба должны отражать текущее состояние. Узлы кэшируем при первом применении темы.
+    // Единственный переключатель темы — в профиле. Узлы кэшируем на первом
+    // применении, чтобы не дёргать DOM на каждую смену темы.
     const themeNodes = {
       toggle: $('#darkToggle'),
       metaColor: document.querySelector('meta[name="theme-color"]'),
-      moon: document.querySelector('#mobThemeToggle .theme-icon-moon'),
-      sun:  document.querySelector('#mobThemeToggle .theme-icon-sun'),
     };
     function applyTheme(theme) {
       const isDark = theme === 'dark';
       document.body.classList.toggle('dark-mode', isDark);
       themeNodes.metaColor?.setAttribute('content', isDark ? '#0B1220' : '#1F76F2');
       if (themeNodes.toggle) themeNodes.toggle.checked = isDark;
-      themeNodes.moon?.classList.toggle('hidden', isDark);
-      themeNodes.sun?.classList.toggle('hidden', !isDark);
     }
     function getTheme() {
       try { return localStorage.getItem('planel_theme') || 'light'; }
@@ -5195,7 +5578,6 @@
     function setTheme(t) { try { localStorage.setItem('planel_theme', t); } catch {} applyTheme(t); }
     applyTheme(getTheme());
     $('#darkToggle')?.addEventListener('change', (e) => setTheme(e.target.checked ? 'dark' : 'light'));
-    $('#mobThemeToggle')?.addEventListener('click', () => setTheme(getTheme() === 'dark' ? 'light' : 'dark'));
 
     // ---------- Markdown (мини-парсер) ----------
     function renderMarkdown(src) {
@@ -5482,10 +5864,33 @@
     // ---------- Search (Cmd/Ctrl+K) ----------
     let searchSelectedIdx = 0;
     let searchItems = [];
+    // Список страниц приложения для быстрой навигации через поиск.
+    // label дублирует то, что в сайдбаре, плюс несколько синонимов для нечёткого поиска.
+    const NAV_PAGES = [
+      { id:'today',        label:'Сегодня',                 aliases:'дашборд день today' },
+      { id:'dashboard',    label:'Дашборд',                 aliases:'обзор статистика аналитика' },
+      { id:'tasks',        label:'Задачи',                  aliases:'канбан доска матрица todo' },
+      { id:'calendar',     label:'Календарь',               aliases:'планер планировщик события' },
+      { id:'projects',     label:'Проекты',                 aliases:'цели' },
+      { id:'habits',       label:'Привычки',                aliases:'трекер серии стрик' },
+      { id:'emotions',     label:'Дневник',                 aliases:'эмоции рефлексия благодарность питание' },
+      { id:'notes',        label:'Заметки',                 aliases:'notes' },
+      { id:'wheel',        label:'Колесо баланса',          aliases:'сферы жизни' },
+      { id:'goals100',     label:'100 целей на год',        aliases:'жизнь в неделях smart' },
+      { id:'achievements', label:'Награды',                 aliases:'ачивки xp уровни геймификация' },
+      { id:'trash',        label:'Корзина',                 aliases:'удалённое trash bin' },
+      { id:'profile',      label:'Профиль',                 aliases:'настройки тёмная тема google telegram команда' },
+    ];
+
     function buildSearchIndex(query) {
       const q = (query || '').toLowerCase().trim();
       if (!q) return [];
       const results = [];
+      // Разделы приложения — первыми, чтобы ⌘K превращался в command-palette
+      NAV_PAGES.forEach(p => {
+        if (p.label.toLowerCase().includes(q) || (p.aliases || '').toLowerCase().includes(q))
+          results.push({ type:'Раздел', label: p.label, action: () => switchView(p.id) });
+      });
       state.tasks.forEach(t => {
         if ((t.title || '').toLowerCase().includes(q) || (t.description || '').toLowerCase().includes(q))
           results.push({ type:'Задача', label: t.title, action: () => openTaskModal(t.id) });
@@ -5534,6 +5939,7 @@
       renderSearch();
       openModal('searchModal');
     }
+    $('#headerSearchBtn')?.addEventListener('click', openSearch);
     $('#searchInput')?.addEventListener('input', (e) => {
       searchItems = buildSearchIndex(e.target.value);
       searchSelectedIdx = 0;
@@ -5941,13 +6347,202 @@
 
     $('#goalsTemplatesBtn')?.addEventListener('click', openTemplatesModal);
 
-    // ---------- Reflection (рефлексия дня) ----------
+    // ---------- Project templates ----------
+    // Готовые проекты с заранее собранным списком задач. В отличие от
+    // шаблонов 100 целей, здесь создаётся именно проект (не запись в goals100),
+    // а задачи уходят в обычный список задач со статусом todo.
+    // due_offset — смещение дедлайна в днях от сегодняшнего дня; null = без дедлайна.
+    const PROJECT_TEMPLATES = [
+      {
+        id: 'mvp_launch',
+        iconKey: 'tpl_project',
+        title: 'Запуск MVP',
+        desc: 'Продукт от идеи до первого платящего клиента',
+        tasks: [
+          { title:'Сформулировать ценность продукта в 1 предложении', description:'Для кого, какую боль решаем, чем лучше альтернатив', priority:'high',   due_offset: 2 },
+          { title:'Провести 5 глубинных интервью', description:'По 40 минут, без продажи — только слушать боли и сценарии', priority:'high',   due_offset: 10 },
+          { title:'Нарисовать прототип в Figma',                        priority:'medium', due_offset: 14 },
+          { title:'Собрать MVP (минимальная рабочая версия)',           priority:'high',   due_offset: 30 },
+          { title:'Запустить лендинг с формой подписки',                priority:'medium', due_offset: 21 },
+          { title:'Раздать доступ 10 первым пользователям вручную',     priority:'high',   due_offset: 35 },
+          { title:'Собрать обратную связь и обновить продукт',          priority:'medium', due_offset: 45 },
+          { title:'Получить первый платёж', description:'Платёж — настоящая валидация идеи', priority:'high', due_offset: 60 },
+        ]
+      },
+      {
+        id: 'marketplace_launch',
+        iconKey: 'tpl_project',
+        title: 'Запуск на маркетплейсе',
+        desc: 'OZON / Wildberries: от выбора товара до первых продаж',
+        tasks: [
+          { title:'Выбрать нишу и товар', description:'Анализ конкурентов, маржинальность, спрос (Moneyplace / SellerFox)', priority:'high', due_offset: 5 },
+          { title:'Найти поставщика и получить образцы',                priority:'high',   due_offset: 14 },
+          { title:'Зарегистрировать ИП и кабинет селлера',              priority:'high',   due_offset: 10 },
+          { title:'Заказать и принять первую партию',                   priority:'high',   due_offset: 28 },
+          { title:'Сделать фото и инфографику карточки',                priority:'medium', due_offset: 30 },
+          { title:'Заполнить карточку и отправить на склад FBO',        priority:'high',   due_offset: 35 },
+          { title:'Запустить внутреннюю рекламу и трафик',              priority:'medium', due_offset: 42 },
+          { title:'Проанализировать первые 30 дней продаж',             priority:'medium', due_offset: 72 },
+        ]
+      },
+      {
+        id: 'content_channel',
+        iconKey: 'tpl_video',
+        title: 'Запуск контент-канала',
+        desc: 'Telegram / YouTube / блог: от ниши до первой тысячи',
+        tasks: [
+          { title:'Определить нишу и позиционирование',                  priority:'high',   due_offset: 3 },
+          { title:'Проанализировать 10 конкурентов',                     priority:'medium', due_offset: 7 },
+          { title:'Собрать контент-план на месяц (8–12 тем)',            priority:'high',   due_offset: 10 },
+          { title:'Запустить канал и оформить шапку',                    priority:'medium', due_offset: 12 },
+          { title:'Опубликовать первый пост / видео',                    priority:'high',   due_offset: 14 },
+          { title:'Выпускать 2 публикации в неделю в течение месяца',    priority:'medium', due_offset: 45 },
+          { title:'Сделать 3 взаимных репоста с нишевыми блогерами',     priority:'medium', due_offset: 50 },
+          { title:'Набрать 1000 подписчиков',                            priority:'high',   due_offset: 90 },
+        ]
+      },
+      {
+        id: 'event',
+        iconKey: 'tpl_star',
+        title: 'Организация мероприятия',
+        desc: 'Митап, воркшоп или конференция до 100 гостей',
+        tasks: [
+          { title:'Выбрать дату, формат и целевую аудиторию',            priority:'high',   due_offset: 3 },
+          { title:'Составить смету и согласовать бюджет',                priority:'high',   due_offset: 7 },
+          { title:'Забронировать площадку',                              priority:'high',   due_offset: 14 },
+          { title:'Пригласить спикеров и подтвердить программу',         priority:'high',   due_offset: 21 },
+          { title:'Сделать лендинг и открыть регистрацию',               priority:'medium', due_offset: 25 },
+          { title:'Запустить рассылку и промо в соцсетях',               priority:'medium', due_offset: 35 },
+          { title:'Согласовать логистику, кейтеринг, техподдержку',      priority:'medium', due_offset: 42 },
+          { title:'Провести мероприятие',                                priority:'high',   due_offset: 50 },
+          { title:'Собрать обратную связь и написать пост-отчёт',        priority:'low',    due_offset: 54 },
+        ]
+      },
+      {
+        id: 'relocation',
+        iconKey: 'tpl_globe',
+        title: 'Переезд',
+        desc: 'В другой город или страну — чек-лист по блокам',
+        tasks: [
+          { title:'Выбрать город / район',                               priority:'high',   due_offset: 7 },
+          { title:'Собрать и подать документы (виза, налоги)',           priority:'high',   due_offset: 21 },
+          { title:'Найти жильё и заключить договор',                     priority:'high',   due_offset: 35 },
+          { title:'Организовать перевозку вещей',                        priority:'medium', due_offset: 45 },
+          { title:'Перерегистрировать карты, страховку, подписки',       priority:'medium', due_offset: 50 },
+          { title:'Оформить местную SIM, банк, медстраховку',            priority:'medium', due_offset: 55 },
+          { title:'Найти круг общения и локальное сообщество',           priority:'low',    due_offset: 90 },
+        ]
+      },
+      {
+        id: 'skill',
+        iconKey: 'tpl_exam',
+        title: 'Освоить новый навык',
+        desc: 'Курс / книга / навык с проверяемым результатом',
+        tasks: [
+          { title:'Сформулировать результат обучения в одной метрике',   description:'Например: «сверстать лендинг за 4 часа без шаблонов»', priority:'high',   due_offset: 2 },
+          { title:'Выбрать курс / книгу / ментора',                      priority:'high',   due_offset: 5 },
+          { title:'Заложить 2 слота в неделю под учёбу в календаре',     priority:'medium', due_offset: 7 },
+          { title:'Пройти первый модуль / 20% материала',                priority:'medium', due_offset: 21 },
+          { title:'Сделать первый практический мини-проект',             priority:'high',   due_offset: 35 },
+          { title:'Пройти 80% материала',                                priority:'medium', due_offset: 60 },
+          { title:'Сделать итоговый проект и показать 1 человеку',       priority:'high',   due_offset: 75 },
+        ]
+      },
+    ];
+
+    function openProjectTemplatesModal() {
+      $('#projTplModal')?.remove();
+      const html = `
+        <div id="projTplModal" class="modal-overlay" data-modal>
+          <div class="modal-card" style="max-width:720px;">
+            <div class="modal-header">
+              <h3 class="heading-font text-lg font-extrabold">Шаблоны проектов</h3>
+              <button class="modal-close" data-close-modal aria-label="Закрыть">×</button>
+            </div>
+            <p class="text-sm text-[color:var(--text-secondary)] mb-4">Выберите сценарий — будет создан проект со всеми задачами внутри. Задачи, названия, приоритеты и дедлайны потом можно отредактировать.</p>
+            <div class="tpl-grid">
+              ${PROJECT_TEMPLATES.map(tpl => `
+                <div class="tpl-card" data-tpl="${tpl.id}">
+                  <span class="tpl-icon" style="color:var(--brand-600); display:inline-flex;">${svgIcon(tpl.iconKey, 28)}</span>
+                  <h4>${escapeHtml(tpl.title)}</h4>
+                  <span class="tpl-count">+${tpl.tasks.length} задач</span>
+                  <div class="tpl-desc">${escapeHtml(tpl.desc)}</div>
+                </div>
+              `).join('')}
+            </div>
+            <div class="flex gap-2 justify-end pt-2 mt-4 border-t border-[color:var(--border-soft)]">
+              <button type="button" class="btn-ghost text-sm" data-close-modal>Закрыть</button>
+            </div>
+          </div>
+        </div>`;
+      document.body.insertAdjacentHTML('beforeend', html);
+      openModal('projTplModal');
+      $('#projTplModal').querySelectorAll('.tpl-card').forEach(card => {
+        card.addEventListener('click', async () => {
+          const tpl = PROJECT_TEMPLATES.find(t => t.id === card.dataset.tpl);
+          if (!tpl) return;
+          if (!canWrite()) { toast('У вас роль «Просмотр» — создавать нельзя', 'warn'); return; }
+          const ok = await confirmModal(`Создать проект «${tpl.title}» и ${tpl.tasks.length} задач внутри? Существующие данные не пострадают.`, 'Создать');
+          if (!ok) return;
+
+          const projects = Store.projects.list();
+          const color = PROJECT_COLORS[Math.floor(Math.random() * PROJECT_COLORS.length)].value;
+          const project = {
+            id: uid(),
+            name: tpl.title,
+            description: tpl.desc || '',
+            deadline: null,
+            color,
+            created_at: new Date().toISOString(),
+            goal_id: null,
+            from_template: tpl.id,
+          };
+          projects.push(project);
+          Store.projects.save(projects);
+
+          // Задачи создаются последовательно через API, чтобы получить настоящие id
+          // и сразу привязать их к проекту. Ошибка одной задачи не должна ронять всю пачку.
+          const today = todayISO();
+          let createdCount = 0;
+          for (const t of tpl.tasks) {
+            const due = t.due_offset != null ? addDaysISO(today, t.due_offset) : null;
+            try {
+              const r = await api(taskUrl('/api/tasks'), {
+                method: 'POST',
+                body: JSON.stringify({
+                  title: t.title,
+                  description: t.description || '',
+                  priority: t.priority || 'medium',
+                  due_date: due,
+                })
+              });
+              if (r.ok) {
+                const j = await r.json();
+                Store.taskMeta.set(j.task.id, { project_id: project.id, status: 'todo' });
+                createdCount++;
+              }
+            } catch {}
+          }
+          await loadTasks();
+          closeModal('projTplModal');
+          $('#projTplModal').remove();
+          toast(`Создан проект «${tpl.title}» · ${createdCount} задач`, 'success', 4000);
+          renderProjects();
+        });
+      });
+    }
+
+    $('#projectsTemplatesBtn')?.addEventListener('click', openProjectTemplatesModal);
+
+    // ---------- Diary mode (питание / эмоции / рефлексия / благодарность) ----------
     function setDiaryMode(mode) {
       state.diaryMode = mode;
       $$('[data-diary-mode]').forEach(b => b.classList.toggle('active', b.dataset.diaryMode === mode));
+      $('#diaryFoodView')?.classList.toggle('hidden', mode !== 'food');
       $('#diaryEmotionsView')?.classList.toggle('hidden', mode !== 'emotions');
       $('#diaryReflectionView')?.classList.toggle('hidden', mode !== 'reflection');
       $('#diaryGratitudeView')?.classList.toggle('hidden', mode !== 'gratitude');
+      if (mode === 'food') renderFoodDiary();
       if (mode === 'reflection') renderReflections();
       if (mode === 'gratitude') renderGratitude();
     }
