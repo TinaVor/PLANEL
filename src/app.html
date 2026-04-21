@@ -481,6 +481,18 @@
     body.dark-mode .sphere-growth        { background:#1F1147; color:#C4B5FD; border-color:#5B21B6; }
     body.dark-mode .sphere-good_deeds    { background:#3D2B0A; color:#FBBF24; border-color:#92400E; }
 
+    /* Dark theme: переопределения захардкоженных bg-white */
+    body.dark-mode header { background: rgba(15, 24, 40, 0.95) !important; backdrop-filter: blur(14px); }
+    body.dark-mode #notifDropdown,
+    body.dark-mode #workspaceMenu { background: var(--bg-surface) !important; border-color: var(--border-soft) !important; }
+    body.dark-mode .bottom-nav { background: rgba(11, 18, 32, 0.94) !important; }
+    body.dark-mode .popover { background: var(--bg-surface); color: var(--text-secondary); }
+    body.dark-mode .popover::before { background: var(--bg-surface); }
+    body.dark-mode .toast { background: var(--bg-surface); color: var(--text-strong); }
+    body.dark-mode .modal-overlay { background: rgba(0, 0, 0, 0.7); }
+    body.dark-mode .notif-item.unread { background: #0C2042; }
+    body.dark-mode .notif-item.unread:hover { background: #0E2E5C; }
+
     /* ============ Search modal ============ */
     .search-overlay { display:flex; align-items:flex-start; justify-content:center; padding-top:10vh; }
     .search-card { width:100%; max-width:600px; }
@@ -551,6 +563,58 @@
     .switch .slider::before { content:""; position:absolute; height:18px; width:18px; left:2px; top:2px; background:#fff; border-radius:50%; transition:transform 200ms ease; }
     .switch input:checked + .slider { background:var(--brand-500); }
     .switch input:checked + .slider::before { transform:translateX(16px); }
+
+    /* Goal templates */
+    .tpl-grid { display:grid; grid-template-columns:1fr; gap:0.6rem; }
+    @media (min-width:640px) { .tpl-grid { grid-template-columns:1fr 1fr; } }
+    .tpl-card {
+      border:1px solid var(--border-soft); border-radius:12px;
+      padding:0.85rem 1rem; cursor:pointer; background:var(--bg-surface);
+      display:flex; flex-direction:column; gap:0.3rem;
+      transition:border-color 140ms ease, transform 140ms ease, box-shadow 140ms ease;
+    }
+    .tpl-card:hover { border-color:var(--brand-300); transform:translateY(-1px); box-shadow:var(--shadow-sm); }
+    .tpl-card .tpl-icon { font-size:1.4rem; }
+    .tpl-card h4 { font-weight:700; font-size:0.95rem; color:var(--text-strong); }
+    .tpl-card .tpl-desc { font-size:0.78rem; color:var(--text-secondary); line-height:1.4; }
+    .tpl-card .tpl-count { font-size:0.7rem; color:var(--brand-700); background:var(--brand-50); padding:0.1rem 0.5rem; border-radius:9999px; font-weight:600; align-self:flex-start; border:1px solid var(--brand-100); }
+
+    /* Gamification */
+    .xp-widget {
+      background: linear-gradient(135deg, var(--brand-500), var(--cyan-500));
+      color:#fff; border-radius:14px; padding:1rem 1.1rem; box-shadow: var(--shadow-brand);
+      display:flex; align-items:center; gap:0.85rem;
+    }
+    .xp-widget .xp-level {
+      width:48px; height:48px; border-radius:50%; background:rgba(255,255,255,0.18);
+      display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.05rem; flex-shrink:0;
+    }
+    .xp-widget .xp-meta { flex:1; min-width:0; }
+    .xp-widget .xp-title { font-weight:700; font-size:0.95rem; }
+    .xp-widget .xp-sub { font-size:0.78rem; opacity:0.85; }
+    .xp-widget .xp-bar { background:rgba(255,255,255,0.22); border-radius:9999px; height:6px; overflow:hidden; margin-top:0.45rem; }
+    .xp-widget .xp-bar > span { display:block; height:100%; background:#fff; border-radius:9999px; transition:width 240ms ease; }
+
+    .ach-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:0.7rem; }
+    .ach-card {
+      border:1px solid var(--border-soft); border-radius:12px; padding:0.85rem 1rem;
+      background:var(--bg-surface); display:flex; gap:0.7rem; align-items:flex-start;
+      transition:border-color 140ms ease, box-shadow 140ms ease;
+    }
+    .ach-card.unlocked { border-color:var(--brand-300); box-shadow:0 0 0 3px rgba(31,118,242,0.08); }
+    .ach-card .ach-icon {
+      width:42px; height:42px; flex-shrink:0; border-radius:10px;
+      display:flex; align-items:center; justify-content:center;
+      background:var(--bg-muted); color:var(--text-muted);
+    }
+    .ach-card.unlocked .ach-icon {
+      background:linear-gradient(135deg, var(--brand-500), var(--cyan-500)); color:#fff;
+    }
+    .ach-card h4 { font-weight:700; font-size:0.92rem; color:var(--text-strong); margin-bottom:0.15rem; }
+    .ach-card .ach-desc { font-size:0.78rem; color:var(--text-secondary); line-height:1.4; }
+    .ach-card .ach-xp { font-size:0.7rem; color:var(--brand-700); font-weight:700; margin-top:0.3rem; }
+    .ach-card.unlocked .ach-xp { color:var(--success-700); }
+    body.dark-mode .ach-card.unlocked { background:#11192A; }
 
     /* Элементы уведомлений */
     .notif-item { display:block; padding:0.7rem 1rem; border-bottom:1px solid var(--border-soft); cursor:pointer; transition:background 140ms ease; position:relative; }
@@ -718,6 +782,16 @@
             </select>
           </div>
         </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="form-label">Время слот · начало</label>
+            <input type="time" id="taskTimeStart" class="form-input">
+          </div>
+          <div>
+            <label class="form-label">Длительность, мин</label>
+            <input type="number" id="taskDuration" class="form-input" min="5" max="480" step="5" placeholder="60">
+          </div>
+        </div>
         <div>
           <div class="flex items-center justify-between mb-1.5">
             <label class="form-label" style="margin:0;">Подзадачи</label>
@@ -810,6 +884,12 @@
               </select>
             </div>
           </div>
+        </div>
+        <div>
+          <label class="form-label">Двигает цель <span class="normal-case text-[color:var(--text-muted)] tracking-normal">· к какой из 100 целей относится</span></label>
+          <select id="habitGoal" class="form-select">
+            <option value="">Не привязано</option>
+          </select>
         </div>
         <p id="habitError" class="text-xs hidden" style="color:var(--danger-700);"></p>
         <div class="flex flex-wrap gap-2 justify-end pt-2">
@@ -929,17 +1009,32 @@
           </button>
           <button class="nav-item" data-view="emotions">
             <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11z"/><path d="M9 10h.01M15 10h.01M9 14c1 1 3 1 4 0"/></svg></span>
-            <span>Дневник эмоций</span>
+            <span>Дневник</span>
           </button>
           <button class="nav-item" data-view="notes">
             <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span>
             <span>Заметки</span>
+          </button>
+          <button class="nav-item" data-view="achievements">
+            <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4"/><path d="M17 4H7v6a5 5 0 0 0 10 0z"/><path d="M17 4h3v3a3 3 0 0 1-3 3"/><path d="M7 4H4v3a3 3 0 0 0 3 3"/></svg></span>
+            <span>Награды</span>
           </button>
           <button class="nav-item" data-view="trash">
             <span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></span>
             <span>Корзина</span>
           </button>
         </nav>
+      </div>
+
+      <!-- Bottom of sidebar: theme toggle -->
+      <div class="mt-auto pt-4 border-t border-[color:var(--border-soft)]">
+        <label class="flex items-center justify-between px-2 py-1 cursor-pointer">
+          <span class="text-sm text-[color:var(--text-secondary)] flex items-center gap-2">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            Тёмная тема
+          </span>
+          <span class="switch"><input type="checkbox" id="darkToggle"><span class="slider"></span></span>
+        </label>
       </div>
     </aside>
 
@@ -987,6 +1082,17 @@
             <div>
               <h2 class="heading-font text-2xl font-extrabold mb-1">Сегодня</h2>
               <p class="text-sm text-[color:var(--text-secondary)]" id="todayDateLabel">—</p>
+            </div>
+
+            <div id="overdueBanner" class="hidden"></div>
+
+            <div class="xp-widget" id="xpWidgetToday" style="cursor:pointer;" title="Открыть награды">
+              <div class="xp-level" id="xpLevel">1</div>
+              <div class="xp-meta">
+                <div class="xp-title" id="xpTitle">Уровень 1</div>
+                <div class="xp-sub" id="xpSub">0 XP</div>
+                <div class="xp-bar"><span id="xpBar" style="width:0%"></span></div>
+              </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -1085,9 +1191,9 @@
                 </div>
                 <div class="text-xs text-[color:var(--text-muted)] mb-3" id="pomodoroStatus">Готов к работе</div>
                 <div class="flex items-center justify-center gap-2 flex-wrap">
-                  <button class="btn-primary text-xs" id="pomodoroStart">▶ Старт</button>
-                  <button class="btn-ghost text-xs" id="pomodoroPause">⏸ Пауза</button>
-                  <button class="btn-ghost text-xs" id="pomodoroStop">⏹ Сброс</button>
+                  <button class="btn-primary text-xs" id="pomodoroStart"><svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m7 5 12 7-12 7z"/></svg>Старт</button>
+                  <button class="btn-ghost text-xs" id="pomodoroPause"><svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>Пауза</button>
+                  <button class="btn-ghost text-xs" id="pomodoroStop"><svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="5" y="5" width="14" height="14" rx="1"/></svg>Сброс</button>
                 </div>
               </div>
               <div class="grid grid-cols-3 gap-3 mt-5 pt-4 border-t border-[color:var(--border-soft)] text-center">
@@ -1215,19 +1321,19 @@
                 <p class="text-xs text-[color:var(--text-muted)] mb-3">Матрица Эйзенхауэра — распределение по срочности и важности.</p>
                 <div class="matrix-grid">
                   <div class="matrix-cell" data-q="q1">
-                    <h4>🔥 Важно и срочно</h4>
+                    <h4>Важно и срочно</h4>
                     <div data-matrix="q1" class="space-y-2"></div>
                   </div>
                   <div class="matrix-cell" data-q="q2">
-                    <h4>📌 Важно, не срочно</h4>
+                    <h4>Важно, не срочно</h4>
                     <div data-matrix="q2" class="space-y-2"></div>
                   </div>
                   <div class="matrix-cell" data-q="q3">
-                    <h4>⏱️ Срочно, не важно</h4>
+                    <h4>Срочно, не важно</h4>
                     <div data-matrix="q3" class="space-y-2"></div>
                   </div>
                   <div class="matrix-cell" data-q="q4">
-                    <h4>🗑️ Не срочно, не важно</h4>
+                    <h4>Не срочно, не важно</h4>
                     <div data-matrix="q4" class="space-y-2"></div>
                   </div>
                 </div>
@@ -1247,6 +1353,14 @@
                   <input type="checkbox" id="googleCalToggle">
                   <span class="font-semibold text-[color:var(--text-secondary)]">Google-события</span>
                 </label>
+                <button class="btn-ghost text-sm hidden" id="googleFullSyncBtn" title="Двусторонняя синхронизация с Google Calendar">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9"/><path d="M3 12a9 9 0 0 1 9-9"/><path d="m17 8 4-4-4-4"/><path d="m7 16-4 4 4 4"/></svg>
+                  Синхр.
+                </button>
+                <button class="btn-ghost text-sm" id="autoReplanBtn" title="Перераспределить задачи по приоритету">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg>
+                  Авто-план
+                </button>
                 <div class="flex items-center gap-1" id="calModeWrap">
                   <button class="pill-filter" data-cal-mode="day">День</button>
                   <button class="pill-filter" data-cal-mode="week">Неделя</button>
@@ -1472,7 +1586,11 @@
                 <strong>T</strong>ime-bound · с дедлайном<br/>
                 Пример вместо «Похудеть»: «Скинуть 5 кг к 1 сентября через 3 тренировки в неделю и дефицит 400 ккал».
               </div>
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
+                <button class="btn-ghost text-sm" id="goalsTemplatesBtn" title="Готовые шаблоны">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                  Шаблоны
+                </button>
                 <button class="btn-ghost text-sm" id="goals100Export" title="Экспорт CSV">
                   <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
                   CSV
@@ -1500,15 +1618,21 @@
             <div id="goals100List" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
           </section>
 
-          <!-- Дневник эмоций -->
+          <!-- Дневник -->
           <section id="emotions" class="view space-y-6">
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 class="heading-font text-2xl font-extrabold mb-1">Дневник эмоций</h2>
-                <p class="text-sm text-[color:var(--text-secondary)]">Записывайте сон, энергию, настроение и благодарность</p>
+                <h2 class="heading-font text-2xl font-extrabold mb-1">Дневник</h2>
+                <p class="text-sm text-[color:var(--text-secondary)]">Эмоции и рефлексия дня</p>
+              </div>
+              <div class="flex items-center gap-2 flex-wrap" id="diaryModeWrap">
+                <button class="pill-filter active" data-diary-mode="emotions">Эмоции</button>
+                <button class="pill-filter" data-diary-mode="reflection">Рефлексия дня</button>
               </div>
             </div>
 
+            <!-- Эмоции -->
+            <div id="diaryEmotionsView">
             <div class="card">
               <h3 class="heading-font text-lg font-extrabold mb-4">Запись на сегодня</h3>
               <form id="emotionsForm" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1524,13 +1648,13 @@
                 <div class="sm:col-span-2">
                   <label class="form-label">Настроение</label>
                   <div class="mood-picker" id="emotMoodPicker">
-                    <div class="mood-option" data-mood="1">😢</div>
-                    <div class="mood-option" data-mood="2">😕</div>
-                    <div class="mood-option" data-mood="3">😐</div>
-                    <div class="mood-option" data-mood="4">🙂</div>
-                    <div class="mood-option" data-mood="5">😊</div>
-                    <div class="mood-option" data-mood="6">😄</div>
-                    <div class="mood-option" data-mood="7">🤩</div>
+                    <div class="mood-option" data-mood="1" title="Очень плохо"></div>
+                    <div class="mood-option" data-mood="2" title="Плохо"></div>
+                    <div class="mood-option" data-mood="3" title="Так себе"></div>
+                    <div class="mood-option" data-mood="4" title="Нормально"></div>
+                    <div class="mood-option" data-mood="5" title="Хорошо"></div>
+                    <div class="mood-option" data-mood="6" title="Отлично"></div>
+                    <div class="mood-option" data-mood="7" title="Супер"></div>
                   </div>
                 </div>
                 <div class="sm:col-span-2">
@@ -1564,6 +1688,36 @@
               <h3 class="heading-font text-lg font-extrabold mb-4">История</h3>
               <div id="emotionsList" class="space-y-3"></div>
             </div>
+            </div>
+
+            <!-- Рефлексия дня -->
+            <div id="diaryReflectionView" class="hidden space-y-6">
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-1">Рефлексия дня</h3>
+                <p class="text-sm text-[color:var(--text-secondary)] mb-4">Один заход в день: что получилось, что помешало, что завтра сделаешь иначе</p>
+                <form id="reflectionForm" class="space-y-3">
+                  <div>
+                    <label class="form-label" style="display:inline-flex; align-items:center; gap:0.4rem; color:var(--success-700);"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>Что получилось?</label>
+                    <textarea id="reflSuccess" class="form-textarea" maxlength="2000" placeholder="Чем доволен сегодня — даже маленьким"></textarea>
+                  </div>
+                  <div>
+                    <label class="form-label" style="display:inline-flex; align-items:center; gap:0.4rem; color:var(--warning-700);"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2 20h20z"/><path d="M12 11v4M12 18h.01"/></svg>Что помешало?</label>
+                    <textarea id="reflObstacle" class="form-textarea" maxlength="2000" placeholder="Что сорвалось, отвлекало, тормозило"></textarea>
+                  </div>
+                  <div>
+                    <label class="form-label" style="display:inline-flex; align-items:center; gap:0.4rem; color:var(--brand-700);"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>Что завтра сделаешь иначе?</label>
+                    <textarea id="reflNext" class="form-textarea" maxlength="2000" placeholder="Один-два конкретных вывода"></textarea>
+                  </div>
+                  <p id="reflMsg" class="text-xs hidden"></p>
+                  <button type="submit" class="btn-primary text-sm w-full justify-center">Сохранить рефлексию</button>
+                </form>
+              </div>
+
+              <div class="card">
+                <h3 class="heading-font text-lg font-extrabold mb-4">История рефлексий</h3>
+                <div id="reflectionList" class="space-y-3"></div>
+              </div>
+            </div>
           </section>
 
           <!-- Заметки -->
@@ -1587,6 +1741,28 @@
             <div id="notesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
           </section>
 
+          <!-- Награды -->
+          <section id="achievements" class="view space-y-6">
+            <div>
+              <h2 class="heading-font text-2xl font-extrabold mb-1">Награды</h2>
+              <p class="text-sm text-[color:var(--text-secondary)]">Уровень, XP за действия и достижения</p>
+            </div>
+
+            <div class="xp-widget" id="xpWidgetBig">
+              <div class="xp-level" id="xpLevelBig">1</div>
+              <div class="xp-meta">
+                <div class="xp-title" id="xpTitleBig">Уровень 1</div>
+                <div class="xp-sub" id="xpSubBig">0 XP до следующего уровня</div>
+                <div class="xp-bar"><span id="xpBarBig" style="width:0%"></span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3 class="heading-font text-lg font-extrabold mb-4">Достижения</h3>
+              <div id="achievementsList" class="ach-grid"></div>
+            </div>
+          </section>
+
           <!-- Корзина -->
           <section id="trash" class="view space-y-6">
             <div class="flex flex-wrap items-center justify-between gap-3">
@@ -1608,16 +1784,10 @@
                 <h2 class="heading-font text-2xl font-extrabold mb-1">Профиль</h2>
                 <p class="text-sm text-[color:var(--text-secondary)]">Личные данные и безопасность</p>
               </div>
-              <div class="flex items-center gap-3 flex-wrap">
-                <label class="flex items-center gap-2 text-sm cursor-pointer">
-                  <span>🌙 Тёмная</span>
-                  <span class="switch"><input type="checkbox" id="darkToggle"><span class="slider"></span></span>
-                </label>
-                <button class="btn-ghost text-sm" id="logoutBtn">
-                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
-                  Выйти из аккаунта
-                </button>
-              </div>
+              <button class="btn-ghost text-sm" id="logoutBtn">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+                Выйти из аккаунта
+              </button>
             </div>
 
             <div class="card">
@@ -1688,6 +1858,54 @@
                       <a class="text-xs text-[color:var(--brand-600)] hidden" id="googleCalendarLink" href="https://calendar.google.com/" target="_blank" rel="noopener">Открыть Google Calendar ↗</a>
                     </div>
                     <p id="googleHint" class="text-xs text-[color:var(--text-muted)] mt-3 hidden"></p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card lg:col-span-2">
+                <div class="flex items-start gap-4">
+                  <div class="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style="background:#FFFFFF; border:1px solid var(--border-soft); color:#0088cc;">
+                    <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M9.78 18.65l.28-4.24 7.7-6.95c.34-.31-.07-.46-.52-.19L7.74 13.32 3.7 12.06c-.87-.25-.88-.85.2-1.27L19.5 4.81c.72-.32 1.41.18 1.13 1.27l-2.69 12.7c-.19.91-.74 1.13-1.5.71l-4.13-3.05-2 1.94c-.23.23-.42.42-.85.42z"/></svg>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h3 class="heading-font text-lg font-extrabold mb-1">Telegram-бот</h3>
+                    <p class="text-sm text-[color:var(--text-secondary)] mb-3" id="tgStatusText">Проверка статуса…</p>
+                    <div class="flex flex-wrap gap-2 items-center mb-3">
+                      <button class="btn-primary text-sm hidden" id="tgConnectBtn">Получить код</button>
+                      <button class="btn-ghost text-sm hidden" id="tgTestBtn">Тестовое сообщение</button>
+                      <button class="btn-ghost text-sm hidden" id="tgDisconnectBtn">Отвязать</button>
+                    </div>
+                    <div id="tgCodeBox" class="hidden card-flat" style="background:var(--bg-muted); margin-bottom:0.7rem;">
+                      <div class="text-xs text-[color:var(--text-muted)] mb-1">Откройте бота, отправьте команду:</div>
+                      <div style="font-family:ui-monospace,Menlo,monospace; font-size:1.1rem; font-weight:700;" id="tgCodeText"></div>
+                      <a class="text-xs text-[color:var(--brand-600)]" id="tgDeepLink" href="#" target="_blank" rel="noopener" style="display:none;">Открыть бота →</a>
+                      <div class="text-xs text-[color:var(--text-muted)] mt-1">Действителен 15 минут</div>
+                    </div>
+                    <div id="tgSettingsBox" class="hidden">
+                      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-2">
+                        <div>
+                          <label class="form-label">Утром</label>
+                          <input type="time" id="tgMorning" class="form-input">
+                        </div>
+                        <div>
+                          <label class="form-label">Днём</label>
+                          <input type="time" id="tgAfternoon" class="form-input">
+                        </div>
+                        <div>
+                          <label class="form-label">Вечером</label>
+                          <input type="time" id="tgEvening" class="form-input">
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-3 flex-wrap">
+                        <label class="flex items-center gap-2 text-sm cursor-pointer">
+                          <span class="switch"><input type="checkbox" id="tgEnabled"><span class="slider"></span></span>
+                          <span>Получать уведомления</span>
+                        </label>
+                        <button class="btn-ghost text-xs ml-auto" id="tgSaveBtn">Сохранить расписание</button>
+                      </div>
+                      <p class="text-xs text-[color:var(--text-muted)] mt-2">Время в зоне Europe/Moscow. Утро — список задач, день — напоминание о Помодоро, вечер — рефлексия.</p>
+                    </div>
+                    <p id="tgHint" class="text-xs text-[color:var(--text-muted)] mt-3 hidden"></p>
                   </div>
                 </div>
               </div>
@@ -1825,16 +2043,77 @@
       { name: 'Оранжевый',  value: 'linear-gradient(135deg, #F59E0B, #FBBF24)' },
       { name: 'Серый',      value: 'linear-gradient(135deg, #94A3B8, #475569)' }
     ];
+    // ---------- SVG icon library ----------
+    const ICON_SVG = {
+      // Сферы
+      health:        '<path d="M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11z"/><path d="M3 13h3l1.5-3 3 6 1.5-3H21"/>',
+      finance:       '<path d="M2 7h20M4 7v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7"/><circle cx="16" cy="13" r="2"/>',
+      career:        '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>',
+      relationships: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 21c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M14 18c0-2.2 1.8-4 4-4s3 1.8 3 4"/>',
+      rest:          '<path d="M12 4v16M8 4l4 2 4-2"/><path d="M3 10c0-3 4-5 9-5s9 2 9 5"/>',
+      growth:        '<path d="M4 19V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14"/><path d="M4 19a2 2 0 1 0 0 4h16"/><path d="M9 7h6M9 11h6"/>',
+      good_deeds:    '<path d="M11 11V8a2 2 0 0 1 4 0v4"/><path d="M11 11h6a2 2 0 1 1 0 4h-1"/><path d="M14 14l-2 7H4l1-5 4-7 5-2"/>',
+
+      // Шаблоны
+      tpl_project: '<path d="M5 18l5-5 4 4 5-5"/><path d="M14 4h6v6"/><path d="M3 21h18"/>',
+      tpl_exam:    '<path d="M4 19V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14"/><path d="M4 19a2 2 0 1 0 0 4h16"/><path d="M9 7h6"/>',
+      tpl_run:     '<circle cx="13" cy="4" r="2"/><path d="M5 22l3-7 3 1 1-3 4 4 4-1"/><path d="M11 13l-2-3"/>',
+      tpl_video:   '<rect x="2" y="6" width="14" height="12" rx="2"/><path d="m22 8-6 4 6 4z"/>',
+      tpl_globe:   '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z"/>',
+      tpl_star:    '<path d="m12 3 2.5 6 6.5.5-5 4.5 1.5 6.5L12 17l-5.5 3.5 1.5-6.5-5-4.5 6.5-.5z"/>',
+
+      // Рефлексия
+      check_circle: '<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',
+      alert_tri:    '<path d="M12 4 2 20h20z"/><path d="M12 11v4M12 18h.01"/>',
+      target:       '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>',
+
+      // Бейджи задач / индикаторы
+      calendar_alt: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/>',
+      recurring:    '<path d="M21 12a9 9 0 0 1-9 9"/><path d="M3 12a9 9 0 0 1 9-9"/><path d="m17 8 4-4-4-4"/><path d="m7 16-4 4 4 4"/>',
+      flame:        '<path d="M12 2c2 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-3 1.5-4.5C9 7 12 5 12 2z"/>',
+      checkbox:     '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="m8 12 3 3 5-6"/>',
+      sleep:        '<path d="M21 12a9 9 0 0 1-9 9c-5 0-9-4-9-9 0-4 3-8 7-9-1 1-2 3-2 5 0 5 4 9 9 9 1 0 3 0 4-1z"/><path d="M16 4h4l-4 4h4"/>',
+      energy:       '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+      party:        '<path d="m4 20 6-14 8 8z"/><path d="M4 20l16-4M14 6l4 4"/>',
+
+      // Pomodoro controls
+      play:  '<path d="m7 5 12 7-12 7z"/>',
+      pause: '<rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/>',
+      stop:  '<rect x="5" y="5" width="14" height="14" rx="1"/>',
+
+      // Геймификация
+      trophy:  '<path d="M8 21h8M12 17v4"/><path d="M17 4H7v6a5 5 0 0 0 10 0z"/><path d="M17 4h3v3a3 3 0 0 1-3 3"/><path d="M7 4H4v3a3 3 0 0 0 3 3"/>',
+      medal:   '<path d="m7 3 5 7 5-7"/><circle cx="12" cy="16" r="6"/><path d="m9 14 3 3 4-5"/>',
+      crown:   '<path d="m3 8 3 10h12l3-10-5 4-4-7-4 7z"/>',
+      sparkle: '<path d="m12 3 2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>',
+      lock:    '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+
+      // Mood faces (нейтральные SVG-смайлы 7 уровней)
+      mood1: '<circle cx="12" cy="12" r="9"/><path d="M9 16c1-2 5-2 6 0"/><circle cx="9" cy="10" r="0.6"/><circle cx="15" cy="10" r="0.6"/>',
+      mood2: '<circle cx="12" cy="12" r="9"/><path d="M9 15c1-1 5-1 6 0"/><circle cx="9" cy="10" r="0.6"/><circle cx="15" cy="10" r="0.6"/>',
+      mood3: '<circle cx="12" cy="12" r="9"/><path d="M9 14h6"/><circle cx="9" cy="10" r="0.6"/><circle cx="15" cy="10" r="0.6"/>',
+      mood4: '<circle cx="12" cy="12" r="9"/><path d="M9 14c1 .8 5 .8 6 0"/><circle cx="9" cy="10" r="0.6"/><circle cx="15" cy="10" r="0.6"/>',
+      mood5: '<circle cx="12" cy="12" r="9"/><path d="M9 14c1 1.5 5 1.5 6 0"/><circle cx="9" cy="10" r="0.6"/><circle cx="15" cy="10" r="0.6"/>',
+      mood6: '<circle cx="12" cy="12" r="9"/><path d="M9 13c1 2 5 2 6 0"/><circle cx="8.5" cy="9" r="0.7"/><circle cx="15.5" cy="9" r="0.7"/>',
+      mood7: '<circle cx="12" cy="12" r="9"/><path d="M8 12c1 3 7 3 8 0"/><path d="M7 8l2 2M17 8l-2 2"/>',
+    };
+    function svgIcon(name, size = 16, extraStyle = '') {
+      const body = ICON_SVG[name];
+      if (!body) return '';
+      return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="${extraStyle}">${body}</svg>`;
+    }
+
     const PRIORITY_LABEL = { low: 'Низкий', medium: 'Средний', high: 'Высокий' };
     const SPHERES = [
-      { id: 'health',        label: 'Здоровье',     icon: '🫀' },
-      { id: 'finance',       label: 'Финансы',      icon: '💰' },
-      { id: 'career',        label: 'Карьера',      icon: '💼' },
-      { id: 'relationships', label: 'Отношения',    icon: '❤️' },
-      { id: 'rest',          label: 'Отдых',        icon: '🌴' },
-      { id: 'growth',        label: 'Развитие',     icon: '📚' },
-      { id: 'good_deeds',    label: 'Добрые дела',  icon: '🤝' },
+      { id: 'health',        label: 'Здоровье' },
+      { id: 'finance',       label: 'Финансы' },
+      { id: 'career',        label: 'Карьера' },
+      { id: 'relationships', label: 'Отношения' },
+      { id: 'rest',          label: 'Отдых' },
+      { id: 'growth',        label: 'Развитие' },
+      { id: 'good_deeds',    label: 'Добрые дела' },
     ];
+    const sphereIcon = (id, size = 14) => svgIcon(id, size);
     const SPHERE_LABEL = Object.fromEntries(SPHERES.map(s => [s.id, s.label]));
     const MEAL_TYPES = [
       { id: 'breakfast', label: 'Завтрак' },
@@ -2052,6 +2331,14 @@
           delete all[id];
           saveBucket('task_extras', all);
         }
+      },
+      reflections: {
+        list: () => loadBucket('reflections', []),
+        save: (arr) => saveBucket('reflections', arr),
+      },
+      game: {
+        get: () => loadBucket('game', { xp: 0, events: [], achievements: [] }),
+        save: (obj) => saveBucket('game', obj),
       }
     };
 
@@ -2071,6 +2358,7 @@
       workspaces: [],        // остальные workspace'ы пользователя (как member)
       teamMembers: [],       // собственные приглашённые сотрудники
       notesQuery: '',
+      diaryMode: 'emotions',
     };
     function getStatus(task) {
       const meta = Store.taskMeta.for(task.id);
@@ -2223,7 +2511,7 @@
         today:'Сегодня', dashboard:'Дашборд', tasks:'Задачи и доски', calendar:'Планер',
         projects:'Цели и проекты', habits:'Привычки',
         wheel:'Колесо баланса', food:'Дневник питания', goals100:'100 целей на год', emotions:'Дневник эмоций',
-        notes:'Заметки', trash:'Корзина', profile:'Профиль', admin:'Админ-панель'
+        notes:'Заметки', achievements:'Награды', trash:'Корзина', profile:'Профиль', admin:'Админ-панель'
       };
       document.title = (titles[name] || 'PLANEL') + ' · PLANEL';
       if (name === 'today')     renderTodayView();
@@ -2237,6 +2525,7 @@
       if (name === 'goals100')  renderGoals100();
       if (name === 'emotions')  renderEmotions();
       if (name === 'notes')     renderNotes();
+      if (name === 'achievements') renderAchievementsView();
       if (name === 'trash')     renderTrash();
       if (name === 'profile')   renderProfile();
       if (name === 'admin')     renderAdmin();
@@ -2251,7 +2540,7 @@
     function fillSphereSelect(selectEl, selected = '') {
       if (!selectEl) return;
       selectEl.innerHTML = `<option value="">Без сферы</option>` + SPHERES.map(s =>
-        `<option value="${s.id}" ${s.id === selected ? 'selected' : ''}>${s.icon} ${s.label}</option>`).join('');
+        `<option value="${s.id}" ${s.id === selected ? 'selected' : ''}>${s.label}</option>`).join('');
     }
 
     function openTaskModal(taskId = null, overrides = {}) {
@@ -2277,6 +2566,9 @@
         fillSphereSelect($('#taskSphere'), getSphere(t) || '');
         $('#taskRecurrence').value = getRecurrence(t);
         renderSubtasksField(getSubtasks(t));
+        const ex = Store.taskExtras.for(t.id);
+        $('#taskTimeStart').value = ex.time_start || '';
+        $('#taskDuration').value  = ex.duration_min || '';
       } else {
         $('#taskModalTitle').textContent = 'Новая задача';
         $('#taskSubmit').textContent = 'Создать';
@@ -2291,6 +2583,8 @@
         fillSphereSelect($('#taskSphere'), overrides.sphere || '');
         $('#taskRecurrence').value = '';
         renderSubtasksField([]);
+        $('#taskTimeStart').value = '';
+        $('#taskDuration').value  = '';
       }
       const gcSync = $('#taskGoogleSync');
       const gcWrap = $('#taskGoogleWrap');
@@ -2311,6 +2605,8 @@
       const sphere = $('#taskSphere').value || null;
       const recurrence = $('#taskRecurrence').value || null;
       const subtasks = readSubtasks();
+      const time_start = $('#taskTimeStart').value || null;
+      const duration_min = Number($('#taskDuration').value) || null;
       const err = $('#taskError');
       err.classList.add('hidden');
       if (!title) { err.textContent = 'Введите название'; err.classList.remove('hidden'); return; }
@@ -2338,7 +2634,7 @@
           const j = await r.json();
           savedId = j.task.id;
           Store.taskMeta.set(savedId, { project_id, status, sphere });
-          Store.taskExtras.set(savedId, { subtasks, recurrence });
+          Store.taskExtras.set(savedId, { subtasks, recurrence, time_start, duration_min });
           if (status === 'done') {
             await api(taskUrl(`/api/tasks/${savedId}`), { method: 'PUT', body: JSON.stringify({ done: true }) });
           }
@@ -2348,6 +2644,12 @@
           await pushTaskToGoogle(savedId);
         } else if (pushGoogle && !due_date) {
           toast('Укажите дедлайн, чтобы добавить в Google Calendar', 'warn');
+        } else if (savedId && googleState.connected) {
+          // Автопуш для уже связанных с Google задач (при редактировании)
+          const meta = Store.taskExtras.for(savedId);
+          if (meta.google_event_id && due_date) {
+            await pushTaskToGoogle(savedId, { silent: true });
+          }
         }
         closeModal('taskModal');
         await loadTasks();
@@ -2366,9 +2668,11 @@
       if (!canWrite()) { toast('У вас роль «Просмотр» — удалять нельзя', 'warn'); return; }
       const ok = await confirmModal('Удалить задачу без возможности восстановления?');
       if (!ok) return;
+      if (googleState.connected) await deleteGoogleEventForTask(id);
       const r = await api(taskUrl(`/api/tasks/${id}`), { method: 'DELETE' });
       if (r.status === 401) return logout();
       Store.taskMeta.delete(id);
+      Store.taskExtras.delete(id);
       closeModal('taskModal');
       toast('Задача удалена', 'success');
       await loadTasks();
@@ -2469,6 +2773,10 @@
     function openHabitModal(habitId = null) {
       $('#habitError').classList.add('hidden');
       const habits = Store.habits.list();
+      // Заполняем select целей
+      const goals = Store.goals100.list();
+      $('#habitGoal').innerHTML = `<option value="">Не привязано</option>` + goals.map(g =>
+        `<option value="${g.id}">${escapeHtml(g.goal || '(без названия)')}</option>`).join('');
       if (habitId) {
         const h = habits.find(x => x.id === habitId);
         if (!h) return;
@@ -2481,6 +2789,7 @@
         fillSphereSelect($('#habitSphere'), h.sphere || '');
         $('#habitTargetCount').value = h.target_count || '';
         $('#habitTargetPeriod').value = h.target_period || 'week';
+        $('#habitGoal').value = h.goal_id || '';
       } else {
         $('#habitModalTitle').textContent = 'Новая привычка';
         $('#habitSubmit').textContent = 'Создать';
@@ -2491,6 +2800,7 @@
         fillSphereSelect($('#habitSphere'), '');
         $('#habitTargetCount').value = '';
         $('#habitTargetPeriod').value = 'week';
+        $('#habitGoal').value = '';
       }
       openModal('habitModal');
     }
@@ -2503,16 +2813,17 @@
       const sphere = $('#habitSphere').value || null;
       const target_count = Number($('#habitTargetCount').value) || null;
       const target_period = $('#habitTargetPeriod').value || 'week';
+      const goal_id = $('#habitGoal').value || null;
       const err = $('#habitError');
       if (!name) { err.textContent = 'Введите название'; err.classList.remove('hidden'); return; }
       const habits = Store.habits.list();
       if (id) {
         const idx = habits.findIndex(h => h.id === id);
         if (idx < 0) return;
-        habits[idx] = { ...habits[idx], name, description, sphere, target_count, target_period };
+        habits[idx] = { ...habits[idx], name, description, sphere, target_count, target_period, goal_id };
         toast('Привычка обновлена', 'success');
       } else {
-        habits.push({ id: uid(), name, description, sphere, target_count, target_period, created_at: new Date().toISOString() });
+        habits.push({ id: uid(), name, description, sphere, target_count, target_period, goal_id, created_at: new Date().toISOString() });
         toast('Привычка создана', 'success');
       }
       Store.habits.save(habits);
@@ -2587,6 +2898,7 @@
       if (t) t.done = done;
       if (done) {
         Store.taskMeta.set(id, { status: 'done' });
+        gameAddXP(t?.priority === 'high' ? 'task_done_high' : 'task_done', id);
         // Если есть рекуррентность — клонируем задачу на следующую дату
         const extras = Store.taskExtras.for(id);
         if (extras.recurrence && t) {
@@ -2656,7 +2968,7 @@
       if (!sphereId) return '';
       const s = SPHERES.find(x => x.id === sphereId);
       if (!s) return '';
-      return `<span class="sphere-badge sphere-${s.id}">${s.icon} ${escapeHtml(s.label)}</span>`;
+      return `<span class="sphere-badge sphere-${s.id}" style="display:inline-flex;align-items:center;gap:0.3rem;">${sphereIcon(s.id, 12)}${escapeHtml(s.label)}</span>`;
     }
 
     function renderTaskRow(t, opts = {}) {
@@ -2668,10 +2980,10 @@
       const extras = Store.taskExtras.for(t.id);
       const subs = extras.subtasks || [];
       const subDone = subs.filter(s => s.done).length;
-      const subBadge = subs.length ? `<span class="subtask-progress">☑ ${subDone}/${subs.length}</span>` : '';
-      const recBadge = extras.recurrence ? `<span class="status-badge badge-info" title="Повтор">🔁</span>` : '';
+      const subBadge = subs.length ? `<span class="subtask-progress" style="display:inline-flex; align-items:center; gap:0.25rem;">${svgIcon('checkbox', 11)}${subDone}/${subs.length}</span>` : '';
+      const recBadge = extras.recurrence ? `<span class="status-badge badge-info" title="Повтор" style="display:inline-flex;align-items:center;padding:0.25rem 0.4rem;">${svgIcon('recurring', 11)}</span>` : '';
       const overdue = t.due_date && !t.done && t.due_date < today;
-      const dueLabel = t.due_date ? (overdue ? `<span style="color:var(--danger-700);font-weight:600;">📅 ${formatDateRu(t.due_date)} · просрочено</span>` : `📅 ${formatDateRu(t.due_date)}`) : '';
+      const dueLabel = t.due_date ? (overdue ? `<span style="color:var(--danger-700);font-weight:600;display:inline-flex;align-items:center;gap:0.25rem;">${svgIcon('calendar_alt', 12)}${formatDateRu(t.due_date)} · просрочено</span>` : `<span style="display:inline-flex;align-items:center;gap:0.25rem;">${svgIcon('calendar_alt', 12)}${formatDateRu(t.due_date)}</span>`) : '';
       return `
         <div class="task-card" data-id="${t.id}" draggable="true">
           <div class="flex items-start justify-between gap-3">
@@ -2755,6 +3067,7 @@
           card.style.transform = '';
           const ok = await confirmModal('Удалить задачу?');
           if (ok) {
+            if (googleState.connected) await deleteGoogleEventForTask(id);
             await api(taskUrl(`/api/tasks/${id}`), { method: 'DELETE' });
             Store.taskMeta.delete(id); Store.taskExtras.delete(id);
             await loadTasks();
@@ -2926,7 +3239,7 @@
           parts.push(`<span class="text-xs ${isToday ? '' : 'text-[color:var(--text-muted)]'}">${dayTasks.length} задач${dayTasks.length === 1 ? 'а' : ''}</span>`);
         }
         if (dayGoogle.length) {
-          parts.push(`<span class="text-xs" style="color:${isToday ? 'rgba(255,255,255,0.9)' : 'var(--brand-600)'};">📅 ${dayGoogle.length} Google</span>`);
+          parts.push(`<span class="text-xs" style="color:${isToday ? 'rgba(255,255,255,0.9)' : 'var(--brand-600)'}; display:inline-flex; align-items:center; gap:0.25rem;">${svgIcon('calendar_alt', 11)}${dayGoogle.length} Google</span>`);
         }
         html += `
           <div class="cal-day ${isToday ? 'is-today' : ''}" data-iso="${iso}">
@@ -2992,19 +3305,30 @@
       const dayTasks = state.tasks.filter(t => t.due_date === iso);
       const dayGoogle = googleEventsOn(iso);
 
-      // Hour grid from 6:00 to 23:00
+      // Hour grid from 6:00 to 23:00 — слоты для Google events и time-blocked задач
       let hoursHtml = '';
+      const scheduledTasks = dayTasks.filter(t => Store.taskExtras.for(t.id).time_start);
       for (let h = 6; h <= 23; h++) {
         const label = String(h).padStart(2, '0') + ':00';
         const atHour = dayGoogle.filter(ev => {
           if (!ev.start || ev.all_day) return false;
           return new Date(ev.start).getHours() === h;
         });
+        const tasksAtHour = scheduledTasks.filter(t => {
+          const ex = Store.taskExtras.for(t.id);
+          const [hh] = (ex.time_start || '00:00').split(':').map(Number);
+          return hh === h;
+        });
         const evHtml = atHour.map(ev => {
           const time = ev.start ? new Date(ev.start).toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'}) : '';
           return `<div class="week-item is-google"><strong>${time}</strong> · ${escapeHtml(ev.summary)}</div>`;
         }).join('');
-        hoursHtml += `<div class="day-hour"><div class="day-hour-label">${label}</div><div class="day-hour-content">${evHtml}</div></div>`;
+        const tasksHtml2 = tasksAtHour.map(t => {
+          const ex = Store.taskExtras.for(t.id);
+          const dur = ex.duration_min || 60;
+          return `<div class="week-item ${t.done ? 'is-done' : ''}" data-task-id="${t.id}"><strong>${escapeHtml(ex.time_start)}</strong> · ${escapeHtml(t.title)} <span style="opacity:0.7;">· ${dur} мин</span></div>`;
+        }).join('');
+        hoursHtml += `<div class="day-hour"><div class="day-hour-label">${label}</div><div class="day-hour-content">${evHtml}${tasksHtml2}</div></div>`;
       }
 
       const allDayGoogle = dayGoogle.filter(ev => ev.all_day);
@@ -3018,8 +3342,10 @@
 
       host.innerHTML = `${allDayHtml}${tasksHtml}<div class="text-xs font-semibold text-[color:var(--text-muted)] uppercase tracking-wider mt-4 mb-2">Расписание</div>${hoursHtml}`;
       $('#calAddForDay')?.addEventListener('click', () => openTaskModal(null, { due_date: iso }));
-      const tasksWrap = host.querySelector('div.mb-3:nth-of-type(1)') || host;
       bindTaskRowEvents(host);
+      host.querySelectorAll('.day-hour .week-item[data-task-id]').forEach(el => {
+        el.addEventListener('click', () => openTaskModal(el.dataset.taskId));
+      });
     }
 
     function renderCalendarYear() {
@@ -3152,7 +3478,7 @@
             <div class="progress ${pct === 100 ? 'success' : ''} mb-3"><span style="width:${pct}%"></span></div>
             <div class="text-sm text-[color:var(--text-secondary)] mb-2">${done}/${total} задач · ${pct}% готово</div>
             <div class="flex items-center justify-between text-xs text-[color:var(--text-muted)]">
-              <span>${p.deadline ? `📅 ${formatDateRu(p.deadline)}` : 'Без дедлайна'}</span>
+              <span style="display:inline-flex; align-items:center; gap:0.3rem;">${p.deadline ? svgIcon('calendar_alt', 12) + formatDateRu(p.deadline) : 'Без дедлайна'}</span>
               <span class="${overdue ? 'priority-high' : (pct === 100 ? 'priority-low' : 'badge-info')} status-badge">${overdue ? 'Просрочен' : (pct === 100 ? 'Готово' : 'Активный')}</span>
             </div>
           </div>`;
@@ -3190,7 +3516,7 @@
         const streak = computeStreak(h.id);
         const periodDone = days.filter(d => Store.habitLogs.isDone(h.id, d)).length;
         const badge = streak > 0
-          ? `🔥 ${streak} дн.`
+          ? `<span style="display:inline-flex; align-items:center; gap:0.25rem;">${svgIcon('flame', 11)}${streak} дн.</span>`
           : `${periodDone}/${dayCount} ${isMonth ? 'за 30 дней' : 'за неделю'}`;
         const cellsHtml = days.map((d, i) => {
           const done = Store.habitLogs.isDone(h.id, d);
@@ -3206,10 +3532,16 @@
               </button>
             </div>
             <div class="flex items-center justify-between mb-3 pr-14">
-              <h4 class="font-semibold text-[color:var(--text-strong)]">${escapeHtml(h.name)}${h.sphere ? ' <span class="sphere-badge sphere-'+h.sphere+'" style="margin-left:0.4rem;">'+SPHERES.find(s=>s.id===h.sphere)?.icon+'</span>' : ''}</h4>
+              <h4 class="font-semibold text-[color:var(--text-strong)]">${escapeHtml(h.name)}${h.sphere ? ' <span class="sphere-badge sphere-'+h.sphere+'" style="margin-left:0.4rem;display:inline-flex;align-items:center;">'+sphereIcon(h.sphere, 12)+'</span>' : ''}</h4>
               <span class="status-badge ${streak >= 3 ? 'priority-low' : (periodDone > 0 ? 'badge-info' : 'badge-neutral')}">${badge}</span>
             </div>
-            ${h.description ? `<p class="text-xs text-[color:var(--text-muted)] mb-3">${escapeHtml(h.description)}</p>` : ''}
+            ${h.description ? `<p class="text-xs text-[color:var(--text-muted)] mb-1">${escapeHtml(h.description)}</p>` : ''}
+            ${(() => {
+              if (!h.goal_id) return '';
+              const linked = Store.goals100.list().find(g => g.id === h.goal_id);
+              if (!linked) return '';
+              return `<p class="text-xs mb-3" style="color:var(--brand-600);">Двигает цель: <a href="#" class="habit-goal-link" data-goal="${linked.id}" style="text-decoration:underline;">${escapeHtml(linked.goal)}</a></p>`;
+            })()}
             ${(() => { const p = habitProgress(h); if (!p) return ''; const pct = Math.min(100, p.pct);
               return `<div class="mb-3"><div class="flex items-center justify-between text-xs mb-1"><span class="text-[color:var(--text-muted)]">Цель: ${p.target} ${p.period === 'week' ? 'в неделю' : 'в месяц'}</span><span class="font-semibold ${pct >= 100 ? 'text-[color:var(--success-700)]' : 'text-[color:var(--text-secondary)]'}">${p.done}/${p.target} · ${pct}%</span></div><div class="progress ${pct >= 100 ? 'success' : ''}"><span style="width:${pct}%"></span></div></div>`;
             })()}
@@ -3219,10 +3551,15 @@
 
       list.querySelectorAll('.habit-day').forEach(el => {
         el.addEventListener('click', () => {
+          const wasDone = Store.habitLogs.isDone(el.dataset.habitId, el.dataset.date);
           Store.habitLogs.toggle(el.dataset.habitId, el.dataset.date);
+          if (!wasDone) gameAddXP('habit_mark', el.dataset.habitId);
           renderHabits();
           renderTodayHabits();
         });
+      });
+      list.querySelectorAll('.habit-goal-link').forEach(a => {
+        a.addEventListener('click', (e) => { e.preventDefault(); switchView('goals100'); });
       });
       list.querySelectorAll('[data-action="edit"]').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -3288,7 +3625,9 @@
       `).join('');
       host.querySelectorAll('input[type="checkbox"][data-habit-id]').forEach(cb => {
         cb.addEventListener('change', () => {
+          const wasDone = Store.habitLogs.isDone(cb.dataset.habitId, today);
           Store.habitLogs.toggle(cb.dataset.habitId, today);
+          if (!wasDone) gameAddXP('habit_mark', cb.dataset.habitId);
           renderHabits();
         });
       });
@@ -3389,7 +3728,8 @@
           pomodoroDisplay();
           pomodoroSetStatus('Готов к работе');
           logPomodoro(25);
-          toast('Помодоро завершён! Время на перерыв 🎉', 'success', 4500);
+          gameAddXP('pomodoro_done');
+          toast('Помодоро завершён. Время на перерыв', 'success', 4500);
         }
       }, 1000);
     }
@@ -3474,8 +3814,136 @@
       $('#profilePassword2').value = '';
       ['profileMsg','nameMsg','passwordMsg','teamMsg'].forEach(id => $('#'+id)?.classList.add('hidden'));
       refreshGoogleStatus();
+      refreshTelegramStatus();
       loadTeamMembers();
     }
+
+    // ---------- Telegram bot ----------
+    const tgState = { configured: false, connected: false };
+
+    async function refreshTelegramStatus() {
+      try {
+        const r = await api('/api/telegram/status');
+        if (r.status === 401) return;
+        const j = await r.json();
+        tgState.configured = !!j.configured;
+        tgState.connected  = !!j.connected;
+        tgState.bot_username = j.bot_username || null;
+        tgState.username = j.username || null;
+        tgState.morning_time = j.morning_time;
+        tgState.afternoon_time = j.afternoon_time;
+        tgState.evening_time = j.evening_time;
+        tgState.enabled = j.enabled !== false;
+      } catch {
+        tgState.configured = false; tgState.connected = false;
+      }
+      renderTelegramUI();
+    }
+
+    function renderTelegramUI() {
+      const s = $('#tgStatusText');
+      const connectBtn = $('#tgConnectBtn');
+      const disconnectBtn = $('#tgDisconnectBtn');
+      const testBtn = $('#tgTestBtn');
+      const settings = $('#tgSettingsBox');
+      const codeBox = $('#tgCodeBox');
+      const hint = $('#tgHint');
+      if (!s) return;
+
+      if (!tgState.configured) {
+        s.textContent = 'Бот не настроен на сервере.';
+        connectBtn.classList.add('hidden');
+        disconnectBtn.classList.add('hidden');
+        testBtn.classList.add('hidden');
+        settings.classList.add('hidden');
+        codeBox.classList.add('hidden');
+        hint.textContent = 'Администратору: создайте бота через @BotFather, задайте TELEGRAM_BOT_TOKEN, TELEGRAM_BOT_USERNAME и TELEGRAM_WEBHOOK_URL=' + location.origin + '/api/telegram/webhook';
+        hint.classList.remove('hidden');
+        return;
+      }
+      hint.classList.add('hidden');
+      if (tgState.connected) {
+        s.innerHTML = `Подключён${tgState.username ? ': <b>@' + escapeHtml(tgState.username) + '</b>' : ''}`;
+        connectBtn.classList.add('hidden');
+        codeBox.classList.add('hidden');
+        disconnectBtn.classList.remove('hidden');
+        testBtn.classList.remove('hidden');
+        settings.classList.remove('hidden');
+        $('#tgMorning').value   = tgState.morning_time || '09:00';
+        $('#tgAfternoon').value = tgState.afternoon_time || '14:00';
+        $('#tgEvening').value   = tgState.evening_time || '21:00';
+        $('#tgEnabled').checked = tgState.enabled !== false;
+      } else {
+        s.textContent = 'Не подключён. Возьмите код и отправьте боту команду /start <код>.';
+        connectBtn.classList.remove('hidden');
+        disconnectBtn.classList.add('hidden');
+        testBtn.classList.add('hidden');
+        settings.classList.add('hidden');
+      }
+    }
+
+    $('#tgConnectBtn')?.addEventListener('click', async () => {
+      try {
+        const r = await api('/api/telegram/connect', { method:'POST', body: '{}' });
+        const j = await r.json();
+        if (!r.ok) { toast(j.error || 'Не удалось получить код', 'error'); return; }
+        if (j.already_linked) { await refreshTelegramStatus(); toast('Уже подключено', 'info'); return; }
+        $('#tgCodeText').textContent = `/start ${j.code}`;
+        $('#tgCodeBox').classList.remove('hidden');
+        if (j.deep_link) {
+          const link = $('#tgDeepLink');
+          link.href = j.deep_link;
+          link.style.display = '';
+        }
+        toast('Код получен. Откройте бота и отправьте команду', 'success', 5000);
+        // Поллим статус каждые 4 сек, пока не привяжется (макс 5 мин)
+        const t0 = Date.now();
+        const poll = setInterval(async () => {
+          if (Date.now() - t0 > 5 * 60_000) { clearInterval(poll); return; }
+          await refreshTelegramStatus();
+          if (tgState.connected) {
+            clearInterval(poll);
+            toast('Telegram подключён', 'success');
+          }
+        }, 4000);
+      } catch { toast('Сетевая ошибка', 'error'); }
+    });
+
+    $('#tgDisconnectBtn')?.addEventListener('click', async () => {
+      const ok = await confirmModal('Отвязать Telegram? Вы перестанете получать уведомления.', 'Отвязать');
+      if (!ok) return;
+      try {
+        const r = await api('/api/telegram/disconnect', { method:'POST', body: '{}' });
+        if (!r.ok) { toast('Не удалось отключить', 'error'); return; }
+        toast('Telegram отвязан', 'success');
+        await refreshTelegramStatus();
+      } catch { toast('Сетевая ошибка', 'error'); }
+    });
+
+    $('#tgTestBtn')?.addEventListener('click', async () => {
+      try {
+        const r = await api('/api/telegram/test', { method:'POST', body: '{}' });
+        const j = await r.json();
+        if (r.ok) toast('Сообщение отправлено в Telegram', 'success');
+        else toast(j.message || 'Ошибка отправки', 'error');
+      } catch { toast('Сетевая ошибка', 'error'); }
+    });
+
+    $('#tgSaveBtn')?.addEventListener('click', async () => {
+      const body = {
+        enabled: $('#tgEnabled').checked,
+        morning_time:   $('#tgMorning').value,
+        afternoon_time: $('#tgAfternoon').value,
+        evening_time:   $('#tgEvening').value,
+      };
+      try {
+        const r = await api('/api/telegram/settings', { method:'POST', body: JSON.stringify(body) });
+        const j = await r.json();
+        if (!r.ok) { toast(j.error || 'Не удалось сохранить', 'error'); return; }
+        toast('Расписание сохранено', 'success');
+        await refreshTelegramStatus();
+      } catch { toast('Сетевая ошибка', 'error'); }
+    });
 
     // ---------- Google Calendar ----------
     const googleState = { configured: false, connected: false, email: null };
@@ -3502,6 +3970,7 @@
       const hint = $('#googleHint');
       const togglesWrap = $('#googleCalToggleWrap');
       const taskGoogleWrap = $('#taskGoogleWrap');
+      const syncBtn = $('#googleFullSyncBtn');
 
       if (!googleState.configured) {
         statusText.textContent = 'Интеграция не настроена на сервере.';
@@ -3512,6 +3981,7 @@
         hint.classList.remove('hidden');
         togglesWrap?.classList.add('hidden');
         taskGoogleWrap?.classList.add('hidden');
+        syncBtn?.classList.add('hidden');
         return;
       }
       hint.classList.add('hidden');
@@ -3522,6 +3992,7 @@
         link.classList.remove('hidden');
         togglesWrap?.classList.remove('hidden');
         taskGoogleWrap?.classList.remove('hidden');
+        syncBtn?.classList.remove('hidden');
       } else {
         statusText.textContent = 'Не подключён. Свяжите аккаунт, чтобы видеть события и отправлять задачи в Google Calendar.';
         connectBtn.classList.remove('hidden');
@@ -3529,8 +4000,11 @@
         link.classList.add('hidden');
         togglesWrap?.classList.add('hidden');
         taskGoogleWrap?.classList.add('hidden');
+        syncBtn?.classList.add('hidden');
       }
     }
+    $('#googleFullSyncBtn')?.addEventListener('click', fullSyncWithGoogle);
+    $('#autoReplanBtn')?.addEventListener('click', autoReplan);
 
     $('#googleConnectBtn')?.addEventListener('click', async () => {
       try {
@@ -3597,23 +4071,105 @@
       renderCalendar();
     });
 
-    async function pushTaskToGoogle(taskId) {
+    async function pushTaskToGoogle(taskId, opts = {}) {
+      const meta = Store.taskExtras.for(taskId);
       try {
-        const r = await api('/api/google/sync-task', { method: 'POST', body: JSON.stringify({ task_id: taskId }) });
+        const payload = { task_id: taskId };
+        if (meta.google_event_id) payload.event_id = meta.google_event_id;
+        const r = await api('/api/google/sync-task', { method: 'POST', body: JSON.stringify(payload) });
         const j = await r.json();
         if (!r.ok) {
-          toast(j.error === 'no_due_date' ? 'У задачи нет дедлайна — нечего отправить' :
-                j.error === 'not_connected' ? 'Сначала подключите Google Calendar в профиле' :
-                'Ошибка отправки в Google', 'error');
+          if (!opts.silent) {
+            toast(j.error === 'no_due_date' ? 'У задачи нет дедлайна — нечего отправить' :
+                  j.error === 'not_connected' ? 'Сначала подключите Google Calendar в профиле' :
+                  'Ошибка отправки в Google', 'error');
+          }
           return false;
         }
-        toast('Задача добавлена в Google Calendar', 'success');
+        Store.taskExtras.set(taskId, {
+          google_event_id: j.event.id,
+          last_synced_at: j.event.updated || new Date().toISOString()
+        });
+        if (!opts.silent) toast(meta.google_event_id ? 'Задача обновлена в Google' : 'Задача добавлена в Google Calendar', 'success');
         return true;
       } catch {
-        toast('Сетевая ошибка Google', 'error');
+        if (!opts.silent) toast('Сетевая ошибка Google', 'error');
         return false;
       }
     }
+
+    async function deleteGoogleEventForTask(taskId) {
+      const meta = Store.taskExtras.for(taskId);
+      if (!meta.google_event_id) return;
+      try {
+        await api(`/api/google/events/${encodeURIComponent(meta.google_event_id)}`, { method: 'DELETE' });
+      } catch { /* silently swallow — локальная задача всё равно удалится */ }
+    }
+
+    // Двусторонняя синхронизация: тянет события Google → импортирует как задачи,
+    // для каждой связанной задачи пушит актуальные поля в Google.
+    async function fullSyncWithGoogle() {
+      if (!googleState.connected) {
+        toast('Сначала подключите Google Calendar в профиле', 'error');
+        return;
+      }
+      toast('Синхронизация с Google…', 'info', 1800);
+      try {
+        // 1) Pull events
+        const r = await api('/api/google/events');
+        if (!r.ok) {
+          const j = await r.json().catch(() => ({}));
+          toast(j.error === 'not_connected' ? 'Google отключён' : 'Не удалось получить события', 'error');
+          return;
+        }
+        const { events } = await r.json();
+        state.googleEvents = events || [];
+
+        // 2) Build reverse lookup: google_event_id → task_id
+        const allExtras = Store.taskExtras.get();
+        const byEventId = new Map();
+        Object.entries(allExtras).forEach(([tid, meta]) => { if (meta.google_event_id) byEventId.set(meta.google_event_id, tid); });
+
+        // 3) Import new events (не импортируем события, уже связанные с локальными задачами)
+        let imported = 0;
+        for (const ev of (events || [])) {
+          if (byEventId.has(ev.id)) continue;
+          if (ev.status === 'cancelled') continue;
+          const dueDate = (ev.start || '').slice(0, 10);
+          if (!dueDate) continue;
+          const description = (ev.description || '').replace(/\[PLANEL task [^\]]+\]/g, '').trim();
+          const created = await api(taskUrl('/api/tasks'), {
+            method: 'POST',
+            body: JSON.stringify({ title: ev.summary || '(событие Google)', description, priority: 'medium', due_date: dueDate })
+          });
+          if (created.ok) {
+            const j = await created.json();
+            Store.taskExtras.set(j.task.id, {
+              google_event_id: ev.id,
+              last_synced_at: ev.updated || new Date().toISOString()
+            });
+            imported++;
+          }
+        }
+
+        // 4) Push local linked tasks обратно в Google (обновляем поля)
+        let pushed = 0;
+        for (const t of state.tasks) {
+          const meta = Store.taskExtras.for(t.id);
+          if (meta.google_event_id && t.due_date) {
+            const ok = await pushTaskToGoogle(t.id, { silent: true });
+            if (ok) pushed++;
+          }
+        }
+
+        toast(`Синхронизировано: импорт ${imported}, отправка ${pushed}`, 'success', 4000);
+        await loadTasks();
+      } catch (e) {
+        console.error('[google/full-sync]', e);
+        toast('Ошибка синхронизации', 'error');
+      }
+    }
+
 
     function showFormMsg(id, text, type) {
       const el = $('#'+id);
@@ -3897,7 +4453,7 @@
         return `
           <div>
             <div class="flex items-center justify-between mb-1">
-              <span class="text-sm font-medium"><span class="sphere-badge sphere-${s.id}" style="margin-right:0.4rem;">${s.icon} ${escapeHtml(s.label)}</span></span>
+              <span class="text-sm font-medium"><span class="sphere-badge sphere-${s.id}" style="margin-right:0.4rem; display:inline-flex; align-items:center; gap:0.3rem;">${sphereIcon(s.id, 12)}${escapeHtml(s.label)}</span></span>
               <span class="heading-font font-bold text-sm" id="wheelVal_${s.id}">${v}</span>
             </div>
             <input type="range" min="0" max="10" step="1" value="${v}" class="sphere-slider" data-sphere="${s.id}">
@@ -3959,7 +4515,7 @@
       SPHERES.forEach((s, i) => {
         const p = pt(R + 22, i);
         const anchor = p.x > 10 ? 'start' : p.x < -10 ? 'end' : 'middle';
-        html += `<text x="${p.x.toFixed(1)}" y="${p.y.toFixed(1) + 4}" text-anchor="${anchor}" font-size="11" font-weight="700" fill="#0F172A">${s.icon} ${s.label}</text>`;
+        html += `<text x="${p.x.toFixed(1)}" y="${p.y.toFixed(1) + 4}" text-anchor="${anchor}" font-size="11" font-weight="700" fill="currentColor">${s.label}</text>`;
       });
       svg.innerHTML = html;
     }
@@ -3977,7 +4533,7 @@
         return `
           <div>
             <div class="flex items-center justify-between text-xs mb-1">
-              <span><span class="sphere-badge sphere-${s.id}">${s.icon} ${escapeHtml(s.label)}</span></span>
+              <span><span class="sphere-badge sphere-${s.id}" style="display:inline-flex; align-items:center; gap:0.3rem;">${sphereIcon(s.id, 12)}${escapeHtml(s.label)}</span></span>
               <span class="text-[color:var(--text-muted)]">${c.tasks} задач · ${c.habits} привычек</span>
             </div>
             <div class="progress"><span style="width:${pct}%"></span></div>
@@ -4170,6 +4726,7 @@
           if (idx >= 0) list[idx] = payload;
         } else list.push(payload);
         Store.food.save(list);
+        if (!entryId) gameAddXP('food_entry', payload.id);
         closeModal('foodDynamicModal');
         modalEl.remove();
         toast(entryId ? 'Запись обновлена' : 'Запись добавлена', 'success');
@@ -4215,22 +4772,43 @@
             </div>
           </div>
           <div class="goal-title">${escapeHtml(g.goal || 'Без названия')}</div>
+          ${(() => {
+            const p = goalProgress(g);
+            if (!p) return '';
+            return `<div style="margin:0.3rem 0;">
+              <div class="flex items-center justify-between text-xs mb-1">
+                <span class="text-[color:var(--text-muted)]">План: ${p.done}/${p.total} задач</span>
+                <span class="font-semibold ${p.pct >= 100 ? 'text-[color:var(--success-700)]' : 'text-[color:var(--text-secondary)]'}">${p.pct}%</span>
+              </div>
+              <div class="progress ${p.pct >= 100 ? 'success' : ''}"><span style="width:${Math.min(100, p.pct)}%"></span></div>
+            </div>`;
+          })()}
           <div class="goal-details">
             ${g.why ? `<div><strong>Почему важно:</strong> ${escapeHtml(g.why)}</div>` : ''}
             ${g.how ? `<div><strong>Как достигну:</strong> ${escapeHtml(g.how)}</div>` : ''}
             ${g.who ? `<div><strong>Кто поможет:</strong> ${escapeHtml(g.who)}</div>` : ''}
             ${g.metric ? `<div><strong>Как пойму:</strong> ${escapeHtml(g.metric)}</div>` : ''}
             ${g.feelings ? `<div><strong>Чувства:</strong> ${escapeHtml(g.feelings)}</div>` : ''}
+            ${g.project_id ? `<div><strong>План:</strong> <a class="goal-open-project" data-project="${g.project_id}" href="#" style="color:var(--brand-600);">открыть проект →</a></div>` : ''}
           </div>
         </div>
       `).join('');
+      host.querySelectorAll('.goal-open-project').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          state.projectFilter = link.dataset.project;
+          switchView('tasks');
+        });
+      });
       host.querySelectorAll('.goal-done').forEach(cb => {
         cb.addEventListener('change', () => {
           const arr = Store.goals100.list();
           const idx = arr.findIndex(g => g.id === cb.dataset.id);
           if (idx < 0) return;
+          const wasDone = arr[idx].done;
           arr[idx].done = cb.checked;
           Store.goals100.save(arr);
+          if (cb.checked && !wasDone) gameAddXP('goal_done', cb.dataset.id);
           renderGoals100();
         });
       });
@@ -4263,6 +4841,11 @@
                 <input type="text" id="glMetric" class="form-input" maxlength="500" value="${escapeHtml(g?.metric || '')}"></div>
               <div><label class="form-label">Какие чувства я испытаю, когда цель будет достигнута?</label>
                 <input type="text" id="glFeelings" class="form-input" maxlength="500" value="${escapeHtml(g?.feelings || '')}"></div>
+              ${g ? `<div class="card-flat" style="background:var(--bg-muted);">
+                <div class="text-xs text-[color:var(--text-muted)] mb-2">План цели${g.project_id ? ' · уже создан' : ''}</div>
+                <button type="button" class="btn-secondary text-sm w-full justify-center" id="glDecompose" ${g.project_id ? 'disabled' : ''}>${g.project_id ? 'План создан' : 'Разбить на план (проект + задачи)'}</button>
+                <p class="text-xs text-[color:var(--text-muted)] mt-2">Создаст проект и задачи из строк «Как достичь»</p>
+              </div>` : ''}
               <div class="flex gap-2 justify-end pt-2">
                 ${g ? '<button type="button" class="btn-ghost text-sm" id="glDelete">Удалить</button>' : ''}
                 <button type="button" class="btn-ghost text-sm" data-close-modal>Отмена</button>
@@ -4283,6 +4866,7 @@
           metric: $('#glMetric').value.trim(),
           feelings: $('#glFeelings').value.trim(),
           done: g?.done || false,
+          project_id: g?.project_id || null,
           created_at: g?.created_at || new Date().toISOString()
         };
         const arr = Store.goals100.list();
@@ -4296,6 +4880,14 @@
         toast(goalId ? 'Цель обновлена' : 'Цель добавлена', 'success');
         renderGoals100();
       });
+      $('#glDecompose')?.addEventListener('click', async () => {
+        const ok = await confirmModal('Создать проект и задачи из этой цели?', 'Создать');
+        if (!ok) return;
+        await decomposeGoalIntoProject(goalId);
+        closeModal('goalsDynamicModal');
+        $('#goalsDynamicModal').remove();
+      });
+
       $('#glDelete')?.addEventListener('click', async () => {
         const ok = await confirmModal('Переместить цель в корзину?'); if (!ok) return;
         const item = Store.goals100.list().find(x => x.id === goalId);
@@ -4316,6 +4908,11 @@
 
     // ---------- Emotions diary ----------
     let selectedMood = null;
+    // Заполняем иконки настроений
+    $$('#emotMoodPicker .mood-option').forEach(el => {
+      const m = el.dataset.mood;
+      el.innerHTML = svgIcon('mood' + m, 26);
+    });
 
     $('#emotEnergy')?.addEventListener('input', (e) => {
       $('#emotEnergyVal').textContent = e.target.value;
@@ -4373,7 +4970,7 @@
         $('#emotThought').value = todayEntry.thought || '';
         $('#emotGratitude').value = todayEntry.gratitude || '';
       }
-      const MOOD_EMOJI = { 1:'😢', 2:'😕', 3:'😐', 4:'🙂', 5:'😊', 6:'😄', 7:'🤩' };
+      const MOOD_LABEL = { 1:'Очень плохо', 2:'Плохо', 3:'Так себе', 4:'Нормально', 5:'Хорошо', 6:'Отлично', 7:'Супер' };
       const host = $('#emotionsList');
       if (!list.length) {
         host.innerHTML = `<div class="empty-state"><strong>Пока нет записей.</strong><br/>Заполните форму выше, чтобы добавить первую.</div>`;
@@ -4384,9 +4981,9 @@
           <div class="flex items-center justify-between mb-2">
             <span class="heading-font font-bold text-sm">${formatDateRu(e.date)}${e.date === today ? ' · сегодня' : ''}</span>
             <div class="flex items-center gap-3 text-xs text-[color:var(--text-muted)]">
-              ${e.mood ? `<span style="font-size:1.1rem;">${MOOD_EMOJI[e.mood] || ''}</span>` : ''}
-              ${e.sleep != null ? `<span>💤 ${e.sleep}ч</span>` : ''}
-              ${e.energy != null ? `<span>⚡ ${e.energy}/10</span>` : ''}
+              ${e.mood ? `<span style="display:inline-flex; align-items:center; color:var(--brand-600);" title="${MOOD_LABEL[e.mood] || ''}">${svgIcon('mood'+e.mood, 18)}</span>` : ''}
+              ${e.sleep != null ? `<span style="display:inline-flex; align-items:center; gap:0.25rem;">${svgIcon('sleep', 12)}${e.sleep}ч</span>` : ''}
+              ${e.energy != null ? `<span style="display:inline-flex; align-items:center; gap:0.25rem;">${svgIcon('energy', 12)}${e.energy}/10</span>` : ''}
               <button class="icon-btn emot-delete" data-id="${e.id}" style="width:28px;height:28px;" title="Удалить">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
               </button>
@@ -4415,7 +5012,7 @@
       const t = $('#darkToggle'); if (t) t.checked = theme === 'dark';
     }
     function getTheme() {
-      try { return localStorage.getItem('planel_theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+      try { return localStorage.getItem('planel_theme') || 'light'; }
       catch { return 'light'; }
     }
     function setTheme(t) { try { localStorage.setItem('planel_theme', t); } catch {} applyTheme(t); }
@@ -4825,10 +5422,561 @@
       });
     }
 
+    // ---------- Auto-planning ----------
+
+    // Подбирает дату для задачи по приоритету и текущему графику.
+    // Высокий → сегодня, средний → ближайшие 3 дня, низкий → в течение недели.
+    // Распределяет так, чтобы на один день не приходилось больше 5 задач одного приоритета.
+    function suggestDateForTask(priority, existingByDate = {}) {
+      const cap = 5;
+      const horizon = priority === 'high' ? 2 : priority === 'medium' ? 4 : 8;
+      for (let offset = 0; offset < horizon; offset++) {
+        const iso = addDaysISO(todayISO(), offset);
+        if ((existingByDate[iso] || 0) < cap) {
+          existingByDate[iso] = (existingByDate[iso] || 0) + 1;
+          return iso;
+        }
+      }
+      // Всё плотно — отдаём конец горизонта
+      const iso = addDaysISO(todayISO(), horizon);
+      existingByDate[iso] = (existingByDate[iso] || 0) + 1;
+      return iso;
+    }
+
+    // Пересчитывает нераспределённые/просроченные задачи по приоритетам.
+    async function autoReplan() {
+      const today = todayISO();
+      const open = state.tasks.filter(t => !t.done && (!t.due_date || t.due_date < today));
+      if (!open.length) { toast('Перепланировать нечего — всё актуально', 'info'); return; }
+      const ok = await confirmModal(`Перепланировать ${open.length} задач? Высокий приоритет → сегодня, средний → ближайшие 3 дня, низкий → неделя.`, 'Перепланировать');
+      if (!ok) return;
+
+      // Учитываем уже занятые задачи в каждом дне (только не done)
+      const existingByDate = {};
+      state.tasks.filter(t => !t.done && t.due_date && t.due_date >= today)
+        .forEach(t => { existingByDate[t.due_date] = (existingByDate[t.due_date] || 0) + 1; });
+
+      // Сортируем: high → medium → low
+      const order = { high: 0, medium: 1, low: 2 };
+      const queue = [...open].sort((a, b) => (order[a.priority] ?? 2) - (order[b.priority] ?? 2));
+
+      let moved = 0;
+      for (const t of queue) {
+        const newDate = suggestDateForTask(t.priority, existingByDate);
+        try {
+          const r = await api(taskUrl(`/api/tasks/${t.id}`), { method: 'PUT', body: JSON.stringify({ due_date: newDate }) });
+          if (r.ok) moved++;
+        } catch {}
+      }
+      toast(`Перепланировано ${moved} задач`, 'success');
+      await loadTasks();
+    }
+
+    // ---------- Smart reminders ----------
+    function computeOverdueCount() {
+      const today = todayISO();
+      return state.tasks.filter(t => !t.done && t.due_date && t.due_date < today).length;
+    }
+
+    // Односложный CTA «перенести на сегодня» для баннера.
+    async function rescheduleOverdueToToday() {
+      const today = todayISO();
+      const overdue = state.tasks.filter(t => !t.done && t.due_date && t.due_date < today);
+      if (!overdue.length) { toast('Просроченных нет', 'info'); return; }
+      let moved = 0;
+      for (const t of overdue) {
+        try {
+          const r = await api(taskUrl(`/api/tasks/${t.id}`), { method: 'PUT', body: JSON.stringify({ due_date: today }) });
+          if (r.ok) moved++;
+        } catch {}
+      }
+      toast(`Перенесено на сегодня: ${moved}`, 'success');
+      await loadTasks();
+    }
+
+    function renderOverdueBanner() {
+      const host = $('#overdueBanner');
+      if (!host) return;
+      const count = computeOverdueCount();
+      if (!count) { host.classList.add('hidden'); host.innerHTML = ''; return; }
+      host.classList.remove('hidden');
+      host.innerHTML = `
+        <div class="card" style="background:var(--warning-50); border-color:#FDE68A;">
+          <div class="flex items-center gap-3 flex-wrap">
+            <span style="color:var(--warning-700);">${svgIcon('alert_tri', 22)}</span>
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-[color:var(--text-strong)]">Просрочено ${count} задач${count === 1 ? 'а' : ''}</div>
+              <div class="text-xs text-[color:var(--text-muted)]">Перенести на сегодня или авто-распределить по приоритетам?</div>
+            </div>
+            <button class="btn-secondary text-xs" id="overdueToToday">На сегодня</button>
+            <button class="btn-ghost text-xs" id="overdueAutoReplan">Авто-план</button>
+          </div>
+        </div>`;
+      $('#overdueToToday')?.addEventListener('click', rescheduleOverdueToToday);
+      $('#overdueAutoReplan')?.addEventListener('click', autoReplan);
+    }
+
+    // ---------- Goal ↔ Project linkage ----------
+
+    // Разбирает поле "Как достичь" на список задач
+    function splitPlanIntoTasks(howText) {
+      if (!howText) return [];
+      const lines = String(howText).split(/\r?\n|[;•·]/).map(s => s.replace(/^\s*[-–—0-9.)\s]+/, '').trim()).filter(Boolean);
+      // Если всё одной строкой без разделителей — разобьём по точкам и запятым
+      if (lines.length <= 1) {
+        const alt = String(howText).split(/[.,]/).map(s => s.trim()).filter(s => s.length > 8);
+        if (alt.length > 1) return alt.slice(0, 8);
+      }
+      return lines.slice(0, 8);
+    }
+
+    // Находит project_id для цели, считает задачи проекта
+    function goalProgress(goal) {
+      if (!goal?.project_id) return null;
+      const tasks = state.tasks.filter(t => getProjectId(t) === goal.project_id);
+      const done = tasks.filter(t => t.done).length;
+      return { total: tasks.length, done, pct: tasks.length ? Math.round(done / tasks.length * 100) : 0 };
+    }
+
+    async function decomposeGoalIntoProject(goalId) {
+      const arr = Store.goals100.list();
+      const idx = arr.findIndex(g => g.id === goalId);
+      if (idx < 0) return;
+      const goal = arr[idx];
+      if (goal.project_id) { toast('У цели уже есть проект', 'warn'); return; }
+
+      // 1) Создаём проект
+      const projects = Store.projects.list();
+      const project = {
+        id: uid(),
+        name: goal.goal || '(без названия)',
+        description: goal.why || '',
+        deadline: null,
+        color: PROJECT_COLORS[Math.floor(Math.random() * PROJECT_COLORS.length)].value,
+        created_at: new Date().toISOString(),
+        goal_id: goal.id
+      };
+      projects.push(project);
+      Store.projects.save(projects);
+
+      // 2) Парсим "Как" в задачи и создаём их
+      const subtasks = splitPlanIntoTasks(goal.how);
+      let created = 0;
+      if (canWrite()) {
+        for (const title of subtasks) {
+          try {
+            const r = await api(taskUrl('/api/tasks'), {
+              method: 'POST',
+              body: JSON.stringify({ title, description: '', priority: 'medium', due_date: null })
+            });
+            if (r.ok) {
+              const j = await r.json();
+              Store.taskMeta.set(j.task.id, { project_id: project.id, status: 'todo' });
+              created++;
+            }
+          } catch {}
+        }
+      }
+
+      // 3) Связываем цель с проектом
+      arr[idx] = { ...goal, project_id: project.id };
+      Store.goals100.save(arr);
+
+      toast(`Создан проект «${project.name}» и ${created} задач`, 'success', 4000);
+      await loadTasks();
+      renderGoals100();
+    }
+
+    // ---------- Goal templates ----------
+    const GOAL_TEMPLATES = [
+      {
+        id: 'project_launch',
+        iconKey: 'tpl_project',
+        title: 'Запуск проекта',
+        desc: 'От идеи до первого платежа',
+        goals: [
+          { goal:'Сформулировать ценность продукта в одном предложении', why:'Чтобы мне и аудитории было ясно, для кого и зачем продукт', how:'Lean Canvas, минимум 5 итераций формулировки', who:'Друг, наставник, потенциальный клиент', metric:'Коллега объясняет продукт чужим словами правильно', feelings:'Ясность, спокойствие' },
+          { goal:'Описать целевую аудиторию (3 сегмента)', why:'Без этого невозможно продавать и развивать', how:'Интервью с 5 пользователями каждого сегмента, JTBD-карта', who:'Существующие клиенты, сообщество', metric:'3 портрета с болью, целью, готовностью платить', feelings:'Уверенность' },
+          { goal:'Собрать MVP и привлечь первых 10 пользователей', why:'Это главный риск-фильтр идеи', how:'Простейший прототип за 2 недели + ручная раздача', who:'Команда / фрилансер на дизайн и код', metric:'10 живых пользователей, 3 отзыва', feelings:'Драйв' },
+          { goal:'Запустить лендинг и форму подписки', why:'Канал для прогрева и первых лидов', how:'Tilda/Webflow + связка с email', who:'Дизайнер на 1 спринт', metric:'200 подписчиков на ожидание', feelings:'Гордость' },
+          { goal:'Найти 3 канала привлечения и проверить юнит-экономику', why:'Без устойчивых каналов рост невозможен', how:'Эксперимент по 5–10 тыс. ₽ на канал', who:'Маркетолог-консультант', metric:'CAC < LTV в 2 каналах из 3', feelings:'Контроль' },
+          { goal:'Получить первый платёж', why:'Платёж = настоящая валидация', how:'Подписка / разовая покупка / pre-order', who:'Первая когорта пользователей', metric:'Первая транзакция в кассе', feelings:'Восторг' },
+        ]
+      },
+      {
+        id: 'exam',
+        iconKey: 'tpl_exam',
+        title: 'Подготовка к экзамену',
+        desc: 'Системно, без выгорания',
+        goals: [
+          { goal:'Составить план повторения по неделям', why:'Без плана теряется фокус и время', how:'Разбить программу по темам, отметить слабые', who:'Преподаватель, прошлый сдавший', metric:'Календарь до даты экзамена', feelings:'Контроль' },
+          { goal:'Прорешать 5 прошлогодних вариантов', why:'Реальный формат ≠ теория', how:'1 вариант в неделю по таймеру', who:'—', metric:'Все 5 вариантов решены и разобраны', feelings:'Уверенность' },
+          { goal:'Найти преподавателя или курс', why:'Внешний контроль ускоряет', how:'2-3 пробных занятия', who:'Преподаватель', metric:'Регулярные встречи минимум 1р/нед', feelings:'Поддержка' },
+          { goal:'Сделать конспект слабых тем', why:'Активная переработка лучше пассивного чтения', how:'Метод Корнелла или mind-map', who:'—', metric:'Слабые темы покрыты конспектом', feelings:'Ясность' },
+          { goal:'Сдать пробный экзамен на проходной балл', why:'Тест уверенности перед реальным днём', how:'Симуляция полного экзамена в реальных условиях', who:'Преподаватель/онлайн-сервис', metric:'Балл ≥ проходного', feelings:'Готовность' },
+          { goal:'Сдать реальный экзамен на нужный балл', why:'Главная цель', how:'Хороший сон + повторение слабых тем', who:'—', metric:'Получен балл ≥ цели', feelings:'Облегчение, гордость' },
+        ]
+      },
+      {
+        id: 'weight_loss',
+        iconKey: 'tpl_run',
+        title: 'Похудение',
+        desc: 'Здоровый дефицит и движение',
+        goals: [
+          { goal:'Зафиксировать стартовые параметры', why:'Чтобы видеть прогресс', how:'Вес, объёмы, фото, BMI', who:'—', metric:'Дата + цифры в дневнике', feelings:'Серьёзность' },
+          { goal:'Создать дефицит ккал 300–500 в день', why:'Похудение = дефицит энергии', how:'Дневник питания PLANEL + расчёт BMR', who:'Нутрициолог по желанию', metric:'Средний дефицит за неделю в норме', feelings:'Контроль' },
+          { goal:'Тренировки 3 раза в неделю', why:'Удерживает мышцы и метаболизм', how:'Силовые + кардио', who:'Тренер 1р/нед', metric:'12+ тренировок в месяц', feelings:'Энергия' },
+          { goal:'Спать 7–8 часов', why:'Сон критичен для гормонов и аппетита', how:'Режим, экраны выкл за 1 час', who:'—', metric:'Среднее 7+ ч/сут за неделю', feelings:'Бодрость' },
+          { goal:'Пить 2 литра воды в день', why:'Снижает ложный голод', how:'Бутылка, напоминания', who:'—', metric:'2000 мл по дневнику воды', feelings:'Лёгкость' },
+          { goal:'Сбросить целевой вес и удержать 2 месяца', why:'Удержание = настоящий результат', how:'Постепенный переход с дефицита на поддержку', who:'—', metric:'Целевой вес ± 1 кг 60 дней', feelings:'Гордость' },
+        ]
+      },
+      {
+        id: 'content',
+        iconKey: 'tpl_video',
+        title: 'Запуск контента',
+        desc: 'Блог / YouTube / Telegram',
+        goals: [
+          { goal:'Определить нишу и аудиторию', why:'Без ниши контент не цепляет', how:'Анализ конкурентов, JTBD', who:'Эксперт ниши', metric:'Сформулирован 1 абзац позиционирования', feelings:'Ясность' },
+          { goal:'Создать контент-план на месяц', why:'Регулярность важнее качества первой публикации', how:'8–12 тем, 2 рубрики', who:'—', metric:'План в Notion/PLANEL Projects', feelings:'Спокойствие' },
+          { goal:'Запустить канал и опубликовать первое', why:'Главный психологический барьер', how:'Минимум хорошее качество, не идеальное', who:'—', metric:'Первый пост/видео опубликован', feelings:'Облегчение' },
+          { goal:'Выпускать 2 единицы контента в неделю', why:'Алгоритмы и аудитория любят регулярность', how:'Шаблоны + бэклог идей', who:'Редактор по желанию', metric:'8+ публикаций в месяц 3 месяца подряд', feelings:'Ритм' },
+          { goal:'Набрать 1000 первых подписчиков', why:'Точка опоры для роста', how:'Качественный контент + взаимные публикации', who:'Нишевые блогеры', metric:'1000 подписчиков на платформе', feelings:'Драйв' },
+          { goal:'Получить первую коммерческую коллаборацию', why:'Подтверждение ценности для рекламодателей', how:'Питч-список из 20 брендов', who:'Менеджер/сам', metric:'Первый платный контракт', feelings:'Гордость' },
+        ]
+      },
+      {
+        id: 'relocation',
+        iconKey: 'tpl_globe',
+        title: 'Переезд',
+        desc: 'В другой город или страну',
+        goals: [
+          { goal:'Выбрать город / район', why:'Без выбора нельзя двигаться по плану', how:'Списки за/против, поездка-разведка', who:'Знакомые на месте', metric:'Решение зафиксировано', feelings:'Ясность' },
+          { goal:'Подготовить документы (виза, налоги)', why:'Самый долгий блок, нужно начать заранее', how:'Чек-лист по странам', who:'Иммиграционный консультант', metric:'Все документы поданы', feelings:'Спокойствие' },
+          { goal:'Найти жильё и заключить договор', why:'База для бытового комфорта', how:'Просмотр 5+ вариантов, риелтор', who:'Риелтор / друзья', metric:'Подписан договор аренды', feelings:'Уверенность' },
+          { goal:'Упаковать и перевезти вещи', why:'Логистика отнимает много энергии без плана', how:'Списки по комнатам, грузоперевозчик', who:'Транспортная компания', metric:'Все вещи на месте, без потерь', feelings:'Контроль' },
+          { goal:'Перерегистрировать карты, страховку, подписки', why:'Скрытая, но болезненная статья', how:'Чек-лист сервисов', who:'—', metric:'Все важные сервисы работают', feelings:'Порядок' },
+          { goal:'Найти круг общения на новом месте', why:'Без сообщества переезд тяжелее', how:'Meetup, языковые клубы, спорт', who:'Локальные сообщества', metric:'3+ постоянных контакта за 3 месяца', feelings:'Связанность' },
+        ]
+      },
+      {
+        id: 'year',
+        iconKey: 'tpl_star',
+        title: 'Годовые цели',
+        desc: 'Сбалансированные цели на 12 месяцев',
+        goals: [
+          { goal:'Ключевая профессиональная цель года', why:'Главный карьерный сдвиг', how:'Декомпозиция на квартальные шаги', who:'Ментор', metric:'Конкретный измеримый результат', feelings:'Реализованность' },
+          { goal:'Финансовая цель: сбережения / доход', why:'Финансовая подушка снижает стресс', how:'Бюджет + ежемесячное откладывание', who:'Финансовый консультант', metric:'Сумма на счёте на 31 декабря', feelings:'Свобода' },
+          { goal:'Цель здоровья (привычка или параметр)', why:'Здоровье — фундамент для всего', how:'Конкретный показатель: вес/жим/бег', who:'Тренер', metric:'Параметр достигнут', feelings:'Сила' },
+          { goal:'Цель отношений', why:'Отношения требуют внимания, как работа', how:'Свидания, общие события, разговоры', who:'Партнёр/семья', metric:'Регулярность встреч, качество диалога', feelings:'Близость' },
+          { goal:'Цель развития (книга / навык / курс)', why:'Без развития жизнь стагнирует', how:'1 курс/12 книг/новый навык', who:'Сообщество по интересам', metric:'Книги/курсы пройдены', feelings:'Расширение' },
+          { goal:'Личное обещание себе — попробовать новое', why:'Опыт ≠ работа, нужны яркие моменты', how:'Танцы, парапланеризм, новая страна, любое непривычное', who:'Друг для смелости', metric:'Сделано хотя бы раз', feelings:'Лёгкость, радость' },
+        ]
+      },
+    ];
+
+    function openTemplatesModal() {
+      $('#tplModal')?.remove();
+      const html = `
+        <div id="tplModal" class="modal-overlay" data-modal>
+          <div class="modal-card" style="max-width:720px;">
+            <div class="modal-header">
+              <h3 class="heading-font text-lg font-extrabold">Шаблоны целей и планов</h3>
+              <button class="modal-close" data-close-modal aria-label="Закрыть">×</button>
+            </div>
+            <p class="text-sm text-[color:var(--text-secondary)] mb-4">Выберите сценарий — он добавит готовый набор целей в ваш список. Их потом можно отредактировать или удалить.</p>
+            <div class="tpl-grid">
+              ${GOAL_TEMPLATES.map(tpl => `
+                <div class="tpl-card" data-tpl="${tpl.id}">
+                  <span class="tpl-icon" style="color:var(--brand-600); display:inline-flex;">${svgIcon(tpl.iconKey, 28)}</span>
+                  <h4>${escapeHtml(tpl.title)}</h4>
+                  <span class="tpl-count">+${tpl.goals.length} целей</span>
+                  <div class="tpl-desc">${escapeHtml(tpl.desc)}</div>
+                </div>
+              `).join('')}
+            </div>
+            <label class="flex items-center gap-2 text-sm cursor-pointer pt-4 mt-4 border-t border-[color:var(--border-soft)]">
+              <input type="checkbox" id="tplCreateProject" checked>
+              <span>Создать отдельный проект и задачи для каждой цели шаблона</span>
+            </label>
+            <div class="flex gap-2 justify-end pt-2">
+              <button type="button" class="btn-ghost text-sm" data-close-modal>Закрыть</button>
+            </div>
+          </div>
+        </div>`;
+      document.body.insertAdjacentHTML('beforeend', html);
+      openModal('tplModal');
+      $('#tplModal').querySelectorAll('.tpl-card').forEach(card => {
+        card.addEventListener('click', async () => {
+          const tpl = GOAL_TEMPLATES.find(t => t.id === card.dataset.tpl);
+          if (!tpl) return;
+          const withProjects = $('#tplCreateProject')?.checked;
+          const ok = await confirmModal(`Добавить «${tpl.title}» — это создаст ${tpl.goals.length} целей${withProjects ? ' и связанный проект-план с задачами' : ''}. Существующие не пострадают.`, 'Добавить');
+          if (!ok) return;
+          const list = Store.goals100.list();
+          let projectId = null;
+          if (withProjects) {
+            const projects = Store.projects.list();
+            const color = PROJECT_COLORS[Math.floor(Math.random() * PROJECT_COLORS.length)].value;
+            const project = { id: uid(), name: tpl.title, description: tpl.desc || '', deadline: null, color, created_at: new Date().toISOString(), goal_id: null };
+            projects.push(project);
+            Store.projects.save(projects);
+            projectId = project.id;
+          }
+          const newGoalIds = [];
+          tpl.goals.forEach(g => {
+            const gid = uid();
+            newGoalIds.push(gid);
+            list.push({
+              id: gid,
+              goal: g.goal, why: g.why, how: g.how, who: g.who, metric: g.metric, feelings: g.feelings,
+              done: false,
+              project_id: projectId,
+              created_at: new Date().toISOString(),
+              from_template: tpl.id
+            });
+          });
+          Store.goals100.save(list);
+          // Создаём задачи в проекте из goal.goal (каждая цель — 1 задача в проекте)
+          if (withProjects && projectId && canWrite()) {
+            for (const g of tpl.goals) {
+              try {
+                const r = await api(taskUrl('/api/tasks'), {
+                  method: 'POST',
+                  body: JSON.stringify({ title: g.goal, description: g.how || '', priority: 'medium', due_date: null })
+                });
+                if (r.ok) {
+                  const j = await r.json();
+                  Store.taskMeta.set(j.task.id, { project_id: projectId, status: 'todo' });
+                }
+              } catch {}
+            }
+            await loadTasks();
+          }
+          closeModal('tplModal');
+          $('#tplModal').remove();
+          toast(`Добавлено ${tpl.goals.length} целей из «${tpl.title}»${withProjects ? ' + проект-план' : ''}`, 'success', 4000);
+          renderGoals100();
+        });
+      });
+    }
+
+    $('#goalsTemplatesBtn')?.addEventListener('click', openTemplatesModal);
+
+    // ---------- Reflection (рефлексия дня) ----------
+    function setDiaryMode(mode) {
+      state.diaryMode = mode;
+      $$('[data-diary-mode]').forEach(b => b.classList.toggle('active', b.dataset.diaryMode === mode));
+      $('#diaryEmotionsView')?.classList.toggle('hidden', mode !== 'emotions');
+      $('#diaryReflectionView')?.classList.toggle('hidden', mode !== 'reflection');
+      if (mode === 'reflection') renderReflections();
+    }
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-diary-mode]');
+      if (!btn) return;
+      setDiaryMode(btn.dataset.diaryMode);
+    });
+
+    function renderReflections() {
+      const list = Store.reflections.list().slice().sort((a, b) => b.date.localeCompare(a.date));
+      const today = todayISO();
+      const todayEntry = list.find(e => e.date === today);
+      // Предзаполнить форму, если запись на сегодня уже есть
+      $('#reflSuccess').value  = todayEntry?.success  || '';
+      $('#reflObstacle').value = todayEntry?.obstacle || '';
+      $('#reflNext').value     = todayEntry?.next     || '';
+      $('#reflMsg').classList.add('hidden');
+
+      const host = $('#reflectionList');
+      if (!list.length) {
+        host.innerHTML = `<div class="empty-state"><strong>Пока нет рефлексий.</strong><br/>Заполните форму выше — это занимает 2 минуты.</div>`;
+        return;
+      }
+      host.innerHTML = list.slice(0, 30).map(r => `
+        <div class="card-flat" data-id="${r.id}">
+          <div class="flex items-center justify-between mb-2">
+            <span class="heading-font font-bold text-sm">${formatDateRu(r.date)}${r.date === today ? ' · сегодня' : ''}</span>
+            <button class="icon-btn refl-delete" data-id="${r.id}" style="width:28px;height:28px;" title="Удалить">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+            </button>
+          </div>
+          ${r.success  ? `<div class="text-sm mb-1" style="display:flex; gap:0.4rem; align-items:flex-start;"><span style="color:var(--success-700); flex-shrink:0; margin-top:2px;">${svgIcon('check_circle', 14)}</span><span><strong>Получилось:</strong> ${escapeHtml(r.success)}</span></div>` : ''}
+          ${r.obstacle ? `<div class="text-sm mb-1" style="display:flex; gap:0.4rem; align-items:flex-start;"><span style="color:var(--warning-700); flex-shrink:0; margin-top:2px;">${svgIcon('alert_tri', 14)}</span><span><strong>Помешало:</strong> ${escapeHtml(r.obstacle)}</span></div>` : ''}
+          ${r.next     ? `<div class="text-sm" style="display:flex; gap:0.4rem; align-items:flex-start;"><span style="color:var(--brand-700); flex-shrink:0; margin-top:2px;">${svgIcon('target', 14)}</span><span><strong>Завтра:</strong> ${escapeHtml(r.next)}</span></div>` : ''}
+        </div>
+      `).join('');
+      host.querySelectorAll('.refl-delete').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const ok = await confirmModal('Удалить запись рефлексии?'); if (!ok) return;
+          Store.reflections.save(Store.reflections.list().filter(x => x.id !== btn.dataset.id));
+          toast('Запись удалена', 'success');
+          renderReflections();
+        });
+      });
+    }
+
+    $('#reflectionForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const today = todayISO();
+      const entry = {
+        id: uid(),
+        date: today,
+        success:  $('#reflSuccess').value.trim(),
+        obstacle: $('#reflObstacle').value.trim(),
+        next:     $('#reflNext').value.trim(),
+        created_at: new Date().toISOString()
+      };
+      if (!entry.success && !entry.obstacle && !entry.next) {
+        showFormMsg('reflMsg', 'Заполните хотя бы одно поле', 'error');
+        return;
+      }
+      const list = Store.reflections.list();
+      const idx = list.findIndex(x => x.date === today);
+      const isNew = idx < 0;
+      if (idx >= 0) { entry.id = list[idx].id; list[idx] = entry; }
+      else list.unshift(entry);
+      Store.reflections.save(list);
+      if (isNew) gameAddXP('reflection_save', entry.id);
+      toast('Рефлексия сохранена', 'success');
+      showFormMsg('reflMsg', 'Сохранено', 'success');
+      renderReflections();
+    });
+
+    // ---------- Gamification ----------
+    const XP_RULES = {
+      task_done:        10,
+      task_done_high:   15,   // вместо +10 для high-priority
+      habit_mark:       5,
+      pomodoro_done:    15,
+      goal_done:        50,
+      reflection_save:  10,
+      note_create:      3,
+      food_entry:       2,
+    };
+    const ACHIEVEMENTS = [
+      { id:'first_task',  iconKey:'medal',  title:'Первый шаг',         desc:'Выполнена первая задача',          xp:25,  check: s => s.tasksDone >= 1 },
+      { id:'tasks_10',    iconKey:'medal',  title:'Десятник',           desc:'10 выполненных задач',             xp:50,  check: s => s.tasksDone >= 10 },
+      { id:'tasks_100',   iconKey:'trophy', title:'Сотня',              desc:'100 выполненных задач',            xp:200, check: s => s.tasksDone >= 100 },
+      { id:'habit_7',     iconKey:'flame',  title:'Неделя подряд',      desc:'7-дневная серия привычки',         xp:80,  check: s => s.maxHabitStreak >= 7 },
+      { id:'habit_30',    iconKey:'crown',  title:'Месяц дисциплины',   desc:'30-дневная серия привычки',        xp:300, check: s => s.maxHabitStreak >= 30 },
+      { id:'pom_5',       iconKey:'sparkle',title:'Фокус-день',         desc:'5 помодоро за один день',          xp:60,  check: s => s.maxPomDay >= 5 },
+      { id:'pom_100',     iconKey:'trophy', title:'Мастер фокуса',      desc:'100 помодоро всего',               xp:250, check: s => s.totalPom >= 100 },
+      { id:'goal_first',  iconKey:'medal',  title:'Первая цель',        desc:'Цель из 100 достигнута',           xp:100, check: s => s.goalsDone >= 1 },
+      { id:'goals_10',    iconKey:'crown',  title:'10 из 100',          desc:'10 достигнутых целей',             xp:300, check: s => s.goalsDone >= 10 },
+      { id:'refl_7',      iconKey:'sparkle',title:'Рефлексирующий',     desc:'7 рефлексий за 7 дней',            xp:80,  check: s => s.reflectionStreak >= 7 },
+      { id:'note_taker',  iconKey:'medal',  title:'Заметочник',         desc:'10 заметок создано',               xp:50,  check: s => s.notesCount >= 10 },
+      { id:'all_spheres', iconKey:'sparkle',title:'Баланс',             desc:'Задачи во всех 7 сферах',          xp:150, check: s => s.sphereCoverage === 7 },
+    ];
+
+    function levelFromXP(xp) { return 1 + Math.floor(Math.sqrt(Math.max(0, xp) / 100)); }
+    function xpForLevel(lv) { return Math.pow(lv - 1, 2) * 100; }
+    function levelProgress(xp) {
+      const lv = levelFromXP(xp);
+      const lo = xpForLevel(lv);
+      const hi = xpForLevel(lv + 1);
+      return { level: lv, lo, hi, pct: Math.round((xp - lo) / (hi - lo) * 100), remaining: hi - xp };
+    }
+
+    function gameComputeStats() {
+      // Подсчёт стат для проверки ачивок
+      const tasksDone = state.tasks.filter(t => t.done).length;
+      // Habits max streak — пробежимся по каждой привычке
+      let maxHabitStreak = 0;
+      Store.habits.list().forEach(h => { const s = computeStreak(h.id); if (s > maxHabitStreak) maxHabitStreak = s; });
+      // Pomodoro: всего и максимум за один день
+      const pomLog = Store.pomLog.list();
+      const totalPom = pomLog.length;
+      const byDay = {};
+      pomLog.forEach(p => { const d = (p.at || '').slice(0, 10); byDay[d] = (byDay[d] || 0) + 1; });
+      const maxPomDay = Object.values(byDay).reduce((m, v) => Math.max(m, v), 0);
+      // Goals
+      const goalsDone = Store.goals100.list().filter(g => g.done).length;
+      // Reflection streak
+      const reflList = Store.reflections.list();
+      let reflectionStreak = 0;
+      let cursor = todayISO();
+      const reflDates = new Set(reflList.map(r => r.date));
+      while (reflDates.has(cursor)) { reflectionStreak++; cursor = addDaysISO(cursor, -1); }
+      // Notes
+      const notesCount = Store.notes.list().length;
+      // Sphere coverage: уникальные сферы среди привычек + задач
+      const spheres = new Set();
+      state.tasks.forEach(t => { const s = getSphere(t); if (s) spheres.add(s); });
+      Store.habits.list().forEach(h => { if (h.sphere) spheres.add(h.sphere); });
+      const sphereCoverage = spheres.size;
+      return { tasksDone, maxHabitStreak, totalPom, maxPomDay, goalsDone, reflectionStreak, notesCount, sphereCoverage };
+    }
+
+    function gameAddXP(type, refId = null) {
+      const game = Store.game.get();
+      const baseXP = XP_RULES[type] || 0;
+      if (!baseXP) return;
+      game.xp = (game.xp || 0) + baseXP;
+      game.events = game.events || [];
+      game.events.push({ at: new Date().toISOString(), type, xp: baseXP, ref_id: refId });
+      if (game.events.length > 200) game.events = game.events.slice(-200);
+      Store.game.save(game);
+      toast(`+${baseXP} XP`, 'info', 1500);
+      gameCheckAchievements(); // может разблокировать
+      renderGameWidget();
+    }
+
+    function gameCheckAchievements() {
+      const game = Store.game.get();
+      game.achievements = game.achievements || [];
+      const stats = gameComputeStats();
+      let any = false;
+      ACHIEVEMENTS.forEach(a => {
+        if (game.achievements.includes(a.id)) return;
+        if (a.check(stats)) {
+          game.achievements.push(a.id);
+          game.xp = (game.xp || 0) + a.xp;
+          any = true;
+          toast(`Награда «${a.title}» · +${a.xp} XP`, 'success', 4000);
+        }
+      });
+      if (any) Store.game.save(game);
+    }
+
+    function renderGameWidget() {
+      const game = Store.game.get();
+      const xp = game.xp || 0;
+      const p = levelProgress(xp);
+      [['xpLevel','xpTitle','xpSub','xpBar'], ['xpLevelBig','xpTitleBig','xpSubBig','xpBarBig']].forEach(ids => {
+        const [lv, t, s, b] = ids.map(id => $('#' + id));
+        if (lv) lv.textContent = p.level;
+        if (t)  t.textContent  = `Уровень ${p.level}`;
+        if (s)  s.textContent  = `${xp} XP · до ${p.level + 1} уровня осталось ${p.remaining}`;
+        if (b)  b.style.width  = Math.min(100, Math.max(0, p.pct)) + '%';
+      });
+    }
+
+    function renderAchievementsView() {
+      gameCheckAchievements();
+      renderGameWidget();
+      const game = Store.game.get();
+      const unlocked = new Set(game.achievements || []);
+      const host = $('#achievementsList');
+      if (!host) return;
+      host.innerHTML = ACHIEVEMENTS.map(a => `
+        <div class="ach-card ${unlocked.has(a.id) ? 'unlocked' : ''}">
+          <div class="ach-icon">${svgIcon(unlocked.has(a.id) ? a.iconKey : 'lock', 22)}</div>
+          <div class="flex-1 min-w-0">
+            <h4>${escapeHtml(a.title)}</h4>
+            <div class="ach-desc">${escapeHtml(a.desc)}</div>
+            <div class="ach-xp">${unlocked.has(a.id) ? '+' + a.xp + ' XP получено' : '+' + a.xp + ' XP при разблокировке'}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    $('#xpWidgetToday')?.addEventListener('click', () => switchView('achievements'));
+
     // ---------- Today ----------
     function renderTodayView() {
       const todayLabel = new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
       $('#todayDateLabel').textContent = todayLabel.charAt(0).toUpperCase() + todayLabel.slice(1);
+      renderOverdueBanner();
       renderDashboard();  // fills #tasksList
       renderTodayHabits();// fills #todayHabits
       // Food summary
@@ -4847,11 +5995,11 @@
       const emot = Store.emotions.list().find(e => e.date === today);
       const status = $('#todayEmotStatus');
       if (emot) {
-        const MOOD_EMOJI = { 1:'😢', 2:'😕', 3:'😐', 4:'🙂', 5:'😊', 6:'😄', 7:'🤩' };
+        const MOOD_LABEL = { 1:'Очень плохо', 2:'Плохо', 3:'Так себе', 4:'Нормально', 5:'Хорошо', 6:'Отлично', 7:'Супер' };
         const parts = [];
-        if (emot.mood) parts.push(MOOD_EMOJI[emot.mood]);
-        if (emot.sleep != null) parts.push(`💤 ${emot.sleep}ч`);
-        if (emot.energy != null) parts.push(`⚡ ${emot.energy}/10`);
+        if (emot.mood) parts.push(MOOD_LABEL[emot.mood]);
+        if (emot.sleep != null) parts.push(`Сон ${emot.sleep}ч`);
+        if (emot.energy != null) parts.push(`Энергия ${emot.energy}/10`);
         status.textContent = parts.join(' · ') || 'Запись сделана';
       } else {
         status.textContent = 'Ещё нет записи';
@@ -4934,8 +6082,14 @@
         list[idx] = { ...list[idx], title, content, tags, updated_at: now };
         toast('Заметка обновлена', 'success');
       } else {
-        list.push({ id: uid(), title, content, tags, created_at: now, updated_at: now });
+        const newId = uid();
+        list.push({ id: newId, title, content, tags, created_at: now, updated_at: now });
         toast('Заметка создана', 'success');
+        Store.notes.save(list);
+        gameAddXP('note_create', newId);
+        closeModal('noteModal');
+        renderNotes();
+        return;
       }
       Store.notes.save(list);
       closeModal('noteModal');
@@ -5184,6 +6338,8 @@
       await loadTasks();
       renderTodayView();
       renderNotifBadge();
+      renderGameWidget();
+      gameCheckAchievements();
       refreshGoogleStatus();
       loadTeamMembers();
       refreshWorkspaces();

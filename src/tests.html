@@ -469,6 +469,310 @@
     });
     return results;
   }
+  // Reflection: "одна запись на день, повторное сохранение обновляет"
+  group('Reflection (дневник)', (t) => {
+    let list = [];
+    function save(entry) {
+      const idx = list.findIndex(x => x.date === entry.date);
+      if (idx >= 0) { entry.id = list[idx].id; list[idx] = entry; }
+      else list.unshift(entry);
+    }
+    save({ id: 'r1', date: '2026-04-21', success: 'Запустил MVP', obstacle: 'Долго писал тексты', next: 'Делать черновик голосом' });
+    t('одна запись добавлена', () => eq(list.length, 1));
+    save({ id: 'r2', date: '2026-04-21', success: 'Дополнил', obstacle: 'То же', next: 'То же' });
+    t('повторная запись за тот же день — обновление', () => { eq(list.length, 1); eq(list[0].success, 'Дополнил'); eq(list[0].id, 'r1'); });
+    save({ id: 'r3', date: '2026-04-22', success: 'a', obstacle: 'b', next: 'c' });
+    t('запись на другой день — добавляется в начало', () => { eq(list.length, 2); eq(list[0].date, '2026-04-22'); });
+    // валидация: пустые поля
+    function valid(entry) { return !!(entry.success || entry.obstacle || entry.next); }
+    t('валидация: пустая запись отклоняется', () => eq(valid({success:'',obstacle:'',next:''}), false));
+    t('валидация: достаточно одного поля', () => eq(valid({success:'',obstacle:'',next:'идея'}), true));
+  });
+
+  // Goal templates
+  const GOAL_TEMPLATES_TEST = [
+    { id: 'project_launch', title: 'Запуск проекта', goals: Array.from({length: 6}, (_, i) => ({ goal: 'g'+i })) },
+    { id: 'exam',           title: 'Подготовка к экзамену', goals: Array.from({length: 6}, (_, i) => ({ goal: 'e'+i })) },
+    { id: 'weight_loss',    title: 'Похудение',     goals: Array.from({length: 6}, (_, i) => ({ goal: 'w'+i })) },
+    { id: 'content',        title: 'Запуск контента', goals: Array.from({length: 6}, (_, i) => ({ goal: 'c'+i })) },
+    { id: 'relocation',     title: 'Переезд',       goals: Array.from({length: 6}, (_, i) => ({ goal: 'r'+i })) },
+    { id: 'year',           title: 'Годовые',       goals: Array.from({length: 6}, (_, i) => ({ goal: 'y'+i })) },
+  ];
+  function applyTemplate(tplId, existing) {
+    const tpl = GOAL_TEMPLATES_TEST.find(t => t.id === tplId);
+    if (!tpl) return existing;
+    return [...existing, ...tpl.goals.map((g, i) => ({ id: tplId+'_'+i, goal: g.goal, done: false, from_template: tplId }))];
+  }
+  group('Goal templates', (t) => {
+    t('6 предзаданных шаблонов', () => eq(GOAL_TEMPLATES_TEST.length, 6));
+    t('каждый шаблон содержит 6 целей', () => {
+      GOAL_TEMPLATES_TEST.forEach(tpl => assert(tpl.goals.length === 6, 'tpl '+tpl.id+' has '+tpl.goals.length));
+    });
+    t('применение шаблона добавляет цели', () => {
+      const after = applyTemplate('exam', []);
+      eq(after.length, 6);
+      eq(after[0].goal, 'e0');
+      eq(after[0].from_template, 'exam');
+    });
+    t('применение к существующему списку — append', () => {
+      const before = [{ id: 'old', goal: 'старая', done: true }];
+      const after = applyTemplate('weight_loss', before);
+      eq(after.length, 7);
+      eq(after[0].id, 'old');
+      eq(after[6].id, 'weight_loss_5');
+    });
+    t('применение неизвестного шаблона ничего не делает', () => {
+      const before = [{ id: 'a' }];
+      eq(applyTemplate('unknown', before), before);
+    });
+    t('две применённые подряд — суммируются', () => {
+      let list = [];
+      list = applyTemplate('year', list);
+      list = applyTemplate('relocation', list);
+      eq(list.length, 12);
+    });
+  });
+
+  // Google Calendar two-way sync
+  group('Google sync: pull/push mapping', (t) => {
+    // Pull: импортируем только события без уже существующей связи
+    function pullPlan(events, taskExtras) {
+      const linked = new Set();
+      Object.values(taskExtras).forEach(m => { if (m.google_event_id) linked.add(m.google_event_id); });
+      return events.filter(ev => {
+        if (linked.has(ev.id)) return false;
+        if (ev.status === 'cancelled') return false;
+        if (!(ev.start || '').slice(0, 10)) return false;
+        return true;
+      });
+    }
+    const events = [
+      { id: 'e1', summary: 'Митинг', start: '2026-04-21T10:00:00Z', status: 'confirmed' },
+      { id: 'e2', summary: 'Уже привязано', start: '2026-04-22', status: 'confirmed' },
+      { id: 'e3', summary: 'Отменено', start: '2026-04-23', status: 'cancelled' },
+      { id: 'e4', summary: 'Без даты', start: '', status: 'confirmed' },
+    ];
+    const extras = { tX: { google_event_id: 'e2' } };
+    const plan = pullPlan(events, extras);
+    t('импорт только нового события', () => eq(plan.map(e => e.id), ['e1']));
+    t('связанные события пропускаются', () => assert(!plan.find(e => e.id === 'e2')));
+    t('cancelled пропускается', () => assert(!plan.find(e => e.id === 'e3')));
+    t('без start не импортируется', () => assert(!plan.find(e => e.id === 'e4')));
+
+    // Marker stripping: импортированное описание не должно содержать [PLANEL task …]
+    function stripMarker(desc) {
+      return (desc || '').replace(/\[PLANEL task [^\]]+\]/g, '').trim();
+    }
+    t('удаление маркера из описания', () => eq(stripMarker('note\n\n[PLANEL task 1234]'), 'note'));
+    t('описание без маркера без изменений', () => eq(stripMarker('просто текст'), 'просто текст'));
+
+    // Push: PATCH если есть event_id, POST если нет
+    function pushMethod(meta) {
+      return meta.google_event_id ? 'PATCH' : 'POST';
+    }
+    t('push для новой задачи — POST', () => eq(pushMethod({}), 'POST'));
+    t('push для связанной задачи — PATCH', () => eq(pushMethod({ google_event_id: 'abc' }), 'PATCH'));
+  });
+
+  // Gamification: XP / Level
+  function levelFromXP(xp) { return 1 + Math.floor(Math.sqrt(Math.max(0, xp) / 100)); }
+  function xpForLevel(lv) { return Math.pow(lv - 1, 2) * 100; }
+  function levelProgress(xp) {
+    const lv = levelFromXP(xp);
+    const lo = xpForLevel(lv);
+    const hi = xpForLevel(lv + 1);
+    return { level: lv, lo, hi, pct: Math.round((xp - lo) / (hi - lo) * 100), remaining: hi - xp };
+  }
+  group('Gamification XP / Level', (t) => {
+    t('0 XP → уровень 1', () => eq(levelFromXP(0), 1));
+    t('99 XP → уровень 1', () => eq(levelFromXP(99), 1));
+    t('100 XP → уровень 2', () => eq(levelFromXP(100), 2));
+    t('399 XP → уровень 2', () => eq(levelFromXP(399), 2));
+    t('400 XP → уровень 3', () => eq(levelFromXP(400), 3));
+    t('900 XP → уровень 4', () => eq(levelFromXP(900), 4));
+    t('xpForLevel(1) = 0', () => eq(xpForLevel(1), 0));
+    t('xpForLevel(2) = 100', () => eq(xpForLevel(2), 100));
+    t('xpForLevel(3) = 400', () => eq(xpForLevel(3), 400));
+    t('progress на 50 XP = 50%', () => eq(levelProgress(50).pct, 50));
+    t('progress.remaining на 50 XP = 50', () => eq(levelProgress(50).remaining, 50));
+    t('progress на 250 XP — уровень 2, до 3 осталось 150', () => {
+      const p = levelProgress(250);
+      eq(p.level, 2); eq(p.remaining, 150);
+    });
+  });
+
+  // Gamification: достижения
+  const ACHIEVEMENTS_TEST = [
+    { id:'first_task',  xp:25,  check: s => s.tasksDone >= 1 },
+    { id:'tasks_10',    xp:50,  check: s => s.tasksDone >= 10 },
+    { id:'tasks_100',   xp:200, check: s => s.tasksDone >= 100 },
+    { id:'habit_7',     xp:80,  check: s => s.maxHabitStreak >= 7 },
+    { id:'all_spheres', xp:150, check: s => s.sphereCoverage === 7 },
+    { id:'goal_first',  xp:100, check: s => s.goalsDone >= 1 },
+  ];
+  function gameCheckAchievements(game, stats) {
+    game.achievements = game.achievements || [];
+    let unlocked = [];
+    ACHIEVEMENTS_TEST.forEach(a => {
+      if (game.achievements.includes(a.id)) return;
+      if (a.check(stats)) {
+        game.achievements.push(a.id);
+        game.xp = (game.xp || 0) + a.xp;
+        unlocked.push(a.id);
+      }
+    });
+    return unlocked;
+  }
+  group('Gamification achievements', (t) => {
+    let game = { xp: 0, achievements: [] };
+    t('первая задача даёт first_task', () => {
+      const unlocked = gameCheckAchievements(game, { tasksDone: 1, maxHabitStreak: 0, sphereCoverage: 0, goalsDone: 0 });
+      eq(unlocked, ['first_task']); eq(game.xp, 25);
+    });
+    t('повторный вызов с теми же стат не разблокирует снова', () => {
+      const unlocked = gameCheckAchievements(game, { tasksDone: 1, maxHabitStreak: 0, sphereCoverage: 0, goalsDone: 0 });
+      eq(unlocked, []); eq(game.xp, 25);
+    });
+    t('10 задач разблокируют tasks_10', () => {
+      const unlocked = gameCheckAchievements(game, { tasksDone: 10, maxHabitStreak: 0, sphereCoverage: 0, goalsDone: 0 });
+      eq(unlocked, ['tasks_10']); eq(game.xp, 75);
+    });
+    t('сразу несколько ачивок за один проход', () => {
+      const game2 = { xp: 0, achievements: [] };
+      const unlocked = gameCheckAchievements(game2, { tasksDone: 100, maxHabitStreak: 7, sphereCoverage: 7, goalsDone: 1 });
+      eq(unlocked.sort(), ['all_spheres','first_task','goal_first','habit_7','tasks_10','tasks_100']);
+      eq(game2.xp, 25 + 50 + 200 + 80 + 150 + 100);
+    });
+    t('sphereCoverage < 7 не разблокирует all_spheres', () => {
+      const game3 = { xp: 0, achievements: [] };
+      gameCheckAchievements(game3, { tasksDone: 0, maxHabitStreak: 0, sphereCoverage: 6, goalsDone: 0 });
+      assert(!game3.achievements.includes('all_spheres'));
+    });
+  });
+
+  // XP rules
+  group('XP rules', (t) => {
+    const RULES = { task_done: 10, task_done_high: 15, habit_mark: 5, pomodoro_done: 15, goal_done: 50, reflection_save: 10, note_create: 3, food_entry: 2 };
+    t('high task даёт 15', () => eq(RULES.task_done_high, 15));
+    t('обычная задача 10', () => eq(RULES.task_done, 10));
+    t('цель 50', () => eq(RULES.goal_done, 50));
+    t('помодоро 15', () => eq(RULES.pomodoro_done, 15));
+    // суммарный сценарий: 5 задач + 3 привычки + 2 помодоро = 50+15+30 = 95
+    const total = 5 * RULES.task_done + 3 * RULES.habit_mark + 2 * RULES.pomodoro_done;
+    t('сценарий: 5 задач + 3 привычки + 2 помодоро = 95 XP', () => eq(total, 95));
+  });
+
+  // Goal → Project decomposition
+  function splitPlanIntoTasks(howText) {
+    if (!howText) return [];
+    const lines = String(howText).split(/\r?\n|[;•·]/).map(s => s.replace(/^\s*[-–—0-9.)\s]+/, '').trim()).filter(Boolean);
+    if (lines.length <= 1) {
+      const alt = String(howText).split(/[.,]/).map(s => s.trim()).filter(s => s.length > 8);
+      if (alt.length > 1) return alt.slice(0, 8);
+    }
+    return lines.slice(0, 8);
+  }
+  group('Goal decomposition', (t) => {
+    t('пустой вход → []', () => eq(splitPlanIntoTasks(''), []));
+    t('переводы строк → список', () => eq(splitPlanIntoTasks('Шаг 1\nШаг 2\nШаг 3'), ['Шаг 1','Шаг 2','Шаг 3']));
+    t('нумерация срезается', () => eq(splitPlanIntoTasks('1) Один\n2) Два'), ['Один','Два']));
+    t('дефисы срезаются', () => eq(splitPlanIntoTasks('- А\n- Б'), ['А','Б']));
+    t('запятые как fallback', () => eq(splitPlanIntoTasks('Сделать зарядку, почитать книгу, написать статью'),
+      ['Сделать зарядку','почитать книгу','написать статью']));
+    t('не более 8 элементов', () => eq(splitPlanIntoTasks('a\nb\nc\nd\ne\nf\ng\nh\ni\nj').length, 8));
+  });
+
+  // Goal progress
+  function goalProgress(goal, tasks, projectIdOf) {
+    if (!goal?.project_id) return null;
+    const linked = tasks.filter(t => projectIdOf(t) === goal.project_id);
+    const done = linked.filter(t => t.done).length;
+    return { total: linked.length, done, pct: linked.length ? Math.round(done / linked.length * 100) : 0 };
+  }
+  group('Goal progress', (t) => {
+    const tasks = [
+      { id: '1', done: true },
+      { id: '2', done: true },
+      { id: '3', done: false },
+    ];
+    const proj = { '1': 'p1', '2': 'p1', '3': 'p1' };
+    const p = goalProgress({ project_id: 'p1' }, tasks, x => proj[x.id]);
+    t('total / done', () => { eq(p.total, 3); eq(p.done, 2); });
+    t('процент 67', () => eq(p.pct, 67));
+    t('цель без project_id → null', () => eq(goalProgress({}, tasks, x => proj[x.id]), null));
+    t('проект без задач → 0%', () => {
+      const q = goalProgress({ project_id: 'pX' }, tasks, x => proj[x.id]);
+      eq(q.total, 0); eq(q.pct, 0);
+    });
+  });
+
+  // Auto-schedule: suggestDateForTask
+  function addDays(iso, n) { const d = new Date(iso); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
+  function suggestDateForTask(priority, existingByDate, today) {
+    const cap = 5;
+    const horizon = priority === 'high' ? 2 : priority === 'medium' ? 4 : 8;
+    for (let offset = 0; offset < horizon; offset++) {
+      const iso = addDays(today, offset);
+      if ((existingByDate[iso] || 0) < cap) {
+        existingByDate[iso] = (existingByDate[iso] || 0) + 1;
+        return iso;
+      }
+    }
+    const iso = addDays(today, horizon);
+    existingByDate[iso] = (existingByDate[iso] || 0) + 1;
+    return iso;
+  }
+  group('Auto-schedule suggestion', (t) => {
+    const today = '2026-04-21';
+    t('high с пустым графиком → сегодня', () => {
+      const map = {};
+      eq(suggestDateForTask('high', map, today), today);
+    });
+    t('пятую high-задачу в сегодня — тоже сегодня', () => {
+      const map = { [today]: 4 };
+      eq(suggestDateForTask('high', map, today), today);
+    });
+    t('шестую high — следующий день', () => {
+      const map = { [today]: 5 };
+      eq(suggestDateForTask('high', map, today), addDays(today, 1));
+    });
+    t('low с пустым графиком → сегодня (в пределах недели)', () => {
+      const map = {};
+      eq(suggestDateForTask('low', map, today), today);
+    });
+    t('medium распределяется в пределах 4 дней', () => {
+      const map = { [today]: 5, [addDays(today,1)]: 5, [addDays(today,2)]: 5 };
+      eq(suggestDateForTask('medium', map, today), addDays(today, 3));
+    });
+    t('если всё плотно — горизонт', () => {
+      const map = {};
+      for (let i = 0; i < 2; i++) map[addDays(today, i)] = 5;
+      eq(suggestDateForTask('high', map, today), addDays(today, 2));
+    });
+  });
+
+  // Overdue count
+  group('Overdue count', (t) => {
+    const today = '2026-04-21';
+    const tasks = [
+      { id:'1', done: false, due_date: '2026-04-19' },  // overdue
+      { id:'2', done: false, due_date: '2026-04-20' },  // overdue
+      { id:'3', done: false, due_date: today },          // сегодня
+      { id:'4', done: true,  due_date: '2026-04-19' },  // готова — не считается
+      { id:'5', done: false, due_date: null },           // без даты
+    ];
+    const overdue = tasks.filter(t => !t.done && t.due_date && t.due_date < today).length;
+    t('2 просроченные', () => eq(overdue, 2));
+  });
+
+  // Theme defaults
+  group('Theme defaults', (t) => {
+    function getTheme(stored) { return stored || 'light'; }
+    t('по умолчанию light', () => eq(getTheme(null), 'light'));
+    t('сохранённый dark возвращается', () => eq(getTheme('dark'), 'dark'));
+    t('сохранённый light возвращается', () => eq(getTheme('light'), 'light'));
+  });
+
   group('Global search', (t) => {
     const sources = {
       tasks: [{ title: 'Подготовить отчёт' }, { title: 'Купить хлеб' }],

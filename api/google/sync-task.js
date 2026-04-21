@@ -34,24 +34,35 @@ module.exports = async function googleSyncTask(req, res) {
       status: task.done ? 'cancelled' : 'confirmed'
     };
 
-    const existingId = task?.google_event_id || null; // на будущее
+    const existingId = typeof req.body?.event_id === 'string' ? req.body.event_id.trim() : null;
     const url = existingId
       ? `https://www.googleapis.com/calendar/v3/calendars/primary/events/${encodeURIComponent(existingId)}`
       : `https://www.googleapis.com/calendar/v3/calendars/primary/events`;
     const method = existingId ? 'PATCH' : 'POST';
 
-    const r = await fetch(url, {
+    let r = await fetch(url, {
       method,
       headers: { Authorization: `Bearer ${g.access_token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(eventBody)
     });
+
+    // Если событие удалили в Google (404/410) — создаём новое
+    if (!r.ok && existingId && (r.status === 404 || r.status === 410)) {
+      console.warn('[google/sync-task] existing event gone, creating new');
+      r = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${g.access_token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(eventBody)
+      });
+    }
+
     if (!r.ok) {
       const text = await r.text();
       console.error('[google/sync-task] api error', r.status, text);
       return res.status(502).json({ error: 'google_api_error', status: r.status });
     }
     const j = await r.json();
-    return res.json({ ok: true, event: { id: j.id, html_link: j.htmlLink } });
+    return res.json({ ok: true, event: { id: j.id, html_link: j.htmlLink, updated: j.updated } });
   } catch (e) {
     console.error('[google/sync-task] error:', e.message);
     return res.status(500).json({ error: 'internal_error' });

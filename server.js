@@ -142,7 +142,16 @@ app.get('/api/google/callback', require('./api/google/callback'));
 app.get('/api/google/status', require('./api/google/status'));
 app.get('/api/google/events', require('./api/google/events'));
 app.post('/api/google/sync-task', require('./api/google/sync-task'));
+app.delete('/api/google/events/:id', require('./api/google/delete-event'));
 app.post('/api/google/disconnect', require('./api/google/disconnect'));
+
+app.get('/api/telegram/status', require('./api/telegram/status'));
+app.post('/api/telegram/connect', require('./api/telegram/connect'));
+app.post('/api/telegram/disconnect', require('./api/telegram/disconnect'));
+app.post('/api/telegram/settings', require('./api/telegram/settings'));
+app.post('/api/telegram/test', require('./api/telegram/test'));
+// Webhook от Telegram (без rate-limit'а, но с проверкой secret_token внутри)
+app.post('/api/telegram/webhook', require('./api/telegram/webhook'));
 
 app.post('/api/team/invite', require('./api/team/invite'));
 const teamMembersHandler = require('./api/team/members');
@@ -183,4 +192,13 @@ process.on('uncaughtException', (e) => console.error('[UNCAUGHT]', e.stack || e)
 process.on('unhandledRejection', (e) => console.error('[UNHANDLED REJECTION]', e));
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => console.log(`[BOOT] PLANEL listening on 0.0.0.0:${PORT}`));
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`[BOOT] PLANEL listening on 0.0.0.0:${PORT}`);
+  // Telegram: регистрируем webhook и запускаем планировщик (если бот настроен)
+  try {
+    require('./api/telegram/register').registerWebhook().catch(e => console.error('[tg] register error:', e.message));
+    require('./api/telegram/scheduler').start();
+  } catch (e) {
+    console.error('[tg] init failed:', e.message);
+  }
+});

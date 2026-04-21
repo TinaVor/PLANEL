@@ -34,7 +34,9 @@ module.exports = async function googleEvents(req, res) {
       end:   e.end?.dateTime   || e.end?.date   || null,
       all_day: !!e.start?.date,
       html_link: e.htmlLink || null,
-      status: e.status
+      status: e.status,
+      updated: e.updated || null,
+      created: e.created || null
     }));
     return res.json({ events });
   } catch (e) {
