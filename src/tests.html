@@ -785,6 +785,153 @@
     t('ничего не нашло', () => eq(buildSearchIndex('zzz', sources).length, 0));
   });
 
+  // Balance wheel: build from activity (tasks + habits)
+  const SPHERES_TEST = [
+    { id: 'health' }, { id: 'finance' }, { id: 'career' },
+    { id: 'relationships' }, { id: 'rest' }, { id: 'growth' }, { id: 'good_deeds' }
+  ];
+  function buildWheelFromActivity(tasks, habits, sphereOf) {
+    const counts = Object.fromEntries(SPHERES_TEST.map(s => [s.id, 0]));
+    tasks.forEach(t => { const s = sphereOf(t); if (s && counts[s] != null) counts[s]++; });
+    habits.forEach(h => { if (h.sphere && counts[h.sphere] != null) counts[h.sphere]++; });
+    const totalItems = Object.values(counts).reduce((a, b) => a + b, 0);
+    if (!totalItems) return null;
+    const maxC = Math.max(1, ...Object.values(counts));
+    const w = {};
+    SPHERES_TEST.forEach(s => {
+      const c = counts[s.id] || 0;
+      w[s.id] = c === 0 ? 0 : Math.max(1, Math.round(c / maxC * 10));
+    });
+    return w;
+  }
+  group('Balance wheel: build from activity', (t) => {
+    const sphereOf = (x) => x.sphere;
+    t('пустые задачи и привычки → null', () => eq(buildWheelFromActivity([], [], sphereOf), null));
+    t('одна сфера заполнена по максимуму → 10', () => {
+      const w = buildWheelFromActivity(
+        [{ sphere: 'health' }, { sphere: 'health' }],
+        [],
+        sphereOf
+      );
+      eq(w.health, 10);
+      eq(w.finance, 0);
+    });
+    t('пропорциональное распределение 2:1 → 10 и 5', () => {
+      const w = buildWheelFromActivity(
+        [{ sphere: 'health' }, { sphere: 'health' }, { sphere: 'career' }],
+        [],
+        sphereOf
+      );
+      eq(w.health, 10);
+      eq(w.career, 5);
+    });
+    t('привычки учитываются наравне с задачами', () => {
+      const w = buildWheelFromActivity(
+        [{ sphere: 'career' }],
+        [{ sphere: 'health' }, { sphere: 'health' }, { sphere: 'health' }],
+        sphereOf
+      );
+      eq(w.health, 10);
+      eq(w.career, Math.round(1 / 3 * 10));
+    });
+    t('минимальная ненулевая оценка — 1', () => {
+      const w = buildWheelFromActivity(
+        Array.from({ length: 20 }, () => ({ sphere: 'health' })).concat([{ sphere: 'rest' }]),
+        [],
+        sphereOf
+      );
+      // 1/20 * 10 = 0.5 → округление до 1 (не 0), т.к. Math.max(1, Math.round(...))
+      eq(w.rest, 1);
+      eq(w.health, 10);
+    });
+    t('задачи без сферы игнорируются', () => {
+      const w = buildWheelFromActivity(
+        [{ sphere: null }, { sphere: 'health' }],
+        [],
+        sphereOf
+      );
+      eq(w.health, 10);
+      eq(w.finance, 0);
+    });
+  });
+
+  // Subtasks preview toggle
+  function toggleSubtask(subs, idx, checked) {
+    const copy = subs.slice();
+    if (copy[idx]) copy[idx] = { ...copy[idx], done: checked };
+    return copy;
+  }
+  group('Subtasks preview toggle', (t) => {
+    const subs = [{ title: 'A', done: false }, { title: 'B', done: false }, { title: 'C', done: true }];
+    t('отмечает чекбокс', () => {
+      const next = toggleSubtask(subs, 0, true);
+      eq(next[0].done, true);
+      eq(subs[0].done, false); // исходный неизменён
+    });
+    t('снимает чекбокс', () => {
+      const next = toggleSubtask(subs, 2, false);
+      eq(next[2].done, false);
+    });
+    t('несуществующий индекс — без изменений', () => {
+      const next = toggleSubtask(subs, 99, true);
+      eq(next.length, subs.length);
+    });
+  });
+
+  // Gratitude diary
+  function saveGratitudeEntry(list, entry) {
+    const idx = list.findIndex(x => x.date === entry.date);
+    const next = list.slice();
+    if (idx >= 0) { entry.id = list[idx].id; next[idx] = entry; }
+    else next.unshift(entry);
+    return next;
+  }
+  function validGratitude(entry) {
+    const any = (entry.items || []).some(Boolean) || !!entry.whom || !!entry.note;
+    return any;
+  }
+  group('Gratitude diary', (t) => {
+    let list = [];
+    list = saveGratitudeEntry(list, { id:'g1', date:'2026-04-21', items:['кофе','солнце','тишина'], whom:'маме', note:'' });
+    t('первая запись добавлена', () => eq(list.length, 1));
+    t('все три благодарности сохранены', () => eq(list[0].items.length, 3));
+    list = saveGratitudeEntry(list, { id:'g2', date:'2026-04-21', items:['обновлено',''], whom:'', note:'новый день' });
+    t('повторная запись за тот же день — обновление', () => {
+      eq(list.length, 1);
+      eq(list[0].items[0], 'обновлено');
+      eq(list[0].id, 'g1'); // сохраняется исходный id
+    });
+    list = saveGratitudeEntry(list, { id:'g3', date:'2026-04-22', items:['завтрак'], whom:'', note:'' });
+    t('запись за другой день добавляется в начало', () => {
+      eq(list.length, 2);
+      eq(list[0].date, '2026-04-22');
+    });
+    t('валидация: полностью пустая запись отклоняется', () => eq(validGratitude({ items:['','',''], whom:'', note:'' }), false));
+    t('валидация: одна благодарность достаточна', () => eq(validGratitude({ items:['кофе','',''], whom:'', note:'' }), true));
+    t('валидация: только кому/заметка тоже ок', () => eq(validGratitude({ items:['','',''], whom:'другу', note:'' }), true));
+  });
+
+  // Diary mode switching (3 modes)
+  group('Diary mode switching', (t) => {
+    const modes = ['emotions', 'reflection', 'gratitude'];
+    function setDiaryMode(state, mode) {
+      if (!modes.includes(mode)) return state;
+      return { ...state, diaryMode: mode };
+    }
+    t('по умолчанию emotions', () => eq(setDiaryMode({}, 'emotions').diaryMode, 'emotions'));
+    t('переключение на reflection', () => eq(setDiaryMode({ diaryMode: 'emotions' }, 'reflection').diaryMode, 'reflection'));
+    t('переключение на gratitude', () => eq(setDiaryMode({ diaryMode: 'emotions' }, 'gratitude').diaryMode, 'gratitude'));
+    t('неизвестный режим игнорируется', () => eq(setDiaryMode({ diaryMode: 'emotions' }, 'unknown').diaryMode, 'emotions'));
+    t('все 3 режима определены', () => eq(modes.length, 3));
+  });
+
+  // Beta badge injection: check that text is preserved
+  group('Beta badge text', (t) => {
+    function hasBeta(html) { return /beta-badge/i.test(html); }
+    t('бейдж помечен CSS-классом', () => assert(hasBeta('<span class="beta-badge">Бета</span>')));
+    t('без бейджа — false', () => eq(hasBeta('<span>Google Calendar</span>'), false));
+  });
+
   clearTestKeys();
 
   // ---------- Рендер ----------
