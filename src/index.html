@@ -253,11 +253,8 @@
     .mock-row .pill.high { background: #FEE2E2; color: #B91C1C; }
     .mock-row .pill.med  { background: #FEF3C7; color: #92400E; }
 
-    .mock-spark {
-      width: 100%; height: 36px;
-    }
-
-    /* Pricing block */
+    /* Градиентный блок, используется в финальном CTA. Изначально назывался
+       pricing-card (отсюда имя), оставлен для совместимости с классом в разметке. */
     .pricing-card {
       background: linear-gradient(135deg, var(--brand-600) 0%, var(--brand-500) 50%, var(--cyan-500) 100%);
       color: #FFFFFF;
@@ -277,20 +274,6 @@
       pointer-events: none;
     }
     .pricing-card * { position: relative; }
-
-    .check-row {
-      display: flex; align-items: flex-start; gap: 0.75rem;
-      padding: 0.55rem 0;
-      font-size: 0.95rem;
-    }
-    .check-row svg {
-      flex-shrink: 0;
-      width: 22px; height: 22px;
-      padding: 3px;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.2);
-      color: #FFFFFF;
-    }
 
     /* KAIROS list */
     .kairos-item {

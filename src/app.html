@@ -2254,6 +2254,9 @@
       const m = document.getElementById(id);
       if (!m) return;
       m.classList.add('hidden');
+      // Снимаем блок скролла тела только если не осталось ни одной открытой
+      // модалки — иначе закрытие вложенной модалки (например, confirm поверх
+      // редактирования задачи) вернёт скролл и сломает родительскую.
       if (!$$('[data-modal]:not(.hidden)').length && !$('#authModal:not(.hidden)')) {
         document.body.style.overflow = '';
       }
@@ -2294,6 +2297,10 @@
     }
 
     // ---------- Local store (per-user) ----------
+    // Ключ localStorage привязан к userId, чтобы при переключении аккаунта
+    // на одном устройстве данные не смешивались. Задачи хранятся на бэкенде,
+    // а Store — это только клиентский слой: настройки, колесо, дневники,
+    // привычки, заметки, гейминг-состояние и мета-данные по задачам.
     function userId() {
       const u = JSON.parse(localStorage.getItem(USER_KEY) || 'null');
       return u?.id || 'anon';
@@ -3059,7 +3066,6 @@
       const extras = Store.taskExtras.for(t.id);
       const subs = extras.subtasks || [];
       const subDone = subs.filter(s => s.done).length;
-      const subBadge = subs.length ? `<span class="subtask-progress" style="display:inline-flex; align-items:center; gap:0.25rem;">${svgIcon('checkbox', 11)}${subDone}/${subs.length}</span>` : '';
       const recBadge = extras.recurrence ? `<span class="status-badge badge-info" title="Повтор" style="display:inline-flex;align-items:center;padding:0.25rem 0.4rem;">${svgIcon('recurring', 11)}</span>` : '';
       const overdue = t.due_date && !t.done && t.due_date < today;
       const dueLabel = t.due_date ? (overdue ? `<span style="color:var(--danger-700);font-weight:600;display:inline-flex;align-items:center;gap:0.25rem;">${svgIcon('calendar_alt', 12)}${formatDateRu(t.due_date)} · просрочено</span>` : `<span style="display:inline-flex;align-items:center;gap:0.25rem;">${svgIcon('calendar_alt', 12)}${formatDateRu(t.due_date)}</span>`) : '';
@@ -3135,6 +3141,10 @@
         });
       });
       root.querySelectorAll('.task-card').forEach(card => {
+        // Вся карточка кликабельна и открывает модалку для редактирования,
+        // но клик по чекбоксу отметки выполнения, по раскрытию подзадач и
+        // по самим подзадачам должен работать по своему сценарию — проверяем
+        // явно, т.к. stopPropagation расставлен не везде (drag-handle совместим).
         card.addEventListener('click', (e) => {
           if (e.target.closest('.task-toggle') || e.target.closest('.subtasks-toggle') || e.target.closest('.subtask-preview-item')) return;
           openTaskModal(card.dataset.id);
@@ -4644,16 +4654,24 @@
       svg.innerHTML = html;
     }
 
+    // Считает сколько задач и привычек приходится на каждую сферу жизни.
+    // Используется и в «Распределении» (tasks+habits отдельно), и в авто-построении
+    // колеса (суммарно) — поэтому возвращаем обе формы одним проходом.
+    function countActivitiesBySphere() {
+      const detailed = Object.fromEntries(SPHERES.map(s => [s.id, { tasks: 0, habits: 0 }]));
+      state.tasks.forEach(t => { const s = getSphere(t); if (s && detailed[s]) detailed[s].tasks++; });
+      Store.habits.list().forEach(h => { if (h.sphere && detailed[h.sphere]) detailed[h.sphere].habits++; });
+      const totals = Object.fromEntries(SPHERES.map(s => [s.id, detailed[s.id].tasks + detailed[s.id].habits]));
+      return { detailed, totals };
+    }
+
     function renderWheelDistribution() {
       const host = $('#wheelDistribution');
-      const counts = Object.fromEntries(SPHERES.map(s => [s.id, { tasks: 0, habits: 0 }]));
-      state.tasks.forEach(t => { const s = getSphere(t); if (s && counts[s]) counts[s].tasks++; });
-      Store.habits.list().forEach(h => { if (h.sphere && counts[h.sphere]) counts[h.sphere].habits++; });
-      const maxTotal = Math.max(1, ...SPHERES.map(s => counts[s.id].tasks + counts[s.id].habits));
+      const { detailed, totals } = countActivitiesBySphere();
+      const maxTotal = Math.max(1, ...Object.values(totals));
       host.innerHTML = SPHERES.map(s => {
-        const c = counts[s.id];
-        const total = c.tasks + c.habits;
-        const pct = Math.round(total / maxTotal * 100);
+        const c = detailed[s.id];
+        const pct = Math.round(totals[s.id] / maxTotal * 100);
         return `
           <div>
             <div class="flex items-center justify-between text-xs mb-1">
@@ -4665,30 +4683,29 @@
       }).join('');
     }
 
+    // Нормализует активность в сферах к шкале 0–10 колеса баланса.
+    // Сфера с нулём сохраняет 0; всё остальное — не меньше 1, чтобы минимальная
+    // активность была видна на радаре.
     async function buildWheelFromActivity() {
-      const counts = Object.fromEntries(SPHERES.map(s => [s.id, 0]));
-      state.tasks.forEach(t => { const s = getSphere(t); if (s && counts[s] != null) counts[s]++; });
-      Store.habits.list().forEach(h => { if (h.sphere && counts[h.sphere] != null) counts[h.sphere]++; });
-      const totalItems = Object.values(counts).reduce((a, b) => a + b, 0);
+      const { totals } = countActivitiesBySphere();
+      const totalItems = Object.values(totals).reduce((a, b) => a + b, 0);
       if (!totalItems) {
         toast('Сначала добавьте задачи или привычки со сферами', 'warn');
         return;
       }
       const ok = await confirmModal('Пересчитать колесо баланса по текущему распределению задач и привычек? Текущие оценки будут заменены.', 'Пересчитать');
       if (!ok) return;
-      const maxC = Math.max(1, ...Object.values(counts));
+      const maxC = Math.max(1, ...Object.values(totals));
       const w = {};
       SPHERES.forEach(s => {
-        const c = counts[s.id] || 0;
+        const c = totals[s.id] || 0;
         w[s.id] = c === 0 ? 0 : Math.max(1, Math.round(c / maxC * 10));
       });
       Store.wheel.save(w);
       renderWheel();
       toast('Колесо построено по задачам и привычкам', 'success');
     }
-    document.addEventListener('click', (e) => {
-      if (e.target.closest('#buildWheelFromActivityBtn')) buildWheelFromActivity();
-    });
+    $('#buildWheelFromActivityBtn')?.addEventListener('click', buildWheelFromActivity);
 
     // ---------- Food diary ----------
     let foodEditingId = null;
@@ -5155,16 +5172,21 @@
     }
 
     // ---------- Dark theme ----------
+    // Тема переключается из двух мест (свитч в сайдбаре и иконка в шапке на мобильном),
+    // оба должны отражать текущее состояние. Узлы кэшируем при первом применении темы.
+    const themeNodes = {
+      toggle: $('#darkToggle'),
+      metaColor: document.querySelector('meta[name="theme-color"]'),
+      moon: document.querySelector('#mobThemeToggle .theme-icon-moon'),
+      sun:  document.querySelector('#mobThemeToggle .theme-icon-sun'),
+    };
     function applyTheme(theme) {
       const isDark = theme === 'dark';
       document.body.classList.toggle('dark-mode', isDark);
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isDark ? '#0B1220' : '#1F76F2');
-      const t = $('#darkToggle'); if (t) t.checked = isDark;
-      // Mobile header toggle icon state
-      const moon = document.querySelector('#mobThemeToggle .theme-icon-moon');
-      const sun  = document.querySelector('#mobThemeToggle .theme-icon-sun');
-      moon?.classList.toggle('hidden', isDark);
-      sun?.classList.toggle('hidden', !isDark);
+      themeNodes.metaColor?.setAttribute('content', isDark ? '#0B1220' : '#1F76F2');
+      if (themeNodes.toggle) themeNodes.toggle.checked = isDark;
+      themeNodes.moon?.classList.toggle('hidden', isDark);
+      themeNodes.sun?.classList.toggle('hidden', !isDark);
     }
     function getTheme() {
       try { return localStorage.getItem('planel_theme') || 'light'; }
