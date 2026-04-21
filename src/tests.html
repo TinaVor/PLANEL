@@ -932,6 +932,300 @@
     t('без бейджа — false', () => eq(hasBeta('<span>Google Calendar</span>'), false));
   });
 
+  // ---------- Life in Weeks ----------
+  // Периоды жизни и вычисление недель прожитой жизни (mirror логики из app.html)
+  const LIFE_WEEKS_TOTAL = 90 * 52;
+  const LIFE_PERIODS_T = [
+    { id:'childhood',  male:{from:0,    to:313},                   female:{from:0,    to:313} },
+    { id:'school',     male:{from:314,  to:938},                   female:{from:314,  to:938} },
+    { id:'education',  male:{from:939,  to:1199},                  female:{from:939,  to:1199} },
+    { id:'career',     male:{from:1200, to:3334},                  female:{from:1200, to:3076} },
+    { id:'retirement', male:{from:3335, to:LIFE_WEEKS_TOTAL-1},    female:{from:3077, to:LIFE_WEEKS_TOTAL-1} },
+  ];
+  function periodOfWeek(weekIdx, gender) {
+    for (const p of LIFE_PERIODS_T) {
+      const r = p[gender];
+      if (weekIdx >= r.from && weekIdx <= r.to) return p.id;
+    }
+    return null;
+  }
+  function weeksLivedSince(birthDate, nowDate) {
+    const MS = 7 * 24 * 60 * 60 * 1000;
+    return Math.max(0, Math.floor((nowDate - birthDate) / MS));
+  }
+  group('Life in Weeks', (t) => {
+    t('общее число клеток 90×52 = 4680', () => eq(LIFE_WEEKS_TOTAL, 4680));
+    t('0 недель → период childhood', () => eq(periodOfWeek(0, 'male'), 'childhood'));
+    t('неделя 314 → школа (1 класс)', () => eq(periodOfWeek(314, 'male'), 'school'));
+    t('неделя 939 → университет (начало)', () => eq(periodOfWeek(939, 'male'), 'education'));
+    t('неделя 1200 → карьера (начало)', () => eq(periodOfWeek(1200, 'male'), 'career'));
+    t('женская пенсия начинается на 3077', () => eq(periodOfWeek(3077, 'female'), 'retirement'));
+    t('мужская пенсия начинается на 3335', () => eq(periodOfWeek(3335, 'male'), 'retirement'));
+    t('для женщин карьера заканчивается раньше мужской', () => {
+      eq(periodOfWeek(3100, 'male'), 'career');
+      eq(periodOfWeek(3100, 'female'), 'retirement');
+    });
+    t('возраст > 90 лет → null (за пределами сетки)', () => eq(periodOfWeek(5000, 'male'), null));
+    t('weeksLivedSince: 1 неделя назад = 1', () => {
+      const now = new Date('2026-04-21');
+      const birth = new Date('2026-04-14');
+      eq(weeksLivedSince(birth, now), 1);
+    });
+    t('weeksLivedSince: ровно 0 дней = 0', () => {
+      const d = new Date('2026-04-21');
+      eq(weeksLivedSince(d, d), 0);
+    });
+    t('weeksLivedSince: 10 лет = ~521 неделя', () => {
+      const birth = new Date('2016-04-21');
+      const now = new Date('2026-04-21');
+      const w = weeksLivedSince(birth, now);
+      assert(w >= 520 && w <= 522, 'got ' + w);
+    });
+    t('валидация: дата рождения в будущем → 0', () => {
+      const birth = new Date('2030-01-01');
+      const now = new Date('2026-04-21');
+      eq(weeksLivedSince(birth, now), 0);
+    });
+  });
+
+  // Life milestones: gender differences
+  const LIFE_MILESTONES_T = [
+    { id:'adult',      male: 939,  female: 939 },
+    { id:'wedding',    male: 1618, female: 1460 },
+    { id:'first_child',male: 1560, female: 1404 },
+    { id:'grandchild', male: 3120, female: 2808 },
+    { id:'avg_life',   male: 3864, female: 4029 },
+  ];
+  group('Life milestones', (t) => {
+    t('совершеннолетие одинаково для обоих полов', () => {
+      const m = LIFE_MILESTONES_T.find(x => x.id === 'adult');
+      eq(m.male, m.female);
+    });
+    t('первый ребёнок: у женщин раньше на 3 года', () => {
+      const m = LIFE_MILESTONES_T.find(x => x.id === 'first_child');
+      const diffYears = (m.male - m.female) / 52;
+      assert(diffYears > 2.9 && diffYears < 3.1, 'diff ' + diffYears);
+    });
+    t('средняя жизнь: женщины дольше', () => {
+      const m = LIFE_MILESTONES_T.find(x => x.id === 'avg_life');
+      assert(m.female > m.male);
+    });
+    t('первый внук: у женщин раньше', () => {
+      const m = LIFE_MILESTONES_T.find(x => x.id === 'grandchild');
+      assert(m.female < m.male);
+    });
+  });
+
+  // ---------- Flashcards SM-2 lite ----------
+  function computeCardReview(card, quality) {
+    const nowISO = todayISO();
+    let { interval = 0, ease = 2.5, repetitions = 0 } = card;
+    if (quality === 1) {
+      repetitions = 0;
+      interval = 1;
+      ease = Math.max(1.3, ease - 0.2);
+    } else {
+      repetitions += 1;
+      if (repetitions === 1) interval = 1;
+      else if (repetitions === 2) interval = 6;
+      else interval = Math.max(1, Math.round(interval * ease));
+      if (quality === 2) ease = Math.max(1.3, ease - 0.15);
+      else if (quality === 4) ease = ease + 0.1;
+    }
+    return { interval, ease, repetitions, next_due: addDaysISO(nowISO, interval), last_review: nowISO };
+  }
+  function cardsDueNow(cards, today) {
+    return cards.filter(c => !c.next_due || c.next_due <= today);
+  }
+  group('Flashcards SM-2', (t) => {
+    t('новая карточка, первое «Хорошо» → interval=1, rep=1', () => {
+      const r = computeCardReview({}, 3);
+      eq(r.interval, 1); eq(r.repetitions, 1);
+    });
+    t('второе повторение → interval=6', () => {
+      const r = computeCardReview({ repetitions: 1, interval: 1, ease: 2.5 }, 3);
+      eq(r.interval, 6); eq(r.repetitions, 2);
+    });
+    t('третье повторение → interval = 6 * ease ≈ 15', () => {
+      const r = computeCardReview({ repetitions: 2, interval: 6, ease: 2.5 }, 3);
+      eq(r.interval, 15); eq(r.repetitions, 3);
+    });
+    t('«Не помню» (1) сбрасывает repetitions к 0 и interval к 1', () => {
+      const r = computeCardReview({ repetitions: 5, interval: 60, ease: 2.5 }, 1);
+      eq(r.repetitions, 0); eq(r.interval, 1);
+    });
+    t('«Легко» (4) увеличивает ease на +0.1', () => {
+      const r = computeCardReview({ repetitions: 1, interval: 1, ease: 2.5 }, 4);
+      assert(Math.abs(r.ease - 2.6) < 1e-9, 'ease=' + r.ease);
+    });
+    t('«Сложно» (2) уменьшает ease на −0.15', () => {
+      const r = computeCardReview({ repetitions: 1, interval: 1, ease: 2.5 }, 2);
+      assert(Math.abs(r.ease - 2.35) < 1e-9, 'ease=' + r.ease);
+    });
+    t('ease никогда не падает ниже 1.3', () => {
+      let c = { ease: 1.35 };
+      for (let i = 0; i < 10; i++) c = computeCardReview(c, 1);
+      assert(c.ease >= 1.3, 'ease=' + c.ease);
+    });
+    t('cardsDueNow: новая карточка (next_due=null) попадает в очередь', () => {
+      const today = todayISO();
+      const list = [{ id:'a', next_due: null }, { id:'b', next_due: addDaysISO(today, 3) }];
+      eq(cardsDueNow(list, today).length, 1);
+      eq(cardsDueNow(list, today)[0].id, 'a');
+    });
+    t('cardsDueNow: просроченные попадают в очередь', () => {
+      const today = todayISO();
+      const list = [
+        { id:'a', next_due: addDaysISO(today, -2) },
+        { id:'b', next_due: today },
+        { id:'c', next_due: addDaysISO(today, 5) }
+      ];
+      eq(cardsDueNow(list, today).map(c => c.id), ['a', 'b']);
+    });
+  });
+
+  // ---------- Zettelkasten ----------
+  function parseZettelLinks(text) {
+    const re = /\[\[([^\]]+)\]\]/g;
+    const set = new Set();
+    let m;
+    while ((m = re.exec(text || '')) !== null) {
+      const x = m[1].trim();
+      if (x) set.add(x);
+    }
+    return Array.from(set);
+  }
+  function zettelByTitle(list, title) {
+    const tt = (title || '').toLowerCase();
+    return list.find(z => (z.title || '').toLowerCase() === tt) || null;
+  }
+  function buildBacklinks(list) {
+    const map = new Map();
+    list.forEach(z => {
+      parseZettelLinks(z.content).forEach(title => {
+        const target = zettelByTitle(list, title);
+        if (target) {
+          if (!map.has(target.id)) map.set(target.id, []);
+          map.get(target.id).push(z.id);
+        }
+      });
+    });
+    return map;
+  }
+  group('Zettelkasten', (t) => {
+    t('parseZettelLinks: одна ссылка', () => eq(parseZettelLinks('см. [[Идея]]'), ['Идея']));
+    t('parseZettelLinks: несколько', () => eq(parseZettelLinks('[[A]] и [[B]]'), ['A','B']));
+    t('parseZettelLinks: дубликаты схлопываются', () => eq(parseZettelLinks('[[A]] и [[A]]'), ['A']));
+    t('parseZettelLinks: пустой текст → []', () => eq(parseZettelLinks(''), []));
+    t('parseZettelLinks: пробелы по краям обрезаются', () => eq(parseZettelLinks('[[ заметка ]]'), ['заметка']));
+    t('zettelByTitle: case-insensitive', () => {
+      const list = [{ id:'1', title:'ПРОДАЖИ' }];
+      assert(zettelByTitle(list, 'продажи') !== null);
+    });
+    t('backlinks: двусторонние связи', () => {
+      const list = [
+        { id:'a', title:'A', content:'см [[B]]' },
+        { id:'b', title:'B', content:'см [[A]]' }
+      ];
+      const bl = buildBacklinks(list);
+      eq(bl.get('a'), ['b']);
+      eq(bl.get('b'), ['a']);
+    });
+    t('backlinks: битые ссылки не попадают', () => {
+      const list = [{ id:'a', title:'A', content:'[[Несуществующая]]' }];
+      const bl = buildBacklinks(list);
+      eq(bl.size, 0);
+    });
+  });
+
+  // ---------- Task author badge ----------
+  function taskAuthorVisible(task, currentUserId) {
+    if (!task.created_by || !task.created_by_email) return null;
+    if (task.created_by === currentUserId) return null;
+    return task.created_by_email;
+  }
+  group('Task author badge', (t) => {
+    t('своя задача → не показываем автора', () => {
+      eq(taskAuthorVisible({ created_by:'me', created_by_email:'me@x.com' }, 'me'), null);
+    });
+    t('чужая задача → показываем email', () => {
+      eq(taskAuthorVisible({ created_by:'other', created_by_email:'other@x.com' }, 'me'), 'other@x.com');
+    });
+    t('легаси без created_by → скрываем', () => {
+      eq(taskAuthorVisible({ title:'X' }, 'me'), null);
+    });
+    t('есть created_by, но нет email → скрываем (бэкенд не ответил)', () => {
+      eq(taskAuthorVisible({ created_by:'other' }, 'me'), null);
+    });
+  });
+
+  // ---------- Diary mode (food добавлен) ----------
+  group('Diary modes (4 режима)', (t) => {
+    const modes = ['food', 'emotions', 'reflection', 'gratitude'];
+    function setDiaryMode(state, mode) {
+      if (!modes.includes(mode)) return state;
+      return { ...state, diaryMode: mode };
+    }
+    t('все 4 режима определены', () => eq(modes.length, 4));
+    t('food теперь в диапазоне режимов', () => assert(modes.includes('food')));
+    t('переключение food ↔ gratitude', () => {
+      let s = { diaryMode: 'food' };
+      s = setDiaryMode(s, 'gratitude');
+      eq(s.diaryMode, 'gratitude');
+    });
+    t('несуществующий режим игнорируется', () => {
+      eq(setDiaryMode({ diaryMode: 'food' }, 'invalid').diaryMode, 'food');
+    });
+  });
+
+  // ---------- Project templates ----------
+  const PROJECT_TEMPLATES_T = [
+    { id:'mvp_launch',  tasks: Array.from({length: 8}, (_, i) => ({ title:'t'+i, priority:'high', due_offset: i*5 })) },
+    { id:'marketplace', tasks: Array.from({length: 8}, (_, i) => ({ title:'m'+i, priority:'medium', due_offset: i*5 })) },
+  ];
+  function applyProjectTemplate(tpl, existing, today = todayISO()) {
+    const project = { id:'p_'+tpl.id, name:tpl.id, from_template: tpl.id };
+    const tasks = tpl.tasks.map((tk, i) => ({
+      id: 't_' + tpl.id + '_' + i,
+      title: tk.title,
+      priority: tk.priority || 'medium',
+      due_date: tk.due_offset != null ? addDaysISO(today, tk.due_offset) : null,
+      project_id: project.id,
+    }));
+    return {
+      projects: [...existing.projects, project],
+      tasks: [...existing.tasks, ...tasks],
+    };
+  }
+  group('Project templates', (t) => {
+    t('apply добавляет один проект и N задач', () => {
+      const r = applyProjectTemplate(PROJECT_TEMPLATES_T[0], { projects: [], tasks: [] }, '2026-04-21');
+      eq(r.projects.length, 1);
+      eq(r.tasks.length, 8);
+    });
+    t('у всех задач в шаблоне есть project_id', () => {
+      const r = applyProjectTemplate(PROJECT_TEMPLATES_T[0], { projects: [], tasks: [] });
+      assert(r.tasks.every(t => t.project_id), 'some tasks missing project_id');
+    });
+    t('due_date рассчитан от today', () => {
+      const r = applyProjectTemplate(PROJECT_TEMPLATES_T[0], { projects: [], tasks: [] }, '2026-04-21');
+      eq(r.tasks[0].due_date, '2026-04-21');
+      eq(r.tasks[1].due_date, '2026-04-26');
+    });
+    t('применение к существующему списку — append', () => {
+      const r = applyProjectTemplate(PROJECT_TEMPLATES_T[0], { projects: [{ id:'old' }], tasks: [{ id:'t0' }] });
+      eq(r.projects.length, 2);
+      eq(r.tasks.length, 9);
+    });
+    t('два шаблона подряд суммируются', () => {
+      let state = { projects: [], tasks: [] };
+      state = applyProjectTemplate(PROJECT_TEMPLATES_T[0], state);
+      state = applyProjectTemplate(PROJECT_TEMPLATES_T[1], state);
+      eq(state.projects.length, 2);
+      eq(state.tasks.length, 16);
+    });
+  });
+
   clearTestKeys();
 
   // ---------- Рендер ----------

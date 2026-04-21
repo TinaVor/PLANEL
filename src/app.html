@@ -481,6 +481,11 @@
     .card-rate-btn[data-quality="2"] { color: #C2410C; } .card-rate-btn[data-quality="2"]:hover { background: #FFEDD5; border-color: #FDBA74; }
     .card-rate-btn[data-quality="3"] { color: #047857; } .card-rate-btn[data-quality="3"]:hover { background: #D1FAE5; border-color: #6EE7B7; }
     .card-rate-btn[data-quality="4"] { color: #1E40AF; } .card-rate-btn[data-quality="4"]:hover { background: #DBEAFE; border-color: #93C5FD; }
+    /* Тёмная тема: приглушённые версии hover-цветов, чтобы кнопка не «резала» глаз. */
+    body.dark-mode .card-rate-btn[data-quality="1"] { color:#FCA5A5; } body.dark-mode .card-rate-btn[data-quality="1"]:hover { background:#3B0E13; border-color:#7F1D1D; }
+    body.dark-mode .card-rate-btn[data-quality="2"] { color:#FDBA74; } body.dark-mode .card-rate-btn[data-quality="2"]:hover { background:#431407; border-color:#9A3412; }
+    body.dark-mode .card-rate-btn[data-quality="3"] { color:#6EE7B7; } body.dark-mode .card-rate-btn[data-quality="3"]:hover { background:#022C22; border-color:#065F46; }
+    body.dark-mode .card-rate-btn[data-quality="4"] { color:#93C5FD; } body.dark-mode .card-rate-btn[data-quality="4"]:hover { background:#0C2042; border-color:#0E4AA8; }
     .card-rate-next { font-size: 0.7rem; color: var(--text-muted); font-weight: 500; }
     .card-item { display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.7rem; border-radius:8px; background:var(--bg-muted); }
     .card-item:hover { background:var(--brand-50); }
@@ -490,6 +495,9 @@
     .card-due-soon   { background:#FEF3C7; color:#92400E; border:1px solid #FDE68A; }
     .card-due-later  { background:var(--bg-surface); color:var(--text-muted); border:1px solid var(--border-soft); }
     .card-due-new    { background:#DBEAFE; color:#1E40AF; border:1px solid #93C5FD; }
+    body.dark-mode .card-due-now  { background:#3B0E13; color:#FCA5A5; border-color:#7F1D1D; }
+    body.dark-mode .card-due-soon { background:#3D2B0A; color:#FBBF24; border-color:#92400E; }
+    body.dark-mode .card-due-new  { background:#0C2042; color:#7BB8FF; border-color:#0E4AA8; }
 
     /* ============ Zettelkasten ============ */
     .zettel-card {
@@ -646,6 +654,7 @@
     .lw-legend-lived   { background:#3B82F6; }
     .lw-legend-current { background:transparent; border:2px solid #0F172A; }
     .lw-legend-event   { background:#F59E0B; border:1px solid #FFFFFF; box-shadow: 0 1px 2px rgba(146,64,14,0.4); }
+    body.dark-mode .lw-legend-empty   { background:#0C2042; border-color:#0E4AA8; }
     body.dark-mode .lw-legend-current { border-color:#F1F5F9; }
     body.dark-mode .lw-legend-event   { background:#FBBF24; border-color:var(--bg-surface); }
 
@@ -657,6 +666,24 @@
     .lw-stat-label { font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.2rem; }
     .lw-stat-value { font-family:"Manrope", "Inter", sans-serif; font-size:1.5rem; font-weight:800; color:var(--text-strong); line-height:1.1; }
     .lw-stat-sub { font-size:0.72rem; color:var(--text-muted); margin-top:0.2rem; }
+
+    /* ============ Onboarding ============ */
+    /* Полноэкранная модалка с пошаговым туром. Каждый шаг — карточка с иконкой
+       в градиентной шапке + текстом. Прогресс-бар сверху показывает, где мы. */
+    .onb-progress { height:4px; background:var(--bg-muted); border-radius:9999px; overflow:hidden; margin-bottom:1rem; }
+    .onb-progress span { display:block; height:100%; background:linear-gradient(90deg, var(--brand-500), var(--cyan-500)); border-radius:9999px; transition: width 240ms ease; }
+    .onb-step { min-height: 220px; display:flex; flex-direction:column; gap:0.8rem; }
+    .onb-hero {
+      background: linear-gradient(135deg, var(--brand-500), var(--cyan-500));
+      color:#fff; border-radius:14px; padding:1.4rem 1.4rem;
+      display:flex; align-items:center; gap:1rem;
+    }
+    .onb-hero-icon { width:48px; height:48px; flex-shrink:0; border-radius:12px; background:rgba(255,255,255,0.18); display:inline-flex; align-items:center; justify-content:center; }
+    .onb-hero-icon svg { width:26px; height:26px; }
+    .onb-hero-title { font-family:"Manrope","Inter",sans-serif; font-weight:800; font-size:1.15rem; letter-spacing:-0.01em; }
+    .onb-body { color:var(--text-primary); font-size:0.95rem; line-height:1.5; }
+    .onb-body ul { margin:0.3rem 0 0 1rem; padding:0; }
+    .onb-body li { margin-bottom:0.25rem; }
 
     /* Beta label */
     .beta-badge {
@@ -825,11 +852,20 @@
     body.dark-mode .ach-card.unlocked { background:#11192A; }
 
     /* Элементы уведомлений */
-    .notif-item { display:block; padding:0.7rem 1rem; border-bottom:1px solid var(--border-soft); cursor:pointer; transition:background 140ms ease; position:relative; }
+    .notif-item { display:block; padding:0.7rem 2.2rem 0.7rem 1rem; border-bottom:1px solid var(--border-soft); cursor:pointer; transition:background 140ms ease; position:relative; }
     .notif-item:last-child { border-bottom:none; }
     .notif-item:hover { background:var(--bg-muted); }
     .notif-item.unread { background:var(--brand-50); }
     .notif-item.unread:hover { background:var(--brand-100); }
+    .notif-delete {
+      position: absolute; top: 0.5rem; right: 0.5rem;
+      width: 22px; height: 22px; border-radius: 6px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: transparent; border: none; cursor: pointer;
+      color: var(--text-muted); opacity: 0; transition: opacity 120ms ease, background 120ms ease, color 120ms ease;
+    }
+    .notif-item:hover .notif-delete, .notif-delete:focus-visible { opacity: 1; }
+    .notif-delete:hover { background: var(--bg-surface); color: var(--danger-700); }
     .notif-dot { position:absolute; left:0.35rem; top:1rem; width:6px; height:6px; border-radius:9999px; background:var(--brand-500); }
     .notif-subject { font-weight:600; color:var(--text-strong); font-size:0.86rem; margin-bottom:0.15rem; }
     .notif-body    { font-size:0.8rem; color:var(--text-secondary); line-height:1.4; }
@@ -1223,6 +1259,23 @@
       <div class="flex gap-2 justify-end">
         <button type="button" class="btn-ghost text-sm" data-close-modal>Отмена</button>
         <button type="button" class="btn-danger text-sm" id="confirmOk">Удалить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Onboarding (первый вход после регистрации + «пройти ещё раз» из профиля) -->
+  <div id="onboardingModal" class="modal-overlay hidden" data-modal>
+    <div class="modal-card" style="max-width:560px;">
+      <div class="modal-header">
+        <h3 class="heading-font text-lg font-extrabold" id="onbTitle">Быстрый тур</h3>
+        <button class="modal-close" id="onbSkip" aria-label="Пропустить">×</button>
+      </div>
+      <div class="onb-progress"><span id="onbProgressBar"></span></div>
+      <div id="onbStep" class="onb-step"></div>
+      <div class="flex items-center justify-between gap-2 pt-4">
+        <button type="button" class="btn-ghost text-sm" id="onbPrev">Назад</button>
+        <span class="text-xs text-[color:var(--text-muted)]" id="onbCounter">1 / 7</span>
+        <button type="button" class="btn-primary text-sm" id="onbNext">Дальше</button>
       </div>
     </div>
   </div>
@@ -2233,6 +2286,16 @@
                 </span>
                 <span class="switch"><input type="checkbox" id="darkToggle"><span class="slider"></span></span>
               </label>
+              <div class="flex items-center justify-between gap-3 pt-4 mt-4 border-t border-[color:var(--border-soft)]">
+                <span class="flex items-center gap-2.5">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01"/><path d="M8 14c1 1.5 2.5 2 4 2s3-0.5 4-2"/></svg>
+                  <span>
+                    <span class="block text-sm font-semibold text-[color:var(--text-strong)]">Пройти обучение ещё раз</span>
+                    <span class="block text-xs text-[color:var(--text-muted)]">Короткий тур по разделам приложения</span>
+                  </span>
+                </span>
+                <button type="button" class="btn-ghost text-sm" id="replayOnboardingBtn">Запустить</button>
+              </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -2794,6 +2857,11 @@
         list: () => loadBucket('zettels', []),
         save: (arr) => saveBucket('zettels', arr),
       },
+      onboarding: {
+        get: () => loadBucket('onboarding', { done: false }),
+        markDone: () => saveBucket('onboarding', { done: true, at: new Date().toISOString() }),
+        reset: () => saveBucket('onboarding', { done: false }),
+      },
       game: {
         get: () => loadBucket('game', { xp: 0, events: [], achievements: [] }),
         save: (obj) => saveBucket('game', obj),
@@ -2817,6 +2885,7 @@
       teamMembers: [],       // собственные приглашённые сотрудники
       notesQuery: '',
       diaryMode: 'emotions',
+      zettelQuery: '',
     };
     function getStatus(task) {
       const meta = Store.taskMeta.for(task.id);
@@ -4791,8 +4860,9 @@
     });
 
     // ---------- Notifications (localStorage per-user + broadcast shared) ----------
-    function notifOwnKey() { return 'planel_notifications_' + userId(); }
-    function notifReadKey() { return 'planel_notif_read_' + userId(); }
+    function notifOwnKey()       { return 'planel_notifications_' + userId(); }
+    function notifReadKey()      { return 'planel_notif_read_' + userId(); }
+    function notifDismissedKey() { return 'planel_notif_dismissed_' + userId(); }
     const BROADCAST_KEY = 'planel_broadcasts';
 
     function readJSON(key, fallback) {
@@ -4804,7 +4874,13 @@
       const own = readJSON(notifOwnKey(), []);
       const broadcasts = readJSON(BROADCAST_KEY, []).filter(b => !b.target_user_id || b.target_user_id === userId());
       const read = readJSON(notifReadKey(), {});
-      return [...own, ...broadcasts].map(n => ({ ...n, read: !!read[n.id] }))
+      // Скрытые записи фильтруются на чтении: для broadcast'ов их невозможно
+      // удалить физически (хранятся общим ключом), поэтому ведём per-user
+      // список dismissed id — уведомление пропадает для этого пользователя.
+      const dismissed = readJSON(notifDismissedKey(), {});
+      return [...own, ...broadcasts]
+        .filter(n => !dismissed[n.id])
+        .map(n => ({ ...n, read: !!read[n.id] }))
         .sort((a,b) => (b.created_at||'').localeCompare(a.created_at||''));
     }
     function unreadCount() { return allNotifications().filter(n => !n.read).length; }
@@ -4826,6 +4902,21 @@
       const read = readJSON(notifReadKey(), {});
       allNotifications().forEach(n => { read[n.id] = true; });
       writeJSON(notifReadKey(), read);
+      renderNotifBadge();
+      renderNotifDropdown();
+    }
+    // Удаляем: собственные уведомления чистим из списка, broadcast'ы добавляем
+    // в dismissed-мапу (физически не удалить — они общие).
+    function deleteNotif(id) {
+      const own = readJSON(notifOwnKey(), []);
+      const owned = own.find(n => n.id === id);
+      if (owned) {
+        writeJSON(notifOwnKey(), own.filter(n => n.id !== id));
+      } else {
+        const dismissed = readJSON(notifDismissedKey(), {});
+        dismissed[id] = true;
+        writeJSON(notifDismissedKey(), dismissed);
+      }
       renderNotifBadge();
       renderNotifDropdown();
     }
@@ -4858,13 +4949,26 @@
       list.innerHTML = items.slice(0, 30).map(n => `
         <div class="notif-item ${n.read ? '' : 'unread'}" data-id="${n.id}">
           ${n.read ? '' : '<span class="notif-dot"></span>'}
+          <button type="button" class="notif-delete" data-id="${n.id}" aria-label="Удалить уведомление" title="Удалить">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
           <div class="notif-subject">${escapeHtml(n.subject || 'Уведомление')}</div>
           <div class="notif-body">${escapeHtml(n.body || '')}</div>
           <div class="notif-time">${formatNotifTime(n.created_at)}${n.channels?.email ? ' · также на email' : ''}</div>
         </div>
       `).join('');
+      list.querySelectorAll('.notif-delete').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          // Останавливаем bubbling, чтобы клик по крестику не помечал уведомление как прочитанное
+          e.stopPropagation();
+          deleteNotif(btn.dataset.id);
+        });
+      });
       list.querySelectorAll('.notif-item').forEach(el => {
-        el.addEventListener('click', () => markNotifRead(el.dataset.id));
+        el.addEventListener('click', (e) => {
+          if (e.target.closest('.notif-delete')) return;
+          markNotifRead(el.dataset.id);
+        });
       });
     }
 
@@ -6752,9 +6856,12 @@
       $('#diaryEmotionsView')?.classList.toggle('hidden', mode !== 'emotions');
       $('#diaryReflectionView')?.classList.toggle('hidden', mode !== 'reflection');
       $('#diaryGratitudeView')?.classList.toggle('hidden', mode !== 'gratitude');
-      if (mode === 'food') renderFoodDiary();
+      // Каждый режим рендерится при открытии, чтобы данные из LocalStorage
+      // показывались свежими после правок в другом месте приложения.
+      if (mode === 'food')       renderFoodDiary();
+      if (mode === 'emotions')   renderEmotions();
       if (mode === 'reflection') renderReflections();
-      if (mode === 'gratitude') renderGratitude();
+      if (mode === 'gratitude')  renderGratitude();
     }
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-diary-mode]');
@@ -7320,6 +7427,9 @@
       const patch = computeCardReview(list[idx], quality);
       list[idx] = { ...list[idx], ...patch };
       Store.cards.save(list);
+      // Сбрасываем cardId + flipped ДО renderCardsView, чтобы renderCardStudy()
+      // не продолжал показывать только что отвеченную карточку, а взял следующую
+      // из очереди pickNextDueCard().
       studyState.cardId = null;
       studyState.flipped = false;
       renderCardsView();
@@ -7419,10 +7529,8 @@
 
     // ---------- Zettelkasten ----------
     // Атомарные заметки с двусторонними связями. Связи извлекаются из
-    // текста вида [[заголовок другого Zettel]] — при сохранении строим
-    // обратные ссылки, при отрисовке показываем backlinks.
-    const state_zettel = { query: '' };
-
+    // текста вида [[заголовок другого Zettel]]: при отрисовке строим
+    // backlinks пробегом по всем zettels и показываем счётчики →/←.
     function parseZettelLinks(text) {
       // Возвращает массив уникальных заголовков, на которые ссылается текст
       const re = /\[\[([^\]]+)\]\]/g;
@@ -7455,7 +7563,7 @@
 
     function renderZettels() {
       const list = Store.zettels.list();
-      const q = (state_zettel.query || '').toLowerCase().trim();
+      const q = (state.zettelQuery || '').toLowerCase().trim();
       const filtered = q
         ? list.filter(z => ((z.title || '') + ' ' + (z.content || '') + ' ' + (z.tags || []).join(' ')).toLowerCase().includes(q))
         : list;
@@ -7553,7 +7661,7 @@
 
     $('#newZettelBtn')?.addEventListener('click', () => openZettelModal());
     $('#zettelSearch')?.addEventListener('input', (e) => {
-      state_zettel.query = e.target.value;
+      state.zettelQuery = e.target.value;
       renderZettels();
     });
     $('#zettelForm')?.addEventListener('submit', (e) => {
@@ -7778,6 +7886,93 @@
     }
 
     // ---------- Boot ----------
+    // ---------- Onboarding tour ----------
+    // Шаги тура. Каждый включает иконку для градиентной шапки и контент.
+    // Хранится флаг done в Store.onboarding, чтобы не показывать повторно.
+    const ONBOARDING_STEPS = [
+      {
+        title: 'Добро пожаловать в PLANEL',
+        iconKey: 'target',
+        body: `<p>Короткий тур на 2 минуты поможет разобраться с разделами. Вы всегда можете <strong>пропустить</strong> (крестик сверху) и пройти его позже из профиля.</p>`
+      },
+      {
+        title: 'Задачи и Календарь',
+        iconKey: 'calendar_alt',
+        body: `<p>Начните со вкладки <strong>Задачи</strong>: список, Kanban (3 статуса) и матрица Эйзенхауэра. Добавляйте подзадачи, повторы и дедлайны.</p><p><strong>Календарь</strong> показывает день/неделю/месяц и синхронизируется с Google Calendar (бета).</p>`
+      },
+      {
+        title: 'Проекты и 100 целей',
+        iconKey: 'target',
+        body: `<p>Собирайте задачи в <strong>Проекты</strong> (6 готовых шаблонов: MVP, Маркетплейс, Контент и другие).</p><p><strong>100 целей на год</strong> включает SMART-цели и вкладку «Жизнь в неделях» — визуализацию ожидаемого времени.</p>`
+      },
+      {
+        title: 'Привычки и Колесо баланса',
+        iconKey: 'flame',
+        body: `<p><strong>Привычки</strong>: серии, журнал недели/месяца, статистика стабильности.</p><p><strong>Колесо баланса</strong>: оценка 7 сфер жизни по 10-балльной шкале или авто-построение по фактической активности.</p>`
+      },
+      {
+        title: 'Дневник и Заметки',
+        iconKey: 'check_circle',
+        body: `<p><strong>Дневник</strong>: 4 режима — питание, эмоции, рефлексия, благодарность.</p><p><strong>Заметки</strong>: 3 режима — обычные заметки, Anki-карточки с интервальным повторением, Zettelkasten с двусторонними связями.</p>`
+      },
+      {
+        title: 'Горячие клавиши и поиск',
+        iconKey: 'sparkle',
+        body: `<ul><li><strong>⌘K / Ctrl+K / /</strong> — глобальный поиск по всему приложению</li><li><strong>N</strong> — новая задача</li><li><strong>?</strong> — подсказка по горячим клавишам</li></ul><p>Поиск также закреплён в верхней панели рядом с уведомлениями.</p>`
+      },
+      {
+        title: 'Готово — можно планировать',
+        iconKey: 'trophy',
+        body: `<p>Вы знаете основное. Начните с первой задачи на вкладке <strong>Сегодня</strong>. Тёмная тема и замена тура — в разделе <strong>Профиль</strong>.</p>`
+      },
+    ];
+
+    let onbStepIdx = 0;
+    function renderOnboarding() {
+      const step = ONBOARDING_STEPS[onbStepIdx];
+      const host = $('#onbStep');
+      host.innerHTML = `
+        <div class="onb-hero">
+          <span class="onb-hero-icon">${svgIcon(step.iconKey, 26)}</span>
+          <span class="onb-hero-title">${escapeHtml(step.title)}</span>
+        </div>
+        <div class="onb-body">${step.body}</div>
+      `;
+      const total = ONBOARDING_STEPS.length;
+      $('#onbCounter').textContent = `${onbStepIdx + 1} / ${total}`;
+      $('#onbProgressBar').style.width = Math.round((onbStepIdx + 1) / total * 100) + '%';
+      $('#onbPrev').disabled = onbStepIdx === 0;
+      $('#onbPrev').style.visibility = onbStepIdx === 0 ? 'hidden' : 'visible';
+      $('#onbNext').textContent = onbStepIdx === total - 1 ? 'Готово' : 'Дальше';
+    }
+    function startOnboarding() {
+      onbStepIdx = 0;
+      renderOnboarding();
+      openModal('onboardingModal');
+    }
+    function finishOnboarding(markDone) {
+      closeModal('onboardingModal');
+      if (markDone) Store.onboarding.markDone();
+    }
+    $('#onbNext')?.addEventListener('click', () => {
+      if (onbStepIdx < ONBOARDING_STEPS.length - 1) {
+        onbStepIdx++;
+        renderOnboarding();
+      } else {
+        finishOnboarding(true);
+      }
+    });
+    $('#onbPrev')?.addEventListener('click', () => {
+      if (onbStepIdx > 0) {
+        onbStepIdx--;
+        renderOnboarding();
+      }
+    });
+    // Крестик и клик вне модалки засчитываются как «пропустить»: не показываем снова
+    $('#onbSkip')?.addEventListener('click', () => finishOnboarding(true));
+    // Повторный запуск тура из профиля — отдельная кнопка.
+    $('#replayOnboardingBtn')?.addEventListener('click', startOnboarding);
+
     async function bootApp() {
       document.body.classList.remove('admin-mode');
       const u = JSON.parse(localStorage.getItem(USER_KEY) || 'null');
@@ -7811,6 +8006,11 @@
       loadTeamMembers();
       refreshWorkspaces();
       applyRolePermissionsUI();
+      // Первый вход после регистрации — показываем тур. Задержка даёт UI
+      // успеть отрисоваться, чтобы тур открывался поверх готового приложения.
+      if (!Store.onboarding.get().done) {
+        setTimeout(startOnboarding, 400);
+      }
       // Если пришли обратно из OAuth (?google=connected)
       const qp = new URLSearchParams(location.search);
       if (qp.get('google') === 'connected') {
