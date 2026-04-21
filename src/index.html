@@ -847,6 +847,13 @@
   </footer>
 
   <script>
+    // Если пользователь пришёл по ссылке подтверждения email (Supabase
+    // редиректит на Site URL с токенами в hash), сразу переводим его
+    // на /app, сохраняя hash — там код прочитает токены и залогинит.
+    if (location.hash && location.hash.includes('access_token=')) {
+      location.replace('/app' + location.hash);
+    }
+
     // Scroll-reveal: единый observer ловит любой из классов анимации.
     // unobserve после первой активации — чтобы не пересчитывать при скролле обратно.
     const io = new IntersectionObserver((entries) => {

@@ -2296,6 +2296,16 @@
                 </span>
                 <button type="button" class="btn-ghost text-sm" id="replayOnboardingBtn">Запустить</button>
               </div>
+              <div class="flex items-center justify-between gap-3 pt-4 mt-4 border-t border-[color:var(--border-soft)]" id="installProfileRow">
+                <span class="flex items-center gap-2.5">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m6 9 6 6 6-6"/><path d="M5 21h14"/></svg>
+                  <span>
+                    <span class="block text-sm font-semibold text-[color:var(--text-strong)]">Установить PLANEL как приложение</span>
+                    <span class="block text-xs text-[color:var(--text-muted)]" id="installProfileHint">Полноэкранный режим, иконка на домашнем экране, быстрый запуск</span>
+                  </span>
+                </span>
+                <button type="button" class="btn-primary text-sm" id="installProfileBtn">Установить</button>
+              </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -6292,28 +6302,70 @@
     });
 
     // ---------- PWA install prompt + service worker ----------
+    // Сценариев два: всплывающий баннер (беспокоит только один раз) и
+    // кнопка в профиле (всегда доступна). Обе используют общий deferredInstall,
+    // запомненный при beforeinstallprompt. После установки событие больше
+    // не прилетит — в этом случае кнопка переключается в инфо-режим.
     let deferredInstall = null;
+    function isStandalone() {
+      return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    }
+    function refreshInstallProfileUI() {
+      const row = $('#installProfileRow');
+      const btn = $('#installProfileBtn');
+      const hint = $('#installProfileHint');
+      if (!row || !btn || !hint) return;
+      if (isStandalone()) {
+        // Приложение уже запущено как standalone PWA — нечего ставить.
+        btn.disabled = true;
+        btn.textContent = 'Установлено';
+        hint.textContent = 'Вы уже запускаете PLANEL в режиме приложения';
+        return;
+      }
+      if (deferredInstall) {
+        btn.disabled = false;
+        btn.textContent = 'Установить';
+        hint.textContent = 'Полноэкранный режим, иконка на домашнем экране, быстрый запуск';
+      } else {
+        // Событие beforeinstallprompt доступно не во всех браузерах (Safari, iOS)
+        // и не всегда сразу. Подсказываем пользователю сделать это через меню браузера.
+        btn.disabled = true;
+        btn.textContent = 'Недоступно';
+        hint.textContent = 'В этом браузере установка доступна из меню: «Поделиться» → «На экран «Домой»» (iOS) или «⋮» → «Установить приложение» (Chrome)';
+      }
+    }
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredInstall = e;
       const dismissed = localStorage.getItem('planel_install_dismissed');
-      if (!dismissed && !window.matchMedia('(display-mode: standalone)').matches) {
+      if (!dismissed && !isStandalone()) {
         const banner = $('#installBanner');
         if (banner) { banner.style.display = 'flex'; banner.classList.remove('hidden'); }
       }
+      refreshInstallProfileUI();
     });
-    $('#installAccept')?.addEventListener('click', async () => {
+    window.addEventListener('appinstalled', () => {
+      deferredInstall = null;
+      refreshInstallProfileUI();
+      toast('PLANEL установлен как приложение', 'success');
+    });
+    async function triggerInstall() {
       if (!deferredInstall) return;
       deferredInstall.prompt();
       const result = await deferredInstall.userChoice;
       if (result.outcome === 'accepted') toast('Установлено!', 'success');
       deferredInstall = null;
       $('#installBanner').style.display = 'none';
-    });
+      refreshInstallProfileUI();
+    }
+    $('#installAccept')?.addEventListener('click', triggerInstall);
+    $('#installProfileBtn')?.addEventListener('click', triggerInstall);
     $('#installDismiss')?.addEventListener('click', () => {
       localStorage.setItem('planel_install_dismissed', '1');
       $('#installBanner').style.display = 'none';
     });
+    // При первом рендере профиля показываем актуальное состояние кнопки
+    refreshInstallProfileUI();
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').catch(err => console.warn('SW reg failed', err));
@@ -8023,6 +8075,28 @@
       document.body.classList.add('admin-mode');
       switchView('admin');
     }
+
+    // Обработчик возврата с Supabase email-confirmation.
+    // Supabase после подтверждения редиректит на Site URL с токенами в hash:
+    //   /app#access_token=...&refresh_token=...&type=signup&expires_in=...
+    // Нам нужно вытащить токены, сохранить в localStorage, очистить URL и
+    // дальше стандартный bootApp() поймёт пользователя как залогиненного.
+    (function consumeAuthHash() {
+      if (!location.hash || !location.hash.includes('access_token=')) return;
+      const h = new URLSearchParams(location.hash.replace(/^#/, ''));
+      const access = h.get('access_token');
+      if (!access) return;
+      localStorage.setItem(TOKEN_KEY, access);
+      const refresh = h.get('refresh_token');
+      if (refresh) localStorage.setItem('planel_refresh_token', refresh);
+      // Минимальный placeholder пользователя — /api/auth/me внутри bootApp
+      // догонит email/full_name и обновит localStorage.
+      if (!localStorage.getItem(USER_KEY)) {
+        localStorage.setItem(USER_KEY, JSON.stringify({ id: 'pending' }));
+      }
+      // Убираем токены из адресной строки, чтобы их не было в истории.
+      history.replaceState(null, '', location.pathname + location.search);
+    })();
 
     const adminToken = localStorage.getItem(ADMIN_TOKEN_KEY);
     if (adminToken) {
