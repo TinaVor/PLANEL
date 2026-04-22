@@ -176,22 +176,26 @@
       background-size:14px; background-repeat:no-repeat; background-position:center;
     }
 
-    .form-input, .form-select, .form-textarea {
+    input.form-input, select.form-select, textarea.form-textarea {
       width:100%; padding:0.55rem 0.85rem; border-radius:10px;
-      background:var(--bg-surface); border:1px solid var(--border-soft);
+      background-color:var(--bg-surface); border:1px solid var(--border-soft);
       color:var(--text-primary); font-size:0.88rem;
       transition:border-color 140ms ease, box-shadow 140ms ease;
     }
-    .form-textarea { resize:vertical; min-height:72px; font-family:inherit; }
-    .form-input:focus, .form-select:focus, .form-textarea:focus {
+    textarea.form-textarea { resize:vertical; min-height:72px; font-family:inherit; }
+    input.form-input:focus, select.form-select:focus, textarea.form-textarea:focus {
       border-color:var(--brand-400); box-shadow:0 0 0 3px rgba(31,118,242,0.15); outline:none;
     }
-    input[type="text"], input[type="email"], input[type="search"], input[type="password"], input[type="date"] {
-      background:var(--bg-surface); border:1px solid var(--border-soft); color:var(--text-primary);
+    input.form-input::placeholder, textarea.form-textarea::placeholder {
+      color:var(--text-muted); opacity:1;
     }
-    input[type="text"]:focus, input[type="email"]:focus, input[type="search"]:focus, input[type="password"]:focus, input[type="date"]:focus {
+    input[type="text"], input[type="email"], input[type="search"], input[type="password"], input[type="date"], input[type="number"], input[type="tel"], input[type="url"], input[type="time"], input[type="datetime-local"] {
+      background-color:var(--bg-surface); border:1px solid var(--border-soft); color:var(--text-primary);
+    }
+    input[type="text"]:focus, input[type="email"]:focus, input[type="search"]:focus, input[type="password"]:focus, input[type="date"]:focus, input[type="number"]:focus, input[type="tel"]:focus, input[type="url"]:focus, input[type="time"]:focus, input[type="datetime-local"]:focus {
       border-color:var(--brand-400); box-shadow:0 0 0 3px rgba(31,118,242,0.15); outline:none;
     }
+    body.dark-mode input::placeholder, body.dark-mode textarea::placeholder { color:var(--text-muted); opacity:1; }
     .form-label { display:block; font-size:0.72rem; font-weight:600; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.35rem; }
 
     .icon-btn { width:38px; height:38px; border-radius:10px; background:var(--bg-surface); border:1px solid var(--border-soft); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-secondary); transition:background 140ms ease, color 140ms ease, border-color 140ms ease; position:relative; }
@@ -295,6 +299,14 @@
     .habit-row-actions { position:absolute; top:0.65rem; right:0.65rem; display:flex; gap:0.3rem; opacity:0; transition:opacity 140ms ease; }
     .habit-row:hover .habit-row-actions { opacity:1; }
 
+    .habit-stat-row { display:flex; align-items:center; gap:0.75rem; padding:0.6rem 0.75rem; border:1px solid var(--border-soft); border-radius:12px; background:var(--bg-surface); }
+    .habit-stat-donut { position:relative; width:44px; height:44px; flex-shrink:0; }
+    .habit-stat-donut svg { width:100%; height:100%; }
+    .habit-stat-pct { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:0.68rem; font-weight:700; color:var(--text-strong); }
+    .habit-stat-meta { min-width:0; flex:1; display:flex; flex-direction:column; gap:0.15rem; }
+    .habit-stat-name { font-size:0.85rem; font-weight:600; color:var(--text-primary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .habit-stat-note { font-size:0.72rem; color:var(--text-muted); }
+
     .pill-filter { padding:0.35rem 0.75rem; border-radius:9999px; font-size:0.8rem; font-weight:600; border:1px solid var(--border-soft); background:var(--bg-surface); color:var(--text-secondary); cursor:pointer; transition:background 140ms ease, color 140ms ease, border-color 140ms ease; }
     .pill-filter:hover { background:var(--brand-50); color:var(--brand-700); border-color:var(--brand-100); }
     .pill-filter.active { background:var(--brand-500); color:#FFF; border-color:var(--brand-500); }
@@ -386,7 +398,13 @@
     }
     .goal-card:hover { border-color:var(--brand-200); box-shadow:var(--shadow-sm); }
     .goal-card.done { background:var(--success-50); border-color:#A7F3D0; }
-    .goal-card.done .goal-title { text-decoration:line-through; opacity:0.7; }
+    .goal-card.done .goal-title { text-decoration:line-through; text-decoration-color:rgba(15,118,110,0.6); opacity:0.85; }
+    body.dark-mode .goal-card.done { background:#0E2D24; border-color:#10B981; }
+    body.dark-mode .goal-card.done .goal-num { color:#6EE7B7; }
+    body.dark-mode .goal-card.done .goal-title { color:#ECFDF5; opacity:0.9; text-decoration-color:rgba(110,231,183,0.7); }
+    body.dark-mode .goal-card.done .goal-details { color:#CBD5E1; }
+    body.dark-mode .goal-card.done .goal-details strong { color:#F1F5F9; }
+    body.dark-mode .goal-card.done .goal-open-project { color:#7BB8FF !important; }
     .goal-num { font-weight:700; color:var(--brand-600); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; }
     .goal-title { font-weight:700; color:var(--text-strong); font-size:0.95rem; }
     .goal-details { font-size:0.78rem; color:var(--text-secondary); line-height:1.5; }
@@ -430,6 +448,30 @@
     .day-hour:first-child { border-top:none; }
     .day-hour-label { font-size:0.7rem; color:var(--text-muted); text-align:right; padding-right:0.5rem; padding-top:0.15rem; }
     .day-hour-content { display:flex; flex-direction:column; gap:0.25rem; }
+
+    /* Weekly time grid (calendar / week view) */
+    .cal-week { display:flex; flex-direction:column; gap:0.5rem; }
+    .cal-week-row { display:grid; grid-template-columns:60px repeat(7, minmax(0, 1fr)); gap:0.4rem; }
+    .cal-week-corner { font-size:0.7rem; color:var(--text-muted); }
+    .cal-week-day-head { padding:0.4rem 0.5rem; border-radius:8px; background:var(--bg-surface); border:1px solid var(--border-soft); text-align:center; cursor:pointer; transition:border-color 140ms ease, background 140ms ease; }
+    .cal-week-day-head:hover { border-color:var(--brand-300); }
+    .cal-week-day-head.is-today { background:var(--brand-50); border-color:var(--brand-400); }
+    .cal-week-day-head .wd { font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); font-weight:700; }
+    .cal-week-day-head .dn { font-weight:800; font-size:1.05rem; color:var(--text-strong); line-height:1.1; }
+    .cal-week-day-head.is-today .dn { color:var(--brand-700); }
+    .cal-week-allday-label { font-size:0.65rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); text-align:right; padding-right:0.4rem; padding-top:0.4rem; font-weight:600; }
+    .cal-week-allday-cell { min-height:32px; padding:0.25rem; background:var(--bg-muted); border-radius:6px; display:flex; flex-direction:column; gap:0.2rem; cursor:pointer; }
+    .cal-week-allday-cell.is-today { background:var(--brand-50); }
+    .cal-week-allday-cell:hover { outline:1px solid var(--brand-300); }
+    .cal-week-hour { display:grid; grid-template-columns:60px repeat(7, minmax(0, 1fr)); gap:0.4rem; border-top:1px dashed var(--border-soft); padding:0.25rem 0; min-height:42px; }
+    .cal-week-hour:first-of-type { border-top:none; }
+    .cal-week-hour-label { font-size:0.7rem; color:var(--text-muted); text-align:right; padding-right:0.4rem; padding-top:0.15rem; }
+    .cal-week-hour-cell { display:flex; flex-direction:column; gap:0.2rem; padding:0.15rem; border-radius:6px; cursor:pointer; transition:background 140ms ease; }
+    .cal-week-hour-cell:hover { background:var(--bg-muted); }
+    .cal-week-hour-cell.is-today { background:var(--brand-50); }
+    body.dark-mode .cal-week-hour-cell.is-today,
+    body.dark-mode .cal-week-allday-cell.is-today,
+    body.dark-mode .cal-week-day-head.is-today { background:#0C2042; }
 
     /* Habit month grid */
     .habit-month-grid {
@@ -499,7 +541,7 @@
     body.dark-mode .card-rate-btn[data-quality="3"] { color:#6EE7B7; } body.dark-mode .card-rate-btn[data-quality="3"]:hover { background:#022C22; border-color:#065F46; }
     body.dark-mode .card-rate-btn[data-quality="4"] { color:#93C5FD; } body.dark-mode .card-rate-btn[data-quality="4"]:hover { background:#0C2042; border-color:#0E4AA8; }
     .card-rate-next { font-size: 0.7rem; color: var(--text-muted); font-weight: 500; }
-    .card-item { display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.7rem; border-radius:8px; background:var(--bg-muted); }
+    .card-item { display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.7rem; border-radius:8px; background:var(--bg-muted); cursor:pointer; }
     .card-item:hover { background:var(--brand-50); }
     body.dark-mode .card-item:hover { background:var(--bg-surface); }
     .card-item-due { font-size: 0.7rem; padding: 0.1rem 0.5rem; border-radius: 9999px; font-weight: 600; }
@@ -529,6 +571,8 @@
 
     /* ============ Dark theme ============ */
     body.dark-mode {
+      color-scheme: dark;
+
       --bg-app:        #0B1220;
       --bg-surface:    #11192A;
       --bg-muted:      #182238;
@@ -540,6 +584,19 @@
       --text-primary:  #E2E8F0;
       --text-secondary:#94A3B8;
       --text-muted:    #64748B;
+
+      /* Переопределяем светлые оттенки акцентов — иначе чипы/бейджи светятся на темном */
+      --brand-50:  #0C2042;
+      --brand-100: #0E4AA8;
+      --brand-200: #1560D4;
+      --brand-700: #93C5FD;
+
+      --success-50:  #0E2D24;
+      --success-700: #6EE7B7;
+      --warning-50:  #3D2B0A;
+      --warning-700: #FBBF24;
+      --danger-50:   #3B0E13;
+      --danger-700:  #FCA5A5;
 
       --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
       --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.25);
@@ -1198,6 +1255,28 @@
     </div>
   </div>
 
+  <!-- Note View Modal (read-only preview with full content) -->
+  <div id="noteViewModal" class="modal-overlay hidden" data-modal>
+    <div class="modal-card" style="max-width:720px;">
+      <div class="modal-header">
+        <h3 class="heading-font text-lg font-extrabold" id="noteViewTitle">Заметка</h3>
+        <button class="modal-close" data-close-modal aria-label="Закрыть">×</button>
+      </div>
+      <div class="space-y-3">
+        <div class="flex flex-wrap items-center gap-2 text-xs text-[color:var(--text-muted)]">
+          <span id="noteViewDate"></span>
+          <span id="noteViewTagsWrap" class="flex flex-wrap gap-1.5"></span>
+        </div>
+        <div id="noteViewContent" class="md-preview card-flat" style="min-height:120px; max-height:60vh; overflow-y:auto;"></div>
+        <div class="flex flex-wrap gap-2 justify-end pt-2">
+          <button type="button" class="btn-ghost text-sm" id="noteViewDeleteBtn">Удалить</button>
+          <button type="button" class="btn-ghost text-sm" data-close-modal>Закрыть</button>
+          <button type="button" class="btn-primary text-sm" id="noteViewEditBtn">Редактировать</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Card Modal (Anki-style flashcard editor) -->
   <div id="cardModal" class="modal-overlay hidden" data-modal>
     <div class="modal-card" style="max-width:560px;">
@@ -1226,6 +1305,35 @@
           <button type="submit" class="btn-primary text-sm" id="cardSubmit">Сохранить</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Card View Modal -->
+  <div id="cardViewModal" class="modal-overlay hidden" data-modal>
+    <div class="modal-card" style="max-width:560px;">
+      <div class="modal-header">
+        <h3 class="heading-font text-lg font-extrabold">Карточка</h3>
+        <button class="modal-close" data-close-modal aria-label="Закрыть">×</button>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <div class="form-label">Вопрос</div>
+          <div id="cardViewFront" style="white-space:pre-wrap; word-break:break-word; padding:0.6rem 0.75rem; border-radius:8px; background:var(--bg-muted); font-weight:600;"></div>
+        </div>
+        <div>
+          <div class="form-label">Ответ</div>
+          <div id="cardViewBack" style="white-space:pre-wrap; word-break:break-word; padding:0.6rem 0.75rem; border-radius:8px; background:var(--bg-muted);"></div>
+        </div>
+        <div id="cardViewTagsWrap">
+          <div class="form-label">Теги</div>
+          <div id="cardViewTags" style="font-size:0.85rem; color:var(--text-muted);"></div>
+        </div>
+        <div id="cardViewMeta" style="font-size:0.75rem; color:var(--text-muted);"></div>
+        <div class="flex flex-wrap gap-2 justify-end pt-2">
+          <button type="button" class="btn-ghost text-sm" data-close-modal>Закрыть</button>
+          <button type="button" class="btn-primary text-sm" id="cardViewEditBtn">Редактировать</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1261,7 +1369,7 @@
   </div>
 
   <!-- Confirm Modal -->
-  <div id="confirmModal" class="modal-overlay hidden" data-modal>
+  <div id="confirmModal" class="modal-overlay hidden" data-modal style="z-index:400;">
     <div class="modal-card" style="max-width:400px;">
       <div class="modal-header">
         <h3 class="heading-font text-base font-extrabold" id="confirmTitle">Подтверждение</h3>
@@ -1429,7 +1537,7 @@
                 <div class="flex items-start justify-between mb-5 gap-3">
                   <div>
                     <h3 class="heading-font text-lg font-extrabold mb-0.5">Задачи на сегодня</h3>
-                    <p class="text-sm text-[color:var(--text-secondary)]" id="todayTasksSubtitle">Ближайшие задачи и дедлайны</p>
+                    <p class="text-sm text-[color:var(--text-secondary)]" id="todayTasksSubtitle">Только с дедлайном на сегодня</p>
                   </div>
                   <button class="btn-primary text-xs hidden-for-viewer" id="todayNewTaskBtn">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
@@ -1714,7 +1822,7 @@
 
             <!-- Week view -->
             <div class="card hidden" id="calWeekView">
-              <div class="grid grid-cols-7 gap-2" id="calWeekGrid"></div>
+              <div id="calWeekGrid" class="cal-week"></div>
             </div>
 
             <!-- Day view -->
@@ -1779,25 +1887,18 @@
                 <div class="space-y-4" id="habitsList"></div>
               </div>
               <div class="card">
-                <h3 class="heading-font text-lg font-extrabold mb-5">Статистика</h3>
-                <div class="text-center space-y-4">
-                  <p class="text-sm text-[color:var(--text-secondary)]" id="habitStatTitle">Стабильность за 7 дней</p>
-                  <div class="relative w-32 h-32 mx-auto">
-                    <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90">
-                      <circle cx="18" cy="18" r="15.9155" fill="none" stroke="var(--bg-muted)" stroke-width="3.5"/>
-                      <circle cx="18" cy="18" r="15.9155" fill="none" stroke="url(#gradH)" stroke-width="3.5" stroke-linecap="round" id="habitStatCircle" stroke-dasharray="0 100"/>
-                      <defs>
-                        <linearGradient id="gradH" x1="0" y1="0" x2="1" y2="1">
-                          <stop offset="0%" stop-color="var(--brand-500)"/>
-                          <stop offset="100%" stop-color="var(--cyan-500)"/>
-                        </linearGradient>
-                      </defs>
-                    </svg>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                      <span class="heading-font text-xl font-extrabold" id="habitStatPct">0%</span>
-                    </div>
-                  </div>
-                  <div class="text-xs text-[color:var(--text-muted)]" id="habitStatNote">Добавьте привычки, чтобы увидеть статистику</div>
+                <h3 class="heading-font text-lg font-extrabold mb-1">Статистика</h3>
+                <p class="text-sm text-[color:var(--text-secondary)] mb-4" id="habitStatTitle">Стабильность за 7 дней</p>
+                <svg width="0" height="0" style="position:absolute;" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="gradH" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="var(--brand-500)"/>
+                      <stop offset="100%" stop-color="var(--cyan-500)"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div id="habitStatsList" class="space-y-3">
+                  <div class="text-xs text-[color:var(--text-muted)] text-center py-6">Добавьте привычки, чтобы увидеть статистику</div>
                 </div>
               </div>
             </div>
@@ -3512,20 +3613,28 @@
         return;
       }
       const today = todayISO();
-      const sorted = [...state.tasks].sort((a, b) => {
+      // Строго задачи на сегодня (дедлайн == сегодня). Просроченные показывает
+      // отдельный баннер #overdueBanner выше, дубль здесь только запутывает.
+      const todays = state.tasks.filter(t => t.due_date === today);
+      const sorted = todays.sort((a, b) => {
         if (a.done !== b.done) return a.done ? 1 : -1;
-        const ad = a.due_date || '9999-12-31';
-        const bd = b.due_date || '9999-12-31';
-        if (ad !== bd) return ad.localeCompare(bd);
+        if (a.due_date !== b.due_date) return a.due_date.localeCompare(b.due_date);
         const priOrder = { high: 0, medium: 1, low: 2 };
         return priOrder[a.priority] - priOrder[b.priority];
       });
-      const top = sorted.slice(0, 6);
-      const doneToday = state.tasks.filter(t => t.done).length;
-      if (subtitle) subtitle.textContent = `${state.tasks.length} всего · ${doneToday} выполнено`;
+      const doneToday = todays.filter(t => t.done).length;
+      if (subtitle) {
+        subtitle.textContent = todays.length
+          ? `${todays.length} на сегодня · ${doneToday} выполнено`
+          : 'На сегодня задач нет';
+      }
       if (list) {
-        list.innerHTML = top.map(t => renderTaskRow(t, { compact: true, today })).join('');
-        bindTaskRowEvents(list);
+        if (!todays.length) {
+          list.innerHTML = `<div class="empty-state"><strong>На сегодня задач нет.</strong><br/>Свободный день — или время добавить новую.</div>`;
+        } else {
+          list.innerHTML = sorted.map(t => renderTaskRow(t, { compact: true, today })).join('');
+          bindTaskRowEvents(list);
+        }
       }
     }
 
@@ -3892,34 +4001,107 @@
       $('#calLabel').textContent = `${fmt(start)} — ${fmt(end)} ${end.getFullYear()}`;
       const today = todayISO();
       const grid = $('#calWeekGrid');
-      let html = '';
+
+      // Соберём данные по дням недели один раз
+      const days = [];
       for (let i = 0; i < 7; i++) {
         const d = new Date(start); d.setDate(d.getDate() + i);
         const iso = isoOfDate(d);
         const dayTasks = state.tasks.filter(t => t.due_date === iso);
         const dayGoogle = googleEventsOn(iso);
-        const isToday = iso === today;
+        days.push({ iso, dn: d.getDate(), wd: DAYS_RU[i], isToday: iso === today, tasks: dayTasks, google: dayGoogle });
+      }
+
+      // Шапка с днями недели
+      const headHtml = `
+        <div class="cal-week-row">
+          <div class="cal-week-corner"></div>
+          ${days.map(day => `
+            <div class="cal-week-day-head ${day.isToday ? 'is-today' : ''}" data-iso="${day.iso}">
+              <div class="wd">${day.wd}</div>
+              <div class="dn">${day.dn}</div>
+            </div>
+          `).join('')}
+        </div>`;
+
+      // Полоса «весь день» — задачи без time_start и all-day Google events
+      const allDayCells = days.map(day => {
+        const noTime = day.tasks.filter(t => !Store.taskExtras.for(t.id).time_start);
+        const allDayGoogle = day.google.filter(ev => ev.all_day);
         const items = [];
-        dayTasks.forEach(t => {
-          items.push(`<div class="week-item ${t.done ? 'is-done' : ''}" data-task-id="${t.id}">${escapeHtml(t.title)}</div>`);
+        noTime.forEach(t => {
+          items.push(`<div class="week-item ${t.done ? 'is-done' : ''}" data-task-id="${t.id}" title="${escapeHtml(t.title)}">${escapeHtml(t.title)}</div>`);
         });
-        dayGoogle.forEach(ev => {
-          const time = ev.all_day ? '' : (ev.start ? new Date(ev.start).toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'}) + ' ' : '');
-          items.push(`<div class="week-item is-google" title="${escapeHtml(ev.summary)}">${time}${escapeHtml(ev.summary)}</div>`);
+        allDayGoogle.forEach(ev => {
+          items.push(`<div class="week-item is-google" title="${escapeHtml(ev.summary)}">${escapeHtml(ev.summary)}</div>`);
         });
-        html += `
-          <div class="week-col ${isToday ? 'is-today' : ''}" data-iso="${iso}">
-            <div class="week-col-head">${DAYS_RU[i]}</div>
-            <div class="week-col-num">${d.getDate()}</div>
-            ${items.length ? items.join('') : `<div class="text-xs text-[color:var(--text-muted)] mt-2">—</div>`}
+        return `<div class="cal-week-allday-cell ${day.isToday ? 'is-today' : ''}" data-iso="${day.iso}">${items.join('')}</div>`;
+      }).join('');
+      const allDayRow = `
+        <div class="cal-week-row">
+          <div class="cal-week-allday-label">весь<br/>день</div>
+          ${allDayCells}
+        </div>`;
+
+      // Часовая сетка 6:00–23:00
+      let hoursHtml = '';
+      for (let h = 6; h <= 23; h++) {
+        const label = String(h).padStart(2, '0') + ':00';
+        const cells = days.map(day => {
+          const tasksAtHour = day.tasks.filter(t => {
+            const ex = Store.taskExtras.for(t.id);
+            if (!ex.time_start) return false;
+            const [hh] = ex.time_start.split(':').map(Number);
+            return hh === h;
+          });
+          const evAtHour = day.google.filter(ev => {
+            if (!ev.start || ev.all_day) return false;
+            return new Date(ev.start).getHours() === h;
+          });
+          const items = [];
+          tasksAtHour.forEach(t => {
+            const ex = Store.taskExtras.for(t.id);
+            const dur = ex.duration_min || 60;
+            items.push(`<div class="week-item ${t.done ? 'is-done' : ''}" data-task-id="${t.id}" title="${escapeHtml(t.title)} · ${dur} мин"><strong>${escapeHtml(ex.time_start)}</strong> · ${escapeHtml(t.title)}</div>`);
+          });
+          evAtHour.forEach(ev => {
+            const time = new Date(ev.start).toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit' });
+            items.push(`<div class="week-item is-google" title="${escapeHtml(ev.summary)}"><strong>${time}</strong> · ${escapeHtml(ev.summary)}</div>`);
+          });
+          return `<div class="cal-week-hour-cell ${day.isToday ? 'is-today' : ''}" data-iso="${day.iso}" data-hour="${h}">${items.join('')}</div>`;
+        }).join('');
+        hoursHtml += `
+          <div class="cal-week-hour">
+            <div class="cal-week-hour-label">${label}</div>
+            ${cells}
           </div>`;
       }
-      grid.innerHTML = html;
+
+      grid.innerHTML = `${headHtml}${allDayRow}${hoursHtml}`;
+
       grid.querySelectorAll('.week-item[data-task-id]').forEach(el => {
         el.addEventListener('click', (e) => { e.stopPropagation(); openTaskModal(el.dataset.taskId); });
       });
-      grid.querySelectorAll('.week-col').forEach(el => {
-        el.addEventListener('click', () => openTaskModal(null, { due_date: el.dataset.iso }));
+      grid.querySelectorAll('.cal-week-day-head[data-iso]').forEach(el => {
+        el.addEventListener('click', () => {
+          const [Y, M, D] = el.dataset.iso.split('-').map(Number);
+          state.calendarDate = new Date(Y, M - 1, D);
+          state.calendarMode = 'day';
+          renderCalendar();
+        });
+      });
+      grid.querySelectorAll('.cal-week-allday-cell[data-iso]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          if (e.target.closest('.week-item')) return;
+          openTaskModal(null, { due_date: el.dataset.iso });
+        });
+      });
+      grid.querySelectorAll('.cal-week-hour-cell[data-iso]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          if (e.target.closest('.week-item')) return;
+          const time = String(el.dataset.hour).padStart(2,'0') + ':00';
+          openTaskModal(null, { due_date: el.dataset.iso, time_start: time });
+        });
       });
     }
 
@@ -4216,30 +4398,40 @@
 
     function renderHabitStats() {
       const habits = Store.habits.list();
-      const circle = $('#habitStatCircle');
-      const pctEl = $('#habitStatPct');
-      const noteEl = $('#habitStatNote');
+      const listEl = $('#habitStatsList');
       const titleEl = $('#habitStatTitle');
       // Окно статистики совпадает с текущей вкладкой журнала, чтобы
       // «Неделя» и «Месяц» показывали согласованные цифры.
       const isMonth = state.habitsView === 'month';
       const windowDays = isMonth ? 30 : 7;
-      if (titleEl) titleEl.textContent = `Стабильность за ${windowDays} дней`;
+      if (titleEl) titleEl.textContent = `Стабильность за ${windowDays} ${isMonth ? 'дней' : 'дней'}`;
+      if (!listEl) return;
       if (!habits.length) {
-        circle.setAttribute('stroke-dasharray', '0 100');
-        pctEl.textContent = '0%';
-        noteEl.textContent = 'Добавьте привычки, чтобы увидеть статистику';
+        listEl.innerHTML = `<div class="text-xs text-[color:var(--text-muted)] text-center py-6">Добавьте привычки, чтобы увидеть статистику</div>`;
         return;
       }
       const today = todayISO();
       const days = Array.from({length: windowDays}, (_, i) => addDaysISO(today, -(windowDays - 1 - i)));
-      const total = habits.length * days.length;
-      let done = 0;
-      habits.forEach(h => days.forEach(d => { if (Store.habitLogs.isDone(h.id, d)) done++; }));
-      const pct = total ? Math.round((done / total) * 100) : 0;
-      circle.setAttribute('stroke-dasharray', `${pct} 100`);
-      pctEl.textContent = `${pct}%`;
-      noteEl.textContent = `${done} отметок из ${total} возможных`;
+      listEl.innerHTML = habits.map(h => {
+        const done = days.reduce((acc, d) => acc + (Store.habitLogs.isDone(h.id, d) ? 1 : 0), 0);
+        const pct = windowDays ? Math.round((done / windowDays) * 100) : 0;
+        const streak = computeStreak(h.id);
+        return `
+          <div class="habit-stat-row" data-habit-id="${h.id}" title="${escapeHtml(h.name)}">
+            <div class="habit-stat-donut">
+              <svg viewBox="0 0 36 36" class="-rotate-90" aria-hidden="true">
+                <circle cx="18" cy="18" r="15.9155" fill="none" stroke="var(--bg-muted)" stroke-width="4"/>
+                <circle cx="18" cy="18" r="15.9155" fill="none" stroke="url(#gradH)" stroke-width="4" stroke-linecap="round" stroke-dasharray="${pct} 100"/>
+              </svg>
+              <span class="habit-stat-pct">${pct}%</span>
+            </div>
+            <div class="habit-stat-meta">
+              <div class="habit-stat-name">${escapeHtml(h.name)}</div>
+              <div class="habit-stat-note">${done} из ${windowDays}${streak > 0 ? ` · серия ${streak} дн.` : ''}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     function renderTodayHabits() {
@@ -7270,9 +7462,42 @@
           </div>`;
       }).join('');
       host.querySelectorAll('.note-card').forEach(el => {
-        el.addEventListener('click', () => openNoteModal(el.dataset.id));
+        el.addEventListener('click', () => openNoteViewModal(el.dataset.id));
       });
     }
+
+    function openNoteViewModal(noteId) {
+      const note = Store.notes.list().find(n => n.id === noteId);
+      if (!note) return;
+      const title = note.title || '(без названия)';
+      $('#noteViewTitle').textContent = title;
+      const date = new Date(note.updated_at || note.created_at).toLocaleDateString('ru-RU', { day:'numeric', month:'long', year:'numeric' });
+      $('#noteViewDate').textContent = date;
+      const tagsWrap = $('#noteViewTagsWrap');
+      tagsWrap.innerHTML = (note.tags || []).map(t => `<span class="note-tag">#${escapeHtml(t)}</span>`).join('');
+      $('#noteViewContent').innerHTML = renderMarkdown(note.content || '_Без содержимого_');
+      $('#noteViewEditBtn').dataset.id = note.id;
+      $('#noteViewDeleteBtn').dataset.id = note.id;
+      openModal('noteViewModal');
+    }
+
+    $('#noteViewEditBtn')?.addEventListener('click', () => {
+      const id = $('#noteViewEditBtn').dataset.id;
+      closeModal('noteViewModal');
+      if (id) openNoteModal(id);
+    });
+
+    $('#noteViewDeleteBtn')?.addEventListener('click', async () => {
+      const id = $('#noteViewDeleteBtn').dataset.id;
+      if (!id) return;
+      const ok = await confirmModal('Переместить заметку в корзину?');
+      if (!ok) return;
+      const note = Store.notes.list().find(n => n.id === id);
+      if (note) trashPush('note', note, note.title || '(без названия)');
+      Store.notes.save(Store.notes.list().filter(n => n.id !== id));
+      closeModal('noteViewModal');
+      renderNotes();
+    });
 
     function openNoteModal(noteId = null) {
       const note = noteId ? Store.notes.list().find(n => n.id === noteId) : null;
@@ -7532,8 +7757,38 @@
         </div>`;
       }).join('');
       host.querySelectorAll('.card-edit').forEach(btn => {
-        btn.addEventListener('click', () => openCardModal(btn.dataset.id));
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openCardModal(btn.dataset.id);
+        });
       });
+      host.querySelectorAll('.card-item').forEach(item => {
+        item.addEventListener('click', () => openCardViewModal(item.dataset.id));
+      });
+    }
+
+    function openCardViewModal(cardId) {
+      const c = Store.cards.list().find(x => x.id === cardId);
+      if (!c) return;
+      $('#cardViewFront').textContent = c.front || '';
+      $('#cardViewBack').textContent = c.back || '';
+      const tags = (c.tags || []).filter(Boolean);
+      if (tags.length) {
+        $('#cardViewTagsWrap').style.display = '';
+        $('#cardViewTags').textContent = tags.join(', ');
+      } else {
+        $('#cardViewTagsWrap').style.display = 'none';
+      }
+      const metaParts = [];
+      if (c.next_due) metaParts.push(`след. повтор: ${formatDateRu(c.next_due)}`);
+      else metaParts.push('новая');
+      if (typeof c.repetitions === 'number') metaParts.push(`повторений: ${c.repetitions}`);
+      $('#cardViewMeta').textContent = metaParts.join(' · ');
+      $('#cardViewEditBtn').onclick = () => {
+        closeModal('cardViewModal');
+        openCardModal(cardId);
+      };
+      openModal('cardViewModal');
     }
 
     function openCardModal(cardId = null) {
