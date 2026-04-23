@@ -189,6 +189,19 @@
     input.form-input::placeholder, textarea.form-textarea::placeholder {
       color:var(--text-muted); opacity:1;
     }
+    /* Tailwind padding utilities должны бить базовый padding form-input/form-textarea
+       (иначе иконки в search-инпутах налезают на текст). Узко скоупим — только инпуты. */
+    input.pl-2, textarea.pl-2, select.pl-2 { padding-left: 0.5rem !important; }
+    input.pl-3, textarea.pl-3, select.pl-3 { padding-left: 0.75rem !important; }
+    input.pl-4, textarea.pl-4, select.pl-4 { padding-left: 1rem !important; }
+    input.pl-6, textarea.pl-6, select.pl-6 { padding-left: 1.5rem !important; }
+    input.pl-8, textarea.pl-8, select.pl-8 { padding-left: 2rem !important; }
+    input.pl-9, textarea.pl-9, select.pl-9 { padding-left: 2.25rem !important; }
+    input.pl-10, textarea.pl-10, select.pl-10 { padding-left: 2.5rem !important; }
+    input.pr-2, textarea.pr-2, select.pr-2 { padding-right: 0.5rem !important; }
+    input.pr-3, textarea.pr-3, select.pr-3 { padding-right: 0.75rem !important; }
+    input.pr-9, textarea.pr-9, select.pr-9 { padding-right: 2.25rem !important; }
+    input.pr-10, textarea.pr-10, select.pr-10 { padding-right: 2.5rem !important; }
     input[type="text"], input[type="email"], input[type="search"], input[type="password"], input[type="date"], input[type="number"], input[type="tel"], input[type="url"], input[type="time"], input[type="datetime-local"] {
       background-color:var(--bg-surface); border:1px solid var(--border-soft); color:var(--text-primary);
     }
@@ -2625,6 +2638,63 @@
               <div class="card"><div class="text-xs text-[color:var(--text-muted)] uppercase tracking-wider mb-1">Всего задач</div><div class="heading-font text-3xl font-extrabold" id="admMTasks">—</div></div>
             </div>
 
+            <!-- Мониторинг системы -->
+            <div class="card">
+              <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
+                <div>
+                  <h3 class="heading-font text-lg font-extrabold">Загрузка системы</h3>
+                  <p class="text-xs text-[color:var(--text-muted)]" id="admSysMeta">—</p>
+                </div>
+                <button class="btn-ghost text-xs" id="admSysRefresh">Обновить</button>
+              </div>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="lw-stat-card"><div class="lw-stat-label">Uptime</div><div class="lw-stat-value" id="admSysUptime">—</div><div class="lw-stat-sub" id="admSysNode">node ?</div></div>
+                <div class="lw-stat-card"><div class="lw-stat-label">RSS память</div><div class="lw-stat-value" id="admSysMem">—</div><div class="lw-stat-sub" id="admSysHeap">heap —</div></div>
+                <div class="lw-stat-card"><div class="lw-stat-label">CPU load 1m</div><div class="lw-stat-value" id="admSysLoad">—</div><div class="lw-stat-sub" id="admSysCpus">— ядер</div></div>
+                <div class="lw-stat-card"><div class="lw-stat-label">Запросов / 5 мин</div><div class="lw-stat-value" id="admSysReqs">—</div><div class="lw-stat-sub" id="admSysReqMeta">—</div></div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div>
+                  <div class="text-xs font-semibold text-[color:var(--text-muted)] uppercase tracking-wider mb-2">Окна запросов</div>
+                  <div class="overflow-x-auto"><table class="w-full text-sm">
+                    <thead class="text-left text-xs text-[color:var(--text-muted)]"><tr><th class="pb-1 pr-2">Окно</th><th class="pb-1 pr-2">Кол-во</th><th class="pb-1 pr-2">Avg</th><th class="pb-1 pr-2">P95</th><th class="pb-1">Ошибок</th></tr></thead>
+                    <tbody id="admSysReqTable"><tr><td colspan="5" class="py-2 text-[color:var(--text-muted)]">Загрузка…</td></tr></tbody>
+                  </table></div>
+                </div>
+                <div>
+                  <div class="text-xs font-semibold text-[color:var(--text-muted)] uppercase tracking-wider mb-2">Топ путей за час</div>
+                  <div id="admSysTopPaths" class="space-y-1 text-sm"><div class="text-[color:var(--text-muted)]">Загрузка…</div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ошибки пользователей -->
+            <div class="card">
+              <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
+                <div>
+                  <h3 class="heading-font text-lg font-extrabold">Ошибки <span id="admErrSource" class="status-badge badge-neutral" style="font-size:0.6rem; vertical-align:middle;">…</span></h3>
+                  <p class="text-xs text-[color:var(--text-muted)]">Сгруппированы по сигнатуре. <span id="admErrCount">0</span> уникальных, всего <span id="admErrTotal">0</span></p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <select id="admErrSince" class="form-select text-xs" style="padding:0.3rem 0.5rem; min-width:120px;">
+                    <option value="">Все</option>
+                    <option value="60">Последний час</option>
+                    <option value="1440" selected>За сутки</option>
+                    <option value="10080">За неделю</option>
+                  </select>
+                  <button class="btn-ghost text-xs" id="admErrRefresh">Обновить</button>
+                </div>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead class="text-left text-xs text-[color:var(--text-muted)] uppercase tracking-wider">
+                    <tr><th class="pb-2 pr-3">Когда</th><th class="pb-2 pr-3">Тип</th><th class="pb-2 pr-3">Сообщение</th><th class="pb-2 pr-3">URL</th><th class="pb-2 pr-3">Кто</th><th class="pb-2 text-right">×</th></tr>
+                  </thead>
+                  <tbody id="admErrBody"><tr><td colspan="6" class="py-4 text-[color:var(--text-muted)] text-center">Загрузка…</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div class="card">
                 <h3 class="heading-font text-lg font-extrabold mb-4">Пользователи</h3>
@@ -2709,6 +2779,51 @@
     // ---------- Constants & utilities ----------
     const TOKEN_KEY = 'planel_token';
     const USER_KEY = 'planel_user';
+
+    // ---------- Client error reporter ----------
+    // Throttle: не чаще одной отправки той же сигнатуры в 30 секунд.
+    const _errSent = new Map();
+    function reportClientError(payload) {
+      try {
+        const fp = `${payload.kind}|${(payload.message || '').slice(0, 160)}|${payload.source || ''}|${payload.line || ''}`;
+        const last = _errSent.get(fp) || 0;
+        if (Date.now() - last < 30_000) return;
+        _errSent.set(fp, Date.now());
+        let user_email = '';
+        try { user_email = JSON.parse(localStorage.getItem('planel_user') || '{}').email || ''; } catch {}
+        const body = JSON.stringify({
+          ...payload,
+          message: String(payload.message || '').slice(0, 800),
+          stack: String(payload.stack || '').slice(0, 3500),
+          url: location.href,
+          ua: navigator.userAgent,
+          user_email,
+        });
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon('/api/errors', new Blob([body], { type: 'application/json' }));
+        } else {
+          fetch('/api/errors', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }).catch(() => {});
+        }
+      } catch {}
+    }
+    window.addEventListener('error', (e) => {
+      reportClientError({
+        kind: 'js',
+        message: e.message,
+        source: e.filename,
+        line: e.lineno,
+        col: e.colno,
+        stack: e.error && e.error.stack,
+      });
+    });
+    window.addEventListener('unhandledrejection', (e) => {
+      const r = e.reason;
+      reportClientError({
+        kind: 'rejection',
+        message: (r && (r.message || String(r))) || 'unhandled rejection',
+        stack: r && r.stack,
+      });
+    });
     const PROJECT_COLORS = [
       { name: 'Синий',      value: 'linear-gradient(135deg, #1F76F2, #06B6D4)' },
       { name: 'Зелёный',    value: 'linear-gradient(135deg, #10B981, #34D399)' },
@@ -5270,8 +5385,117 @@
     }
 
     async function renderAdmin() {
-      await Promise.all([loadAdminMetrics(), loadAdminUsers()]);
+      await Promise.all([loadAdminMetrics(), loadAdminUsers(), loadAdminSystem(), loadAdminErrors()]);
     }
+
+    function fmtUptime(sec) {
+      sec = Math.max(0, Math.round(sec));
+      const d = Math.floor(sec / 86400);
+      const h = Math.floor((sec % 86400) / 3600);
+      const m = Math.floor((sec % 3600) / 60);
+      if (d) return `${d}д ${h}ч`;
+      if (h) return `${h}ч ${m}м`;
+      if (m) return `${m}м ${sec % 60}с`;
+      return `${sec}с`;
+    }
+
+    function fmtAgo(ts) {
+      const sec = Math.floor((Date.now() - ts) / 1000);
+      if (sec < 60) return `${sec}с назад`;
+      if (sec < 3600) return `${Math.floor(sec / 60)}м назад`;
+      if (sec < 86400) return `${Math.floor(sec / 3600)}ч назад`;
+      return `${Math.floor(sec / 86400)}д назад`;
+    }
+
+    async function loadAdminSystem() {
+      try {
+        const r = await fetch('/api/admin/system', { headers: adminHeaders() });
+        if (r.status === 401) return logoutAdmin();
+        const j = await r.json();
+        $('#admSysUptime').textContent = fmtUptime(j.uptime_sec);
+        $('#admSysNode').textContent   = `node ${j.node || ''}`;
+        $('#admSysMem').textContent    = `${j.memory.rss_mb} МБ`;
+        $('#admSysHeap').textContent   = `heap ${j.memory.heap_used_mb}/${j.memory.heap_total_mb} МБ`;
+        const load = j.system.loadavg_1m;
+        const loadColor = load > j.system.cpus ? 'var(--danger-700)' : load > j.system.cpus * 0.7 ? 'var(--warning-700)' : 'var(--success-700)';
+        $('#admSysLoad').innerHTML     = `<span style="color:${loadColor};">${load}</span>`;
+        $('#admSysCpus').textContent   = `${j.system.cpus} ядер · своб. ${Math.round(j.system.free_mem_mb)}/${Math.round(j.system.total_mem_mb)} МБ`;
+        const r5 = j.requests.last_5m;
+        $('#admSysReqs').textContent     = r5.count;
+        $('#admSysReqMeta').textContent  = r5.count ? `avg ${r5.avg_ms}ms · p95 ${r5.p95_ms}ms · ошибок ${r5.error_rate}%` : 'тихо';
+        $('#admSysMeta').textContent     = `${j.system.hostname} · ${j.platform}/${j.arch} · обновлено ${new Date(j.generated_at).toLocaleTimeString('ru-RU')}`;
+        const rows = [
+          ['1 мин', j.requests.last_1m],
+          ['5 мин', j.requests.last_5m],
+          ['1 час', j.requests.last_1h],
+        ];
+        $('#admSysReqTable').innerHTML = rows.map(([label, s]) => `
+          <tr>
+            <td class="py-1 pr-2 text-[color:var(--text-muted)]">${label}</td>
+            <td class="py-1 pr-2">${s.count}</td>
+            <td class="py-1 pr-2">${s.avg_ms}ms</td>
+            <td class="py-1 pr-2">${s.p95_ms}ms</td>
+            <td class="py-1" style="color:${s.error_rate > 5 ? 'var(--danger-700)' : 'var(--text-secondary)'};">${s.errors} (${s.error_rate}%)</td>
+          </tr>`).join('');
+        const top = j.top_paths_1h || [];
+        $('#admSysTopPaths').innerHTML = top.length
+          ? top.map(t => `<div class="flex items-center justify-between"><span class="font-mono text-xs">${escapeHtml(t.path)}</span><span class="text-xs text-[color:var(--text-muted)]">${t.count}</span></div>`).join('')
+          : `<div class="text-[color:var(--text-muted)]">Запросов пока нет</div>`;
+      } catch (e) {
+        toast('Ошибка загрузки системных метрик', 'error');
+      }
+    }
+
+    async function loadAdminErrors() {
+      const since = $('#admErrSince')?.value || '';
+      try {
+        const url = since ? `/api/admin/errors?since_min=${encodeURIComponent(since)}` : '/api/admin/errors';
+        const r = await fetch(url, { headers: adminHeaders() });
+        if (r.status === 401) return logoutAdmin();
+        const j = await r.json();
+        const list = (j.errors || []).slice().sort((a, b) => b.ts - a.ts);
+        const srcEl = $('#admErrSource');
+        if (srcEl) {
+          if (j.source === 'db') {
+            srcEl.textContent = 'БД';
+            srcEl.className = 'status-badge priority-low';
+            srcEl.title = `Из таблицы error_log${j.raw_total != null ? ` · сырых записей: ${j.raw_total}` : ''}`;
+          } else {
+            srcEl.textContent = 'память';
+            srcEl.className = 'status-badge priority-medium';
+            srcEl.title = j.db_error ? `БД недоступна: ${j.db_error}` : 'Таблица error_log не настроена — выполни docs/error-log-table.sql';
+          }
+          srcEl.style.fontSize = '0.6rem';
+          srcEl.style.verticalAlign = 'middle';
+        }
+        $('#admErrCount').textContent = list.length;
+        $('#admErrTotal').textContent = list.reduce((s, e) => s + (e.count || 1), 0);
+        if (!list.length) {
+          $('#admErrBody').innerHTML = `<tr><td colspan="6" class="py-4 text-[color:var(--text-muted)] text-center">Ошибок не зафиксировано 🎀</td></tr>`;
+          return;
+        }
+        const kindColor = { js: 'var(--danger-700)', server: 'var(--warning-700)', uncaught: 'var(--danger-700)', rejection: 'var(--danger-700)', api: 'var(--warning-700)' };
+        $('#admErrBody').innerHTML = list.map(e => `
+          <tr style="border-top:1px solid var(--border-soft);">
+            <td class="py-2 pr-3 text-[color:var(--text-muted)] text-xs whitespace-nowrap" title="${new Date(e.ts).toLocaleString('ru-RU')}">${fmtAgo(e.ts)}</td>
+            <td class="py-2 pr-3 text-xs" style="color:${kindColor[e.kind] || 'var(--text-secondary)'}; font-weight:600;">${escapeHtml(e.kind || '?')}</td>
+            <td class="py-2 pr-3"><div class="font-semibold text-[color:var(--text-strong)]" style="font-size:0.82rem;">${escapeHtml(e.message)}</div>${e.source ? `<div class="text-xs text-[color:var(--text-muted)]" style="font-family:ui-monospace,Menlo,monospace;">${escapeHtml(e.source)}${e.line ? `:${e.line}` : ''}${e.col ? `:${e.col}` : ''}</div>` : ''}</td>
+            <td class="py-2 pr-3 text-xs text-[color:var(--text-muted)]" style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(e.url || '')}">${escapeHtml(e.url || '—')}</td>
+            <td class="py-2 pr-3 text-xs text-[color:var(--text-muted)]">${escapeHtml(e.user_email || '—')}</td>
+            <td class="py-2 text-right text-xs font-bold" style="color:${e.count > 5 ? 'var(--danger-700)' : 'var(--text-secondary)'};">${e.count}</td>
+          </tr>`).join('');
+      } catch {
+        toast('Ошибка загрузки логов', 'error');
+      }
+    }
+
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('#admSysRefresh')) loadAdminSystem();
+      if (e.target.closest('#admErrRefresh')) loadAdminErrors();
+    });
+    document.addEventListener('change', (e) => {
+      if (e.target.id === 'admErrSince') loadAdminErrors();
+    });
 
     async function loadAdminMetrics() {
       try {

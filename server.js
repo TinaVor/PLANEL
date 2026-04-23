@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const monitoring = require('./api/_monitoring');
 
 console.log('[BOOT] starting PLANEL server');
 console.log('[BOOT] __dirname =', __dirname);
@@ -57,7 +58,19 @@ app.use((req, res, next) => {
   const start = Date.now();
   console.log(`[REQ] ${req.method} ${req.url} host=${req.headers.host} ua="${(req.headers['user-agent'] || '').slice(0, 60)}"`);
   res.on('finish', () => {
-    console.log(`[RES] ${req.method} ${req.url} -> ${res.statusCode} (${Date.now() - start}ms)`);
+    const ms = Date.now() - start;
+    console.log(`[RES] ${req.method} ${req.url} -> ${res.statusCode} (${ms}ms)`);
+    // В мониторинг: только API-роуты, чтобы не засорять статикой
+    if (req.url.startsWith('/api/')) {
+      monitoring.pushRequest({
+        method: req.method,
+        path: req.url.split('?')[0],
+        status: res.statusCode,
+        ms,
+        ip: req.ip,
+        ua: req.headers['user-agent'],
+      });
+    }
   });
   next();
 });
@@ -136,6 +149,11 @@ app.post('/api/admin/login', require('./api/admin/login'));
 app.get('/api/admin/metrics', require('./api/admin/metrics'));
 app.get('/api/admin/users', require('./api/admin/users'));
 app.post('/api/admin/broadcast', require('./api/admin/broadcast'));
+app.get('/api/admin/errors', require('./api/admin/errors'));
+app.get('/api/admin/system', require('./api/admin/system'));
+
+// Эндпоинт сбора клиентских ошибок (без auth, под общим rate-limit)
+app.post('/api/errors', require('./api/errors'));
 
 app.get('/api/google/auth', require('./api/google/auth'));
 app.get('/api/google/callback', require('./api/google/callback'));
@@ -185,11 +203,24 @@ app.get('*', (req, res) => {
 
 app.use((err, req, res, next) => {
   console.error('[ERR]', req.method, req.url, '->', err.stack || err.message);
+  monitoring.pushError({
+    kind: 'server',
+    message: err.message || 'unknown',
+    stack: err.stack,
+    url: req.url,
+    ua: req.headers['user-agent'],
+  });
   if (!res.headersSent) res.status(500).send('Internal Server Error');
 });
 
-process.on('uncaughtException', (e) => console.error('[UNCAUGHT]', e.stack || e));
-process.on('unhandledRejection', (e) => console.error('[UNHANDLED REJECTION]', e));
+process.on('uncaughtException', (e) => {
+  console.error('[UNCAUGHT]', e.stack || e);
+  monitoring.pushError({ kind: 'uncaught', message: e.message || String(e), stack: e.stack });
+});
+process.on('unhandledRejection', (e) => {
+  console.error('[UNHANDLED REJECTION]', e);
+  monitoring.pushError({ kind: 'rejection', message: (e && e.message) || String(e), stack: e && e.stack });
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
