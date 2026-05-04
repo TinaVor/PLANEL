@@ -182,6 +182,21 @@ const tasksHandler = require('./api/tasks');
 app.all('/api/tasks', tasksHandler);
 app.all('/api/tasks/:id', tasksHandler);
 
+const habitsHandler = require('./api/habits');
+app.all('/api/habits', habitsHandler);
+app.all('/api/habits/:id', habitsHandler);
+
+const habitLogsHandler = require('./api/habit-logs');
+app.all('/api/habit-logs', habitLogsHandler);
+
+const notesHandler = require('./api/notes');
+app.all('/api/notes', notesHandler);
+app.all('/api/notes/:id', notesHandler);
+
+const diaryHandler = require('./api/diary');
+app.all('/api/diary', diaryHandler);
+app.all('/api/diary/:id', diaryHandler);
+
 app.use(express.static(srcDir, {
   extensions: ['html'],
   setHeaders(res, filePath) {

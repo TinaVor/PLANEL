@@ -1908,23 +1908,76 @@
 
           <!-- Проекты -->
           <section id="projects" class="view space-y-6">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h2 class="heading-font text-2xl font-extrabold mb-1">Проекты</h2>
-                <p class="text-sm text-[color:var(--text-secondary)]">Группируйте задачи по проектам и отслеживайте прогресс</p>
+            <!-- Список проектов -->
+            <div id="projectsListWrap" class="space-y-6">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h2 class="heading-font text-2xl font-extrabold mb-1">Проекты</h2>
+                  <p class="text-sm text-[color:var(--text-secondary)]">Группируйте задачи по проектам и отслеживайте прогресс</p>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <button class="btn-ghost text-sm" id="projectsTemplatesBtn" title="Готовые шаблоны проектов">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                    Шаблоны
+                  </button>
+                  <button class="btn-primary text-sm" id="newProjectBtn">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                    Новый проект
+                  </button>
+                </div>
               </div>
-              <div class="flex items-center gap-2 flex-wrap">
-                <button class="btn-ghost text-sm" id="projectsTemplatesBtn" title="Готовые шаблоны проектов">
-                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-                  Шаблоны
-                </button>
-                <button class="btn-primary text-sm" id="newProjectBtn">
-                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-                  Новый проект
-                </button>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="projectsGrid"></div>
+            </div>
+
+            <!-- Деталка проекта -->
+            <div id="projectDetailWrap" class="space-y-6 hidden">
+              <!-- Шапка с цветовым полем и навигацией -->
+              <div class="card overflow-hidden p-0">
+                <div class="h-32 -mx-0 -mt-0" id="projectDetailColorStrip" style="background:var(--brand-500);"></div>
+                <div class="p-6 space-y-4">
+                  <div class="flex flex-wrap items-start justify-between gap-3">
+                    <div class="min-w-0 flex-1">
+                      <button class="btn-ghost text-xs mb-2" id="projectDetailBackBtn" title="К списку проектов">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+                        Все проекты
+                      </button>
+                      <h2 class="heading-font text-2xl font-extrabold mb-1" id="projectDetailName">Проект</h2>
+                      <p class="text-sm text-[color:var(--text-secondary)]" id="projectDetailDescription"></p>
+                    </div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <button class="btn-ghost text-sm" id="projectDetailEditBtn">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+                        Редактировать
+                      </button>
+                      <button class="btn-primary text-sm" id="projectDetailAddTaskBtn">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                        Новая задача
+                      </button>
+                    </div>
+                  </div>
+                  <!-- Блок мета: дедлайн / статус / прогресс -->
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="projectDetailMeta"></div>
+                  <div>
+                    <div class="flex items-center justify-between text-xs mb-1">
+                      <span class="text-[color:var(--text-muted)]" id="projectDetailProgressLabel">Прогресс</span>
+                      <span class="font-semibold" id="projectDetailProgressPct">0%</span>
+                    </div>
+                    <div class="progress" id="projectDetailProgressBar"><span style="width:0%"></span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Фильтры по статусу -->
+              <div class="card">
+                <div class="flex items-center gap-2 flex-wrap mb-4">
+                  <button class="pill-filter active" data-detail-status="">Все</button>
+                  <button class="pill-filter" data-detail-status="open">Активные</button>
+                  <button class="pill-filter" data-detail-status="done">Готовые</button>
+                  <button class="pill-filter" data-detail-status="overdue">Просрочены</button>
+                </div>
+                <div id="projectDetailTasks" class="space-y-2"></div>
               </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="projectsGrid"></div>
           </section>
 
           <!-- Привычки -->
@@ -3162,6 +3215,187 @@
       }
     };
 
+    // ---------- Cloud (Supabase-backed CRUD) ----------
+    // Слой для синхронизации привычек, заметок и дневника с бэкендом.
+    // Локальные Store.* остаются кэшем для оффлайн-чтения и быстрых рендеров.
+    async function cloudFetch(path, opts = {}) {
+      const r = await api(path, opts);
+      if (r.status === 401) { logout(); throw new Error('unauthorized'); }
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error || `http_${r.status}`);
+      return j;
+    }
+    const Cloud = {
+      habits: {
+        list:   () => cloudFetch('/api/habits').then(j => j.habits || []),
+        create: (p) => cloudFetch('/api/habits', { method: 'POST', body: JSON.stringify(p) }).then(j => j.habit),
+        update: (id, p) => cloudFetch(`/api/habits/${id}`, { method: 'PUT', body: JSON.stringify(p) }).then(j => j.habit),
+        remove: (id) => cloudFetch(`/api/habits/${id}`, { method: 'DELETE' }),
+      },
+      habitLogs: {
+        list:   () => cloudFetch('/api/habit-logs').then(j => j.logs || []),
+        toggle: (habit_id, date) => cloudFetch('/api/habit-logs', { method: 'POST', body: JSON.stringify({ habit_id, date }) }).then(j => !!j.done),
+        purge:  (habit_id) => cloudFetch(`/api/habit-logs?habit_id=${encodeURIComponent(habit_id)}`, { method: 'DELETE' }),
+      },
+      notes: {
+        list:   (kind) => cloudFetch(`/api/notes${kind ? '?kind=' + kind : ''}`).then(j => j.notes || []),
+        create: (p) => cloudFetch('/api/notes', { method: 'POST', body: JSON.stringify(p) }).then(j => j.note),
+        update: (id, p) => cloudFetch(`/api/notes/${id}`, { method: 'PUT', body: JSON.stringify(p) }).then(j => j.note),
+        remove: (id) => cloudFetch(`/api/notes/${id}`, { method: 'DELETE' }),
+      },
+      diary: {
+        list:   (kind) => cloudFetch(`/api/diary${kind ? '?kind=' + kind : ''}`).then(j => j.entries || []),
+        create: (p) => cloudFetch('/api/diary', { method: 'POST', body: JSON.stringify(p) }).then(j => j.entry),
+        update: (id, p) => cloudFetch(`/api/diary/${id}`, { method: 'PUT', body: JSON.stringify(p) }).then(j => j.entry),
+        remove: (id) => cloudFetch(`/api/diary/${id}`, { method: 'DELETE' }),
+      },
+    };
+
+    // Локальные id вида 'id_xxx' — наследие старого Store. После загрузки с
+    // сервера у всех записей будет UUID; этот хелпер отличает "новые" локальные.
+    const isServerId = (s) => typeof s === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
+
+    // Подтягиваем серверные данные, при необходимости одноразово переливаем
+    // существующий localStorage в Supabase.
+    async function bootstrapUserContent() {
+      try {
+        const [habits, logs, notes, diaryAll] = await Promise.all([
+          Cloud.habits.list(),
+          Cloud.habitLogs.list(),
+          Cloud.notes.list(),
+          Cloud.diary.list(),
+        ]);
+
+        // ---- HABITS + LOGS ----
+        const localHabits = Store.habits.list();
+        const idMap = {}; // local_id -> server_id
+        if (!habits.length && localHabits.length) {
+          for (const h of localHabits) {
+            try {
+              const created = await Cloud.habits.create({
+                name: h.name, description: h.description || '', sphere: h.sphere || null,
+                target_count: h.target_count || null, target_period: h.target_period || 'week',
+                goal_id: h.goal_id || null,
+              });
+              idMap[h.id] = created.id;
+              habits.push(created);
+            } catch (e) { console.warn('[migrate] habit failed:', e.message); }
+          }
+          // Переливаем логи привычек
+          const localLogs = Store.habitLogs.get();
+          for (const [oldId, days] of Object.entries(localLogs)) {
+            const newId = idMap[oldId] || (isServerId(oldId) ? oldId : null);
+            if (!newId) continue;
+            for (const date of Object.keys(days)) {
+              try { await Cloud.habitLogs.toggle(newId, date); } catch {}
+            }
+          }
+          // Перечитываем логи с сервера
+          try { logs.splice(0, logs.length, ...(await Cloud.habitLogs.list())); } catch {}
+        }
+        Store.habits.save(habits);
+        // habit_logs: переводим серверный плоский список в локальную мапу {habit_id: {date: true}}
+        const logsMap = {};
+        for (const l of logs) {
+          logsMap[l.habit_id] = logsMap[l.habit_id] || {};
+          logsMap[l.habit_id][l.log_date] = true;
+        }
+        Store.habitLogs.save(logsMap);
+
+        // ---- NOTES (разбиваем по kind: note/card/zettel) ----
+        if (!notes.length) {
+          const toMigrate = [
+            ...Store.notes.list().map(n => ({ ...n, kind: 'note' })),
+            ...Store.cards.list().map(n => ({ ...n, kind: 'card' })),
+            ...Store.zettels.list().map(n => ({ ...n, kind: 'zettel' })),
+          ];
+          for (const n of toMigrate) {
+            try {
+              const created = await Cloud.notes.create({
+                kind: n.kind,
+                title: n.title || '',
+                body: n.body || n.content || n.text || '',
+                tags: Array.isArray(n.tags) ? n.tags : [],
+                links: Array.isArray(n.links) ? n.links : [],
+                color: n.color || null,
+                pinned: !!n.pinned,
+                meta: { ...n, id: undefined, kind: undefined, title: undefined, body: undefined, tags: undefined, links: undefined, color: undefined, pinned: undefined },
+              });
+              notes.push(created);
+            } catch (e) { console.warn('[migrate] note failed:', e.message); }
+          }
+        }
+        // Распределяем по локальным бакетам, поддерживая прежнюю форму
+        Store.notes.save(notes.filter(n => n.kind === 'note').map(serverNoteToLocal));
+        Store.cards.save(notes.filter(n => n.kind === 'card').map(serverNoteToLocal));
+        Store.zettels.save(notes.filter(n => n.kind === 'zettel').map(serverNoteToLocal));
+
+        // ---- DIARY (food/emotion/reflection/gratitude) ----
+        if (!diaryAll.length) {
+          const toMigrate = [
+            ...Store.food.list().map(e => ({ kind: 'food', entry_date: (e.datetime || '').slice(0,10) || null, data: e })),
+            ...Store.emotions.list().map(e => ({ kind: 'emotion', entry_date: e.date || null, data: e })),
+            ...Store.reflections.list().map(e => ({ kind: 'reflection', entry_date: e.date || null, data: e })),
+            ...Store.gratitude.list().map(e => ({ kind: 'gratitude', entry_date: e.date || null, data: e })),
+          ];
+          for (const e of toMigrate) {
+            try {
+              const created = await Cloud.diary.create(e);
+              diaryAll.push(created);
+            } catch (err) { console.warn('[migrate] diary failed:', err.message); }
+          }
+        }
+        Store.food.save(diaryAll.filter(e => e.kind === 'food').map(serverDiaryToLocal));
+        Store.emotions.save(diaryAll.filter(e => e.kind === 'emotion').map(serverDiaryToLocal));
+        Store.reflections.save(diaryAll.filter(e => e.kind === 'reflection').map(serverDiaryToLocal));
+        Store.gratitude.save(diaryAll.filter(e => e.kind === 'gratitude').map(serverDiaryToLocal));
+      } catch (e) {
+        console.warn('[bootstrapUserContent] failed:', e.message);
+      }
+    }
+
+    function serverNoteToLocal(n) {
+      // Восстанавливаем форму старого Store: UI ждёт поле `content`, а на
+      // сервере хранится `body`. Дублируем оба поля для совместимости.
+      return { id: n.id, title: n.title || '', body: n.body || '', content: n.body || '',
+        tags: n.tags || [], links: n.links || [], color: n.color, pinned: n.pinned,
+        created_at: n.created_at, updated_at: n.updated_at, ...(n.meta || {}) };
+    }
+    function serverDiaryToLocal(e) {
+      // Возвращаем { id, ...data } — UI читает поля прямо из плоской записи.
+      const flat = { id: e.id, ...(e.data || {}), created_at: e.created_at };
+      if (e.entry_date && !flat.date && e.kind !== 'food') flat.date = e.entry_date;
+      return flat;
+    }
+
+    // Универсальный helper: создать/обновить дневниковую запись и положить в Store.
+    // bucketName: 'food' | 'emotions' | 'reflections' | 'gratitude'
+    // kind: соответствующий kind на сервере
+    async function saveDiaryEntry(bucketName, kind, payload, existingId) {
+      const isUpdate = existingId && isServerId(existingId);
+      const entry_date = (payload.datetime || payload.date || '').slice(0, 10) || null;
+      const data = { ...payload };
+      delete data.id;
+      const result = isUpdate
+        ? await Cloud.diary.update(existingId, { entry_date, data })
+        : await Cloud.diary.create({ kind, entry_date, data });
+      const local = serverDiaryToLocal(result);
+      const store = Store[bucketName];
+      const list = store.list();
+      const idx = list.findIndex(x => x.id === existingId);
+      if (idx >= 0) list[idx] = local; else list.unshift(local);
+      store.save(list);
+      return local;
+    }
+
+    async function deleteDiaryEntry(bucketName, id) {
+      try { if (isServerId(id)) await Cloud.diary.remove(id); }
+      catch (e) { toast('Не удалось удалить на сервере', 'error'); return false; }
+      const store = Store[bucketName];
+      store.save(store.list().filter(x => x.id !== id));
+      return true;
+    }
+
     // ---------- App state ----------
     const state = {
       tasks: [],
@@ -3349,7 +3583,7 @@
       if (name === 'dashboard') { renderAnalytics(); renderPomStats(); }
       if (name === 'tasks')     renderTasksView();
       if (name === 'calendar')  renderCalendar();
-      if (name === 'projects')  renderProjects();
+      if (name === 'projects')  { closeProjectDetail(); renderProjects(); }
       if (name === 'habits')    renderHabits();
       if (name === 'wheel')     renderWheel();
       if (name === 'goals100')  renderGoals100();
@@ -3642,7 +3876,7 @@
       openModal('habitModal');
     }
 
-    $('#habitForm').addEventListener('submit', (e) => {
+    $('#habitForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = $('#habitId').value;
       const name = $('#habitName').value.trim();
@@ -3653,20 +3887,32 @@
       const goal_id = $('#habitGoal').value || null;
       const err = $('#habitError');
       if (!name) { err.textContent = 'Введите название'; err.classList.remove('hidden'); return; }
-      const habits = Store.habits.list();
-      if (id) {
-        const idx = habits.findIndex(h => h.id === id);
-        if (idx < 0) return;
-        habits[idx] = { ...habits[idx], name, description, sphere, target_count, target_period, goal_id };
-        toast('Привычка обновлена', 'success');
-      } else {
-        habits.push({ id: uid(), name, description, sphere, target_count, target_period, goal_id, created_at: new Date().toISOString() });
-        toast('Привычка создана', 'success');
+      const submit = $('#habitSubmit');
+      const prev = submit.textContent;
+      submit.disabled = true; submit.textContent = '...';
+      try {
+        const payload = { name, description, sphere, target_count, target_period, goal_id };
+        if (id && isServerId(id)) {
+          const updated = await Cloud.habits.update(id, payload);
+          const list = Store.habits.list();
+          const idx = list.findIndex(h => h.id === id);
+          if (idx >= 0) list[idx] = updated; else list.push(updated);
+          Store.habits.save(list);
+          toast('Привычка обновлена', 'success');
+        } else {
+          const created = await Cloud.habits.create(payload);
+          Store.habits.save([...Store.habits.list(), created]);
+          toast('Привычка создана', 'success');
+        }
+        closeModal('habitModal');
+        renderHabits();
+        renderTodayHabits();
+      } catch (e2) {
+        err.textContent = 'Не удалось сохранить привычку';
+        err.classList.remove('hidden');
+      } finally {
+        submit.disabled = false; submit.textContent = prev;
       }
-      Store.habits.save(habits);
-      closeModal('habitModal');
-      renderHabits();
-      renderTodayHabits();
     });
 
     $('#habitDeleteBtn').addEventListener('click', async () => {
@@ -3676,6 +3922,9 @@
       if (!ok) return;
       const habit = Store.habits.list().find(h => h.id === id);
       if (habit) trashPush('habit', habit, habit.name);
+      try {
+        if (isServerId(id)) await Cloud.habits.remove(id);
+      } catch (e) { toast('Не удалось удалить на сервере', 'error'); return; }
       Store.habits.save(Store.habits.list().filter(h => h.id !== id));
       Store.habitLogs.deleteHabit(id);
       closeModal('habitModal');
@@ -3723,6 +3972,7 @@
       renderProjects();
       renderAnalytics();
       renderTodayView();
+      if (projectDetail.projectId) renderProjectDetail();
     }
 
     async function toggleTaskDone(id, done) {
@@ -4468,12 +4718,147 @@
         const id = card.dataset.id;
         card.querySelector('[data-action="edit"]').addEventListener('click', (e) => { e.stopPropagation(); openProjectModal(id); });
         card.querySelector('[data-action="add-task"]').addEventListener('click', (e) => { e.stopPropagation(); openTaskModal(null, { project_id: id }); });
-        card.addEventListener('click', () => {
-          state.projectFilter = id;
-          switchView('tasks');
+        card.addEventListener('click', () => openProjectDetail(id));
+      });
+    }
+
+    // ---------- Project detail (подробный вид одного проекта) ----------
+    const projectDetail = { projectId: null, status: '' };
+
+    function openProjectDetail(projectId) {
+      projectDetail.projectId = projectId;
+      projectDetail.status = '';
+      $('#projectsListWrap')?.classList.add('hidden');
+      $('#projectDetailWrap')?.classList.remove('hidden');
+      // Сброс фильтра статуса
+      $$('[data-detail-status]').forEach(b => b.classList.toggle('active', b.dataset.detailStatus === ''));
+      renderProjectDetail();
+    }
+    function closeProjectDetail() {
+      projectDetail.projectId = null;
+      $('#projectDetailWrap')?.classList.add('hidden');
+      $('#projectsListWrap')?.classList.remove('hidden');
+    }
+
+    function renderProjectDetail() {
+      const id = projectDetail.projectId;
+      if (!id) return;
+      const project = Store.projects.list().find(p => p.id === id);
+      if (!project) { closeProjectDetail(); return; }
+
+      $('#projectDetailColorStrip').style.background = project.color || 'var(--brand-500)';
+      $('#projectDetailName').textContent = project.name || 'Без названия';
+      const desc = $('#projectDetailDescription');
+      if (project.description) { desc.textContent = project.description; desc.style.display = ''; }
+      else { desc.style.display = 'none'; }
+
+      const tasks = state.tasks.filter(t => getProjectId(t) === id);
+      const total = tasks.length;
+      const done  = tasks.filter(t => t.done).length;
+      const open  = total - done;
+      const today = todayISO();
+      const overdue = tasks.filter(t => !t.done && t.due_date && t.due_date < today).length;
+      const pct = total ? Math.round(done / total * 100) : 0;
+      const deadlineOverdue = project.deadline && project.deadline < today && pct < 100;
+
+      // Метаблок
+      const meta = $('#projectDetailMeta');
+      const status = pct === 100 ? 'Готов' : (deadlineOverdue ? 'Просрочен' : 'Активный');
+      const statusClass = pct === 100 ? 'priority-low' : (deadlineOverdue ? 'priority-high' : 'badge-info');
+      meta.innerHTML = `
+        <div class="lw-stat-card"><div class="lw-stat-label">Дедлайн</div><div class="lw-stat-value" style="font-size:1.05rem;">${project.deadline ? formatDateRu(project.deadline) : '—'}</div><div class="lw-stat-sub">${project.deadline ? (deadlineOverdue ? 'просрочен' : 'до ' + project.deadline) : 'не задан'}</div></div>
+        <div class="lw-stat-card"><div class="lw-stat-label">Статус</div><div class="lw-stat-value" style="font-size:1.05rem;"><span class="status-badge ${statusClass}">${status}</span></div><div class="lw-stat-sub">${total} задач всего</div></div>
+        <div class="lw-stat-card"><div class="lw-stat-label">Активных</div><div class="lw-stat-value" style="color:var(--brand-600);">${open}</div><div class="lw-stat-sub">в работе</div></div>
+        <div class="lw-stat-card"><div class="lw-stat-label">Просрочено</div><div class="lw-stat-value" style="color:var(--danger-700);">${overdue}</div><div class="lw-stat-sub">требуют внимания</div></div>
+      `;
+
+      $('#projectDetailProgressPct').textContent = pct + '%';
+      $('#projectDetailProgressLabel').textContent = `Прогресс: ${done} из ${total}`;
+      const bar = $('#projectDetailProgressBar');
+      bar.classList.toggle('success', pct === 100);
+      bar.querySelector('span').style.width = pct + '%';
+
+      // Список задач c фильтром статуса
+      const filter = projectDetail.status;
+      let visible = tasks.slice();
+      if (filter === 'open')    visible = visible.filter(t => !t.done);
+      if (filter === 'done')    visible = visible.filter(t => t.done);
+      if (filter === 'overdue') visible = visible.filter(t => !t.done && t.due_date && t.due_date < today);
+      // Сортируем: незавершённые сверху, по дедлайну
+      visible.sort((a, b) => {
+        if (a.done !== b.done) return a.done ? 1 : -1;
+        return (a.due_date || '9999').localeCompare(b.due_date || '9999');
+      });
+
+      const host = $('#projectDetailTasks');
+      if (!visible.length) {
+        host.innerHTML = `<div class="empty-state" style="padding:1.5rem;"><strong>Здесь пусто.</strong><br/>Нажмите «Новая задача», чтобы добавить первую.</div>`;
+      } else {
+        host.innerHTML = visible.map(t => {
+          const isOverdue = !t.done && t.due_date && t.due_date < today;
+          const prio = t.priority || 'medium';
+          return `
+            <div class="task-item ${t.done ? 'task-done' : ''}" data-id="${t.id}">
+              <input type="checkbox" class="proj-detail-toggle" data-id="${t.id}" ${t.done ? 'checked' : ''}>
+              <div class="flex-1 min-w-0">
+                <div class="font-semibold text-sm ${t.done ? 'line-through text-[color:var(--text-muted)]' : ''}">${escapeHtml(t.title)}</div>
+                ${t.description ? `<div class="text-xs text-[color:var(--text-muted)] mt-1 truncate">${escapeHtml(t.description)}</div>` : ''}
+                <div class="flex items-center gap-2 mt-2 text-xs flex-wrap">
+                  <span class="status-badge priority-${prio}">${prio === 'high' ? 'Высокий' : prio === 'low' ? 'Низкий' : 'Средний'}</span>
+                  ${t.due_date ? `<span class="${isOverdue ? 'priority-high status-badge' : 'text-[color:var(--text-muted)]'}" style="display:inline-flex; align-items:center; gap:0.25rem;">${svgIcon('calendar_alt', 12)}${formatDateRu(t.due_date)}${isOverdue ? ' · просрочена' : ''}</span>` : ''}
+                </div>
+              </div>
+              <div class="row-actions">
+                <button class="icon-btn proj-detail-edit" data-id="${t.id}" style="width:30px;height:30px;" title="Редактировать">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+                </button>
+                <button class="icon-btn proj-detail-del" data-id="${t.id}" style="width:30px;height:30px;" title="Удалить">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      host.querySelectorAll('.proj-detail-toggle').forEach(cb => {
+        cb.addEventListener('change', async () => {
+          await toggleTaskDone(cb.dataset.id, cb.checked);
+        });
+      });
+      host.querySelectorAll('.proj-detail-edit').forEach(b => {
+        b.addEventListener('click', () => openTaskModal(b.dataset.id));
+      });
+      host.querySelectorAll('.proj-detail-del').forEach(b => {
+        b.addEventListener('click', async () => {
+          const ok = await confirmModal('Удалить задачу без возможности восстановления?');
+          if (!ok) return;
+          const r = await api(taskUrl(`/api/tasks/${b.dataset.id}`), { method: 'DELETE' });
+          if (r.status === 401) return logout();
+          Store.taskMeta.delete(b.dataset.id);
+          Store.taskExtras.delete(b.dataset.id);
+          toast('Задача удалена', 'success');
+          await loadTasks();
         });
       });
     }
+
+    // Кнопки в шапке деталки
+    $('#projectDetailBackBtn')?.addEventListener('click', closeProjectDetail);
+    $('#projectDetailEditBtn')?.addEventListener('click', () => {
+      if (projectDetail.projectId) openProjectModal(projectDetail.projectId);
+    });
+    $('#projectDetailAddTaskBtn')?.addEventListener('click', () => {
+      if (projectDetail.projectId) openTaskModal(null, { project_id: projectDetail.projectId });
+    });
+    // Фильтры статуса
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-detail-status]');
+      if (!btn) return;
+      projectDetail.status = btn.dataset.detailStatus;
+      $$('[data-detail-status]').forEach(b => b.classList.toggle('active', b === btn));
+      renderProjectDetail();
+    });
 
     // ---------- Habits ----------
     function renderHabits() {
@@ -4530,12 +4915,24 @@
       }).join('');
 
       list.querySelectorAll('.habit-day').forEach(el => {
-        el.addEventListener('click', () => {
-          const wasDone = Store.habitLogs.isDone(el.dataset.habitId, el.dataset.date);
-          Store.habitLogs.toggle(el.dataset.habitId, el.dataset.date);
-          if (!wasDone) gameAddXP('habit_mark', el.dataset.habitId);
+        el.addEventListener('click', async () => {
+          const habitId = el.dataset.habitId;
+          const date = el.dataset.date;
+          const wasDone = Store.habitLogs.isDone(habitId, date);
+          // Оптимистично рисуем, на сервере подтверждаем
+          Store.habitLogs.toggle(habitId, date);
+          if (!wasDone) gameAddXP('habit_mark', habitId);
           renderHabits();
           renderTodayHabits();
+          if (isServerId(habitId)) {
+            try { await Cloud.habitLogs.toggle(habitId, date); }
+            catch (e) {
+              // Откат на ошибке
+              Store.habitLogs.toggle(habitId, date);
+              renderHabits(); renderTodayHabits();
+              toast('Не удалось сохранить отметку', 'error');
+            }
+          }
         });
       });
       list.querySelectorAll('.habit-goal-link').forEach(a => {
@@ -4620,11 +5017,20 @@
         </label>
       `).join('');
       host.querySelectorAll('input[type="checkbox"][data-habit-id]').forEach(cb => {
-        cb.addEventListener('change', () => {
-          const wasDone = Store.habitLogs.isDone(cb.dataset.habitId, today);
-          Store.habitLogs.toggle(cb.dataset.habitId, today);
-          if (!wasDone) gameAddXP('habit_mark', cb.dataset.habitId);
+        cb.addEventListener('change', async () => {
+          const habitId = cb.dataset.habitId;
+          const wasDone = Store.habitLogs.isDone(habitId, today);
+          Store.habitLogs.toggle(habitId, today);
+          if (!wasDone) gameAddXP('habit_mark', habitId);
           renderHabits();
+          if (isServerId(habitId)) {
+            try { await Cloud.habitLogs.toggle(habitId, today); }
+            catch (e) {
+              Store.habitLogs.toggle(habitId, today);
+              renderHabits();
+              toast('Не удалось сохранить отметку', 'error');
+            }
+          }
         });
       });
     }
@@ -5767,9 +6173,7 @@
         body.querySelectorAll('.food-edit').forEach(b => b.addEventListener('click', () => openFoodModal(b.dataset.id)));
         body.querySelectorAll('.food-delete').forEach(b => b.addEventListener('click', async () => {
           const ok = await confirmModal('Переместить запись в корзину?'); if (!ok) return;
-          const item = Store.food.list().find(x => x.id === b.dataset.id);
-          if (item) trashPush('food', item, `${MEAL_LABEL[item.meal_type] || ''}: ${item.food || '—'}`);
-          Store.food.save(Store.food.list().filter(x => x.id !== b.dataset.id));
+          await deleteDiaryEntry('food', b.dataset.id);
           renderFoodDiary();
         }));
       }
@@ -5879,10 +6283,9 @@
       document.body.insertAdjacentHTML('beforeend', formHtml);
       const modalEl = $('#foodDynamicModal');
       openModal('foodDynamicModal');
-      $('#foodDynamicForm').addEventListener('submit', (e) => {
+      $('#foodDynamicForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const payload = {
-          id: entryId || uid(),
           datetime: $('#fdDatetime').value,
           meal_type: $('#fdMeal').value,
           food: $('#fdFood').value.trim(),
@@ -5893,27 +6296,26 @@
           protein: Number($('#fdProtein').value) || 0,
           fat:     Number($('#fdFat').value)     || 0,
           carbs:   Number($('#fdCarbs').value)   || 0,
-          created_at: entry?.created_at || new Date().toISOString()
         };
-        const list = Store.food.list();
-        if (entryId) {
-          const idx = list.findIndex(x => x.id === entryId);
-          if (idx >= 0) list[idx] = payload;
-        } else list.push(payload);
-        Store.food.save(list);
-        if (!entryId) gameAddXP('food_entry', payload.id);
-        closeModal('foodDynamicModal');
-        modalEl.remove();
-        toast(entryId ? 'Запись обновлена' : 'Запись добавлена', 'success');
-        renderFoodDiary();
+        try {
+          const saved = await saveDiaryEntry('food', 'food', payload, entryId);
+          if (!entryId) gameAddXP('food_entry', saved.id);
+          closeModal('foodDynamicModal');
+          modalEl.remove();
+          toast(entryId ? 'Запись обновлена' : 'Запись добавлена', 'success');
+          renderFoodDiary();
+        } catch (e2) {
+          toast('Не удалось сохранить', 'error');
+        }
       });
       $('#fdDelete')?.addEventListener('click', async () => {
         const ok = await confirmModal('Переместить запись в корзину?'); if (!ok) return;
         const item = Store.food.list().find(x => x.id === entryId);
         if (item) trashPush('food', item, `${MEAL_LABEL[item.meal_type] || ''}: ${item.food || '—'}`);
-        Store.food.save(Store.food.list().filter(x => x.id !== entryId));
-        closeModal('foodDynamicModal'); modalEl.remove();
-        renderFoodDiary();
+        if (await deleteDiaryEntry('food', entryId)) {
+          closeModal('foodDynamicModal'); modalEl.remove();
+          renderFoodDiary();
+        }
       });
     }
 
@@ -6297,11 +6699,10 @@
       selectedMood = Number(el.dataset.mood);
     });
 
-    $('#emotionsForm')?.addEventListener('submit', (e) => {
+    $('#emotionsForm')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const today = todayISO();
-      const entry = {
-        id: uid(),
+      const payload = {
         date: today,
         sleep: Number($('#emotSleep').value) || null,
         energy: Number($('#emotEnergy').value),
@@ -6309,21 +6710,21 @@
         event: $('#emotEvent').value.trim(),
         thought: $('#emotThought').value.trim(),
         gratitude: $('#emotGratitude').value.trim(),
-        created_at: new Date().toISOString()
       };
-      if (!entry.event && !entry.thought && !entry.gratitude && !entry.sleep) {
+      if (!payload.event && !payload.thought && !payload.gratitude && !payload.sleep) {
         showFormMsg('emotMsg', 'Заполните хотя бы одно поле', 'error');
         return;
       }
-      const list = Store.emotions.list();
-      // Заменяем запись за сегодня, если уже есть
-      const existingIdx = list.findIndex(x => x.date === today);
-      if (existingIdx >= 0) { entry.id = list[existingIdx].id; list[existingIdx] = entry; }
-      else list.unshift(entry);
-      Store.emotions.save(list);
-      toast('Запись сохранена', 'success');
-      showFormMsg('emotMsg', 'Сохранено', 'success');
-      renderEmotions();
+      // Если за сегодня уже есть запись — апдейтим её
+      const existing = Store.emotions.list().find(x => x.date === today);
+      try {
+        await saveDiaryEntry('emotions', 'emotion', payload, existing?.id);
+        toast('Запись сохранена', 'success');
+        showFormMsg('emotMsg', 'Сохранено', 'success');
+        renderEmotions();
+      } catch (e2) {
+        showFormMsg('emotMsg', 'Не удалось сохранить', 'error');
+      }
     });
 
     function renderEmotions() {
@@ -6370,8 +6771,7 @@
           const ok = await confirmModal('Переместить запись в корзину?'); if (!ok) return;
           const item = Store.emotions.list().find(x => x.id === btn.dataset.id);
           if (item) trashPush('emotion', item, formatDateRu(item.date));
-          Store.emotions.save(Store.emotions.list().filter(x => x.id !== btn.dataset.id));
-          renderEmotions();
+          if (await deleteDiaryEntry('emotions', btn.dataset.id)) renderEmotions();
         });
       });
     }
@@ -7446,38 +7846,38 @@
       host.querySelectorAll('.refl-delete').forEach(btn => {
         btn.addEventListener('click', async () => {
           const ok = await confirmModal('Удалить запись рефлексии?'); if (!ok) return;
-          Store.reflections.save(Store.reflections.list().filter(x => x.id !== btn.dataset.id));
-          toast('Запись удалена', 'success');
-          renderReflections();
+          if (await deleteDiaryEntry('reflections', btn.dataset.id)) {
+            toast('Запись удалена', 'success');
+            renderReflections();
+          }
         });
       });
     }
 
-    $('#reflectionForm')?.addEventListener('submit', (e) => {
+    $('#reflectionForm')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const today = todayISO();
-      const entry = {
-        id: uid(),
+      const payload = {
         date: today,
         success:  $('#reflSuccess').value.trim(),
         obstacle: $('#reflObstacle').value.trim(),
         next:     $('#reflNext').value.trim(),
-        created_at: new Date().toISOString()
       };
-      if (!entry.success && !entry.obstacle && !entry.next) {
+      if (!payload.success && !payload.obstacle && !payload.next) {
         showFormMsg('reflMsg', 'Заполните хотя бы одно поле', 'error');
         return;
       }
-      const list = Store.reflections.list();
-      const idx = list.findIndex(x => x.date === today);
-      const isNew = idx < 0;
-      if (idx >= 0) { entry.id = list[idx].id; list[idx] = entry; }
-      else list.unshift(entry);
-      Store.reflections.save(list);
-      if (isNew) gameAddXP('reflection_save', entry.id);
-      toast('Рефлексия сохранена', 'success');
-      showFormMsg('reflMsg', 'Сохранено', 'success');
-      renderReflections();
+      const existing = Store.reflections.list().find(x => x.date === today);
+      const isNew = !existing;
+      try {
+        const saved = await saveDiaryEntry('reflections', 'reflection', payload, existing?.id);
+        if (isNew) gameAddXP('reflection_save', saved.id);
+        toast('Рефлексия сохранена', 'success');
+        showFormMsg('reflMsg', 'Сохранено', 'success');
+        renderReflections();
+      } catch (e2) {
+        showFormMsg('reflMsg', 'Не удалось сохранить', 'error');
+      }
     });
 
     function renderGratitude() {
@@ -7513,14 +7913,15 @@
       host.querySelectorAll('.grat-delete').forEach(btn => {
         btn.addEventListener('click', async () => {
           const ok = await confirmModal('Удалить запись благодарности?'); if (!ok) return;
-          Store.gratitude.save(Store.gratitude.list().filter(x => x.id !== btn.dataset.id));
-          toast('Запись удалена', 'success');
-          renderGratitude();
+          if (await deleteDiaryEntry('gratitude', btn.dataset.id)) {
+            toast('Запись удалена', 'success');
+            renderGratitude();
+          }
         });
       });
     }
 
-    $('#gratitudeForm')?.addEventListener('submit', (e) => {
+    $('#gratitudeForm')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const today = todayISO();
       const items = [
@@ -7534,15 +7935,16 @@
         showFormMsg('gratMsg', 'Заполните хотя бы одно поле', 'error');
         return;
       }
-      const entry = { id: uid(), date: today, items, whom, note, created_at: new Date().toISOString() };
-      const list = Store.gratitude.list();
-      const idx = list.findIndex(x => x.date === today);
-      if (idx >= 0) { entry.id = list[idx].id; list[idx] = entry; }
-      else list.unshift(entry);
-      Store.gratitude.save(list);
-      toast('Благодарность сохранена', 'success');
-      showFormMsg('gratMsg', 'Сохранено', 'success');
-      renderGratitude();
+      const payload = { date: today, items, whom, note };
+      const existing = Store.gratitude.list().find(x => x.date === today);
+      try {
+        await saveDiaryEntry('gratitude', 'gratitude', payload, existing?.id);
+        toast('Благодарность сохранена', 'success');
+        showFormMsg('gratMsg', 'Сохранено', 'success');
+        renderGratitude();
+      } catch (e2) {
+        showFormMsg('gratMsg', 'Не удалось сохранить', 'error');
+      }
     });
 
     // ---------- Gamification ----------
@@ -7772,11 +8174,10 @@
       if (!id) return;
       const ok = await confirmModal('Переместить заметку в корзину?');
       if (!ok) return;
-      const note = Store.notes.list().find(n => n.id === id);
-      if (note) trashPush('note', note, note.title || '(без названия)');
-      Store.notes.save(Store.notes.list().filter(n => n.id !== id));
-      closeModal('noteViewModal');
-      renderNotes();
+      if (await deleteNoteById(id)) {
+        closeModal('noteViewModal');
+        renderNotes();
+      }
     });
 
     function openNoteModal(noteId = null) {
@@ -7802,7 +8203,7 @@
       openModal('noteModal');
     }
 
-    $('#noteForm').addEventListener('submit', (e) => {
+    $('#noteForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = $('#noteId').value;
       const title = $('#noteTitle').value.trim();
@@ -7810,38 +8211,53 @@
       const tags = $('#noteTags').value.split(',').map(s => s.trim()).filter(Boolean).slice(0, 10);
       const err = $('#noteError');
       if (!title && !content) { err.textContent = 'Заполните заголовок или содержимое'; err.classList.remove('hidden'); return; }
-      const list = Store.notes.list();
-      const now = new Date().toISOString();
-      if (id) {
-        const idx = list.findIndex(n => n.id === id);
-        if (idx < 0) return;
-        list[idx] = { ...list[idx], title, content, tags, updated_at: now };
-        toast('Заметка обновлена', 'success');
-      } else {
-        const newId = uid();
-        list.push({ id: newId, title, content, tags, created_at: now, updated_at: now });
-        toast('Заметка создана', 'success');
-        Store.notes.save(list);
-        gameAddXP('note_create', newId);
+      const submit = $('#noteSubmit');
+      const prev = submit.textContent;
+      submit.disabled = true; submit.textContent = '...';
+      try {
+        if (id && isServerId(id)) {
+          const updated = await Cloud.notes.update(id, { title, body: content, tags });
+          const list = Store.notes.list();
+          const idx = list.findIndex(n => n.id === id);
+          const local = serverNoteToLocal(updated);
+          if (idx >= 0) list[idx] = local; else list.push(local);
+          Store.notes.save(list);
+          toast('Заметка обновлена', 'success');
+        } else {
+          const created = await Cloud.notes.create({ kind: 'note', title, body: content, tags });
+          Store.notes.save([serverNoteToLocal(created), ...Store.notes.list()]);
+          gameAddXP('note_create', created.id);
+          toast('Заметка создана', 'success');
+        }
         closeModal('noteModal');
         renderNotes();
-        return;
+      } catch (e2) {
+        err.textContent = 'Не удалось сохранить заметку';
+        err.classList.remove('hidden');
+      } finally {
+        submit.disabled = false; submit.textContent = prev;
       }
-      Store.notes.save(list);
-      closeModal('noteModal');
-      renderNotes();
     });
+
+    async function deleteNoteById(id) {
+      const note = Store.notes.list().find(n => n.id === id);
+      if (note) trashPush('note', note, note.title || '(без названия)');
+      try {
+        if (isServerId(id)) await Cloud.notes.remove(id);
+      } catch (e) { toast('Не удалось удалить на сервере', 'error'); return false; }
+      Store.notes.save(Store.notes.list().filter(n => n.id !== id));
+      return true;
+    }
 
     $('#noteDeleteBtn').addEventListener('click', async () => {
       const id = $('#noteId').value;
       if (!id) return;
       const ok = await confirmModal('Переместить заметку в корзину?');
       if (!ok) return;
-      const note = Store.notes.list().find(n => n.id === id);
-      if (note) trashPush('note', note, note.title || '(без названия)');
-      Store.notes.save(Store.notes.list().filter(n => n.id !== id));
-      closeModal('noteModal');
-      renderNotes();
+      if (await deleteNoteById(id)) {
+        closeModal('noteModal');
+        renderNotes();
+      }
     });
 
     $('#newNoteBtn')?.addEventListener('click', () => openNoteModal());
@@ -7999,12 +8415,13 @@
       });
     }
 
-    function rateCurrentCard(quality) {
+    async function rateCurrentCard(quality) {
       const list = Store.cards.list();
       const idx = list.findIndex(c => c.id === studyState.cardId);
       if (idx < 0) return;
       const patch = computeCardReview(list[idx], quality);
-      list[idx] = { ...list[idx], ...patch };
+      const merged = { ...list[idx], ...patch };
+      list[idx] = merged;
       Store.cards.save(list);
       // Сбрасываем cardId + flipped ДО renderCardsView, чтобы renderCardStudy()
       // не продолжал показывать только что отвеченную карточку, а взял следующую
@@ -8012,6 +8429,11 @@
       studyState.cardId = null;
       studyState.flipped = false;
       renderCardsView();
+      // Персистим обновлённое состояние SRS на сервер
+      if (isServerId(merged.id)) {
+        try { await Cloud.notes.update(merged.id, { meta: cardToNotePayload(merged).meta }); }
+        catch (e) { console.warn('[card rate] sync failed:', e.message); }
+      }
     }
 
     function renderCardsList() {
@@ -8094,7 +8516,21 @@
     }
 
     $('#newCardBtn')?.addEventListener('click', () => openCardModal());
-    $('#cardForm')?.addEventListener('submit', (e) => {
+    // Маппинг card <-> notes(kind=card): front/back в title/body, SRS-state в meta.
+    function cardToNotePayload(c) {
+      return {
+        kind: 'card',
+        title: c.front || '',
+        body: c.back || '',
+        tags: c.tags || [],
+        meta: {
+          interval: c.interval ?? 0, ease: c.ease ?? 2.5,
+          repetitions: c.repetitions ?? 0,
+          next_due: c.next_due ?? null, last_review: c.last_review ?? null,
+        },
+      };
+    }
+    $('#cardForm')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = $('#cardId').value;
       const front = $('#cardFront').value.trim();
@@ -8106,21 +8542,29 @@
         return;
       }
       const list = Store.cards.list();
-      if (id) {
-        const idx = list.findIndex(c => c.id === id);
-        if (idx >= 0) list[idx] = { ...list[idx], front, back, tags };
-      } else {
-        list.push({
-          id: uid(), front, back, tags,
-          interval: 0, ease: 2.5, repetitions: 0,
-          next_due: null, last_review: null,
-          created_at: new Date().toISOString()
-        });
+      try {
+        if (id && isServerId(id)) {
+          const existing = list.find(c => c.id === id) || {};
+          const updated = await Cloud.notes.update(id, cardToNotePayload({ ...existing, front, back, tags }));
+          const local = serverNoteToLocal(updated);
+          // serverNoteToLocal даёт title/body+spread meta — переименуем в front/back
+          local.front = updated.title; local.back = updated.body;
+          const idx = list.findIndex(c => c.id === id);
+          if (idx >= 0) list[idx] = local; else list.push(local);
+        } else {
+          const created = await Cloud.notes.create(cardToNotePayload({ front, back, tags, interval: 0, ease: 2.5, repetitions: 0, next_due: null, last_review: null }));
+          const local = serverNoteToLocal(created);
+          local.front = created.title; local.back = created.body;
+          list.push(local);
+        }
+        Store.cards.save(list);
+        closeModal('cardModal');
+        toast('Карточка сохранена', 'success');
+        renderCardsView();
+      } catch (e2) {
+        $('#cardError').textContent = 'Не удалось сохранить';
+        $('#cardError').classList.remove('hidden');
       }
-      Store.cards.save(list);
-      closeModal('cardModal');
-      toast('Карточка сохранена', 'success');
-      renderCardsView();
     });
     $('#cardDeleteBtn')?.addEventListener('click', async () => {
       const id = $('#cardId').value;
@@ -8129,6 +8573,8 @@
       const list = Store.cards.list();
       const c = list.find(x => x.id === id);
       if (c) trashPush('card', c, c.front || '');
+      try { if (isServerId(id)) await Cloud.notes.remove(id); }
+      catch (e) { toast('Не удалось удалить на сервере', 'error'); return; }
       Store.cards.save(list.filter(x => x.id !== id));
       if (studyState.cardId === id) { studyState.cardId = null; studyState.flipped = false; }
       closeModal('cardModal');
@@ -8277,13 +8723,11 @@
       $('#zettelViewDeleteBtn').onclick = async () => {
         const ok = await confirmModal('Удалить эту карточку? Ссылки на неё в других заметках станут «битыми».');
         if (!ok) return;
-        const arr = Store.zettels.list();
-        const item = arr.find(x => x.id === zettelId);
-        if (item) trashPush('zettel', item, item.title || '');
-        Store.zettels.save(arr.filter(x => x.id !== zettelId));
-        closeModal('zettelViewModal');
-        toast('Карточка удалена', 'success');
-        renderZettels();
+        if (await deleteZettelById(zettelId)) {
+          closeModal('zettelViewModal');
+          toast('Карточка удалена', 'success');
+          renderZettels();
+        }
       };
       // Внутренние ссылки в content и блоке Связи
       $('#zettelViewModal').querySelectorAll('.zettel-link, [data-zlink]').forEach(a => {
@@ -8385,7 +8829,16 @@
       state.zettelQuery = e.target.value;
       renderZettels();
     });
-    $('#zettelForm')?.addEventListener('submit', (e) => {
+    function zettelToNotePayload(z) {
+      return {
+        kind: 'zettel',
+        title: z.title || '',
+        body: z.content || '',
+        tags: z.tags || [],
+        meta: { zid: z.zid || null },
+      };
+    }
+    $('#zettelForm')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = $('#zettelId').value;
       const title = $('#zettelTitle').value.trim();
@@ -8397,31 +8850,49 @@
         return;
       }
       const list = Store.zettels.list();
-      const now = new Date().toISOString();
-      if (id) {
-        const idx = list.findIndex(z => z.id === id);
-        if (idx >= 0) list[idx] = { ...list[idx], title, content, tags, updated_at: now };
-      } else {
-        // zid — «timestamp-style» идентификатор в духе классического Luhmann-Zettelkasten
-        const zid = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
-        list.push({ id: uid(), zid, title, content, tags, created_at: now, updated_at: now });
+      try {
+        if (id && isServerId(id)) {
+          const existing = list.find(z => z.id === id) || {};
+          const updated = await Cloud.notes.update(id, zettelToNotePayload({ ...existing, title, content, tags }));
+          const local = serverNoteToLocal(updated);
+          local.content = updated.body;
+          const idx = list.findIndex(z => z.id === id);
+          if (idx >= 0) list[idx] = local; else list.push(local);
+        } else {
+          // zid — «timestamp-style» идентификатор в духе классического Luhmann-Zettelkasten
+          const zid = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
+          const created = await Cloud.notes.create(zettelToNotePayload({ title, content, tags, zid }));
+          const local = serverNoteToLocal(created);
+          local.content = created.body;
+          list.push(local);
+        }
+        Store.zettels.save(list);
+        closeModal('zettelModal');
+        toast('Карточка сохранена', 'success');
+        renderZettels();
+      } catch (e2) {
+        $('#zettelError').textContent = 'Не удалось сохранить';
+        $('#zettelError').classList.remove('hidden');
       }
-      Store.zettels.save(list);
-      closeModal('zettelModal');
-      toast('Карточка сохранена', 'success');
-      renderZettels();
     });
+    async function deleteZettelById(id) {
+      const list = Store.zettels.list();
+      const z = list.find(x => x.id === id);
+      if (z) trashPush('zettel', z, z.title || '');
+      try { if (isServerId(id)) await Cloud.notes.remove(id); }
+      catch (e) { toast('Не удалось удалить на сервере', 'error'); return false; }
+      Store.zettels.save(list.filter(x => x.id !== id));
+      return true;
+    }
     $('#zettelDeleteBtn')?.addEventListener('click', async () => {
       const id = $('#zettelId').value;
       if (!id) return;
       const ok = await confirmModal('Удалить эту карточку? Ссылки на неё в других заметках станут «битыми».'); if (!ok) return;
-      const list = Store.zettels.list();
-      const z = list.find(x => x.id === id);
-      if (z) trashPush('zettel', z, z.title || '');
-      Store.zettels.save(list.filter(x => x.id !== id));
-      closeModal('zettelModal');
-      toast('Карточка удалена', 'success');
-      renderZettels();
+      if (await deleteZettelById(id)) {
+        closeModal('zettelModal');
+        toast('Карточка удалена', 'success');
+        renderZettels();
+      }
     });
 
     // ---------- Team (сотрудники) ----------
@@ -8719,6 +9190,14 @@
       pomodoroDisplay();
       renderPomStats();
       await loadTasks();
+      // Подтягиваем привычки/заметки/дневник с сервера (и переливаем local на первый раз)
+      await bootstrapUserContent();
+      // Перерисовываем разделы, которые читали из локального кэша
+      renderHabits(); renderNotes(); renderTodayHabits();
+      if (typeof renderFood === 'function') renderFood();
+      if (typeof renderEmotions === 'function') renderEmotions();
+      if (typeof renderReflections === 'function') renderReflections();
+      if (typeof renderGratitude === 'function') renderGratitude();
       renderTodayView();
       renderNotifBadge();
       renderGameWidget();
